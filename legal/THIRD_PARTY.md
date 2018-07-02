@@ -1,6 +1,6 @@
-# @atomist/automation-seed
+# @atomist/cli
 
-This page details all runtime OSS dependencies of `@atomist/automation-seed`.
+This page details all runtime OSS dependencies of `@atomist/cli`.
 
 ## Licenses
 
@@ -38,7 +38,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
-|`@atomist/automation-seed`|`0.10.1`|Atomist|[https://github.com/atomist/automation-seed-ts](https://github.com/atomist/automation-seed-ts)|
+|`@atomist/cli`|`0.1.0`|David Dooling|[https://github.com/atomist/cli](https://github.com/atomist/cli)|
 |`@atomist/slack-messages`|`0.12.1`|Atomist|[https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)|
 |`aws-sign2`|`0.7.0`|Mikeal Rogers|[https://github.com/mikeal/aws-sign](https://github.com/mikeal/aws-sign)|
 |`before-after-hook`|`1.1.0`|Gregor Martynus|[https://github.com/gr2m/before-after-hook](https://github.com/gr2m/before-after-hook)|
