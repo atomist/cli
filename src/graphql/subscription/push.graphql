@@ -1,0 +1,12 @@
+subscription PushWithRepo {
+  Push {
+    after {
+      sha
+    }
+    repo {
+      channels {
+        name
+      }
+    }
+  }
+}

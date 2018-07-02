@@ -1,0 +1,14 @@
+.idea/
+*.iml
+.vscode/
+*~
+.#*
+.npmrc
+/build/
+node_modules/
+*.d.ts
+*.js
+*.js.map
+*.log
+*.txt
+git-info.json

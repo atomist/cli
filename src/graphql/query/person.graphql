@@ -1,0 +1,10 @@
+query Person($teamId: ID!, $slackUser: String!) {
+  ChatTeam(id: $teamId) {
+    members(screenName: $slackUser) {
+      person {
+        forename
+        surname
+      }
+    }
+  }
+}

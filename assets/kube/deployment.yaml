@@ -1,0 +1,77 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: automation-seed
+  namespace: default
+  labels:
+    app: automation-seed
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: automation-seed
+  template:
+    metadata:
+      labels:
+        app: automation-seed
+        version: '0'
+      annotations:
+        atomist.com/k8vent: '{"webhooks":["https://webhook.atomist.com/atomist/kube/teams/TEAM_ID"]}'
+        atomist.com/repo-image: '{"repo":{"owner":"atomist","name":"automation-seed-ts"},"image":"atomist/automation-seed-ts"}'
+    spec:
+      containers:
+      - name: automation-seed
+        image: atomist/automation-seed-ts:0.8.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ATOMIST_CONFIG_PATH
+          value: /opt/atm/client.config.json
+        ports:
+        - name: http
+          containerPort: 2866
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: "/health"
+            port: 2866
+            scheme: HTTP
+          initialDelaySeconds: 20
+          timeoutSeconds: 3
+          periodSeconds: 20
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: "/health"
+            port: 2866
+            scheme: HTTP
+          initialDelaySeconds: 20
+          timeoutSeconds: 3
+          periodSeconds: 20
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          limits:
+            cpu: 1.0
+            memory: 512Mi
+          requests:
+            cpu: 0.1
+            memory: 384Mi
+        volumeMounts:
+        - name: automation
+          mountPath: /opt/atm
+          readOnly: true
+      volumes:
+      - name: automation
+        secret:
+          secretName: automation
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 180
+      dnsPolicy: ClusterFirst
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
