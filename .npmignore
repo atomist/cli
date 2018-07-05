@@ -6,7 +6,6 @@
 .dockerignore
 .gitignore
 .npmrc*
-.travis.yml
 /build/
 /config/
 /scripts/
@@ -14,7 +13,6 @@
 /test/
 /CO*.md
 /Dockerfile
-/assets/kube/
 /ts*.json
 *.log
 *.txt
