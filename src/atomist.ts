@@ -78,7 +78,7 @@ yargs.completion("completion")
             process.exit(101);
         }
     })
-    .command(["start", "st", "run"], "Start an automation client", ya => {
+    .command(["start", "st", "run"], "Start an SDM or automation client", ya => {
         return ya
             .option("change-dir", {
                 alias: "C",
@@ -105,9 +105,9 @@ yargs.completion("completion")
         }
 
     })
-    .command(["gql-fetch <team>"], "Introspect GraphQL schema", ya => {
+    .command(["gql-fetch <workspace-id>"], "Introspect GraphQL schema", ya => {
         return (ya as any)
-            .positional("team", {
+            .positional("workspace-id", {
                 describe: "Atomist workspace/team ID",
                 required: true,
             })
@@ -128,7 +128,7 @@ yargs.completion("completion")
                 type: "boolean",
             });
     }, argv => {
-        gqlFetch(argv["change-dir"], argv.team, argv.token, argv.install)
+        gqlFetch(argv["change-dir"], argv["workspace-id"], argv.token, argv.install)
             .then(status => process.exit(status), err => {
                 console.error(`${Package}: Unhandled Error: ${err.message}`);
                 process.exit(101);
@@ -169,10 +169,9 @@ yargs.completion("completion")
     })
     .command("config", "Configure environment for running automation clients", ya => {
         return ya
-            .option("team", {
-                describe: "Atomist workspace/team ID",
+            .option("atomist-token", {
+                describe: "GitHub personal access token",
                 type: "string",
-                alias: "slack-team",
             })
             .option("github-user", {
                 describe: "GitHub user login",
@@ -184,6 +183,10 @@ yargs.completion("completion")
             })
             .option("github-mfa-token", {
                 describe: "GitHub user password",
+                type: "string",
+            })
+            .option("workspace-id", {
+                describe: "Atomist workspace/team ID",
                 type: "string",
             });
     }, argv => {

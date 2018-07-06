@@ -53,10 +53,11 @@ function createGitHubToken(user: string, password: string, mfa?: string): Promis
 
 export function cliAtomistConfig(argv: any): Promise<number> {
 
-    const argTeamId: string = argv.team;
+    const argTeamId: string = argv["workspace-id"];
     const argGitHubUser: string = argv["github-user"];
     const argGitHubPassword: string = argv["github-password"];
     const argGitHubMfaToken: string = argv["github-mfa-token"];
+    const argAtomistToken: string = argv["atomist-token"];
 
     const userConfig = getUserConfig() || {};
     if (!userConfig.teamIds) {
@@ -66,6 +67,12 @@ export function cliAtomistConfig(argv: any): Promise<number> {
         if (!userConfig.teamIds.includes(argTeamId)) {
             userConfig.teamIds.push(argTeamId);
         }
+    }
+    if (argAtomistToken) {
+        if (userConfig.token && userConfig.token !== argAtomistToken) {
+            console.log(`Overwriting current token with value from command line.`);
+        }
+        userConfig.token = argAtomistToken;
     }
 
     const questions: inquirer.Question[] = [];
@@ -161,189 +168,6 @@ To generate a new token, remove the existing token from
 '${configPath}'
 and run \`atomist config\` again.
 `);
-    }
-
-    if (process.env.ATOMIST_DOCKER_REGISTRY || process.env.ATOMIST_DOCKER_USER ||
-        process.env.ATOMIST_DOCKER_PASSWORD) {
-        const dockerRegistry: inquirer.Question = {
-            type: "input",
-            name: "dockerRegistry",
-            message: "Docker Registry Host",
-            validate: value => {
-                if (!/\S/.test(value) && !process.env.ATOMIST_DOCKER_REGISTRY) {
-                    return `The Docker registry host you entered is empty`;
-                }
-                return true;
-            },
-        };
-        if (process.env.ATOMIST_DOCKER_REGISTRY) {
-            dockerRegistry.default = process.env.ATOMIST_DOCKER_REGISTRY;
-        }
-        const dockerUser: inquirer.Question = {
-            type: "input",
-            name: "dockerUser",
-            message: "Docker Registry Username",
-            validate: value => {
-                if (!/\S/.test(value) && !process.env.ATOMIST_DOCKER_USER) {
-                    return `The Docker registry username you entered is empty`;
-                }
-                return true;
-            },
-        };
-        if (process.env.ATOMIST_DOCKER_USER) {
-            dockerUser.default = process.env.ATOMIST_DOCKER_USER;
-        }
-        const dockerPassword: inquirer.Question = {
-            type: "password",
-            name: "dockerPassword",
-            message: "Docker Registry Password",
-            validate: value => {
-                if (!/\S/.test(value) && !process.env.ATOMIST_DOCKER_PASSWORD) {
-                    return `The Docker registry password you entered is empty`;
-                }
-                return true;
-            },
-        };
-        if (process.env.ATOMIST_DOCKER_PASSWORD) {
-            dockerPassword.default = process.env.ATOMIST_DOCKER_PASSWORD;
-        }
-        questions.push(dockerRegistry, dockerUser, dockerPassword);
-    }
-
-    if (process.env.PCF_API || process.env.PCF_ORG || process.env.PCF_SPACE_STAGING ||
-        process.env.PCF_SPACE_PRODUCTION || process.env.PIVOTAL_USER || process.env.PIVOTAL_PASSWORD) {
-        const cfUser: inquirer.Question = {
-            type: "input",
-            name: "cfUser",
-            message: "Cloud Foundry Username",
-            validate: value => {
-                if (!/\S/.test(value) && !process.env.PIVOTAL_USER) {
-                    return `The Cloud Foundry username you entered is empty`;
-                }
-                return true;
-            },
-        };
-        if (process.env.PIVOTAL_USER) {
-            cfUser.default = process.env.PIVOTAL_USER;
-        }
-        const cfPassword: inquirer.Question = {
-            type: "password",
-            name: "cfPassword",
-            message: "Cloud Foundry Password",
-            validate: value => {
-                if (!/\S/.test(value) && !process.env.PIVOTAL_PASSWORD) {
-                    return `The Cloud Foundry password you entered is empty`;
-                }
-                return true;
-            },
-        };
-        if (process.env.PIVOTAL_PASSWORD) {
-            cfPassword.default = process.env.PIVOTAL_PASSWORD;
-        }
-        const cfOrg: inquirer.Question = {
-            type: "input",
-            name: "cfOrg",
-            message: "Cloud Foundry Org",
-            validate: value => {
-                if (!/\S/.test(value) && !process.env.PCF_ORG) {
-                    return `The Cloud Foundry Org you entered is empty`;
-                }
-                return true;
-            },
-        };
-        if (process.env.PCF_ORG) {
-            cfOrg.default = process.env.PCF_ORG;
-        }
-        const cfSpaceStaging: inquirer.Question = {
-            type: "input",
-            name: "cfSpaceStaging",
-            message: "Cloud Foundry Staging Space",
-            validate: value => {
-                if (!/\S/.test(value) && !process.env.PCF_SPACE_STAGING) {
-                    return `The Cloud Foundry Space you entered is empty`;
-                }
-                return true;
-            },
-        };
-        if (process.env.PCF_SPACE_STAGING) {
-            cfOrg.default = process.env.PCF_SPACE_STAGING;
-        }
-        const cfSpaceProd: inquirer.Question = {
-            type: "input",
-            name: "cfSpaceProd",
-            message: "Cloud Foundry Production Space",
-            validate: value => {
-                if (!/\S/.test(value) && !process.env.PCF_SPACE_PRODUCTION) {
-                    return `The Cloud Foundry Space you entered is empty`;
-                }
-                return true;
-            },
-        };
-        if (process.env.PCF_SPACE_PRODUCTION) {
-            cfOrg.default = process.env.PCF_SPACE_PRODUCTION;
-        }
-        const cfApi: inquirer.Question = {
-            type: "input",
-            name: "cfApi",
-            message: "Cloud Foundry API endpoint",
-            validate: value => {
-                if (!/\S/.test(value) && !process.env.PCF_API) {
-                    return `The Cloud Foundry API endpoint you entered is empty`;
-                }
-                return true;
-            },
-        };
-        if (process.env.PCF_API) {
-            cfApi.default = process.env.PCF_API;
-        } else {
-            cfApi.default = "https://api.run.pivotal.io";
-        }
-        questions.push(cfUser, cfPassword, cfOrg, cfSpaceStaging, cfSpaceProd, cfApi);
-    }
-
-    if (process.env.ATOMIST_NPM) {
-        const npm: inquirer.Question = {
-            type: "input",
-            name: "npm",
-            message: "NPM configuration (JSON stringified)",
-            validate: value => {
-                if (!/\S/.test(value) && !process.env.ATOMIST_NPM) {
-                    return `The NPM configuration you entered is empty`;
-                }
-                return true;
-            },
-            default: process.env.ATOMIST_NPM,
-        };
-        questions.push(npm);
-    }
-
-    if (process.env.USE_CHECKSTYLE || process.env.CHECKSTYLE_PATH) {
-        const checkstyle: inquirer.Question = {
-            type: "confirm",
-            name: "checkstyle",
-            message: "Use checkstyle?",
-        };
-        if (process.env.USE_CHECKSTYLE) {
-            checkstyle.default = process.env.USE_CHECKSTYLE;
-        }
-        const checkstylePath: inquirer.Question = {
-            type: "input",
-            name: "checkstylePath",
-            message: "Absolute path to checkstyle jar",
-            validate: value => {
-                if (!value && !process.env.CHECKSTYLE_PATH) {
-                    return `You must provide a path to the checkstyle jar`;
-                }
-                if (value && !/\.jar$/i.test(value)) {
-                    return `The path to the checkstyle jar must end with '.jar'`;
-                }
-                return true;
-            },
-        };
-        if (process.env.CHECKSTYLE_PATH) {
-            checkstylePath.default = process.env.CHECKSTYLE_PATH;
-        }
-        questions.push(checkstyle, checkstylePath);
     }
 
     return inquirer.prompt(questions)
