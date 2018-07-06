@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*
  * Copyright © 2018 Atomist, Inc.
  *
@@ -14,7 +15,8 @@
  * limitations under the License.
  */
 
-#!/usr/bin/env node
+process.env.SUPPRESS_NO_CONFIG_WARNING = "true";
+
 import { automationClient } from "@atomist/automation-client/automationClient";
 import {
     Configuration,
@@ -29,7 +31,6 @@ import { AutomationServer } from "@atomist/automation-client/server/AutomationSe
 import * as stringify from "json-stringify-safe";
 import * as yargs from "yargs";
 
-process.env.SUPPRESS_NO_CONFIG_WARNING = "true";
 LoggingConfig.format = "cli";
 
 if (yargs.argv.request) {
