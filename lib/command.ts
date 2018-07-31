@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import { Arg } from "@atomist/automation-client/internal/invoker/Payload";
+import {
+    Arg,
+} from "@atomist/automation-client/internal/invoker/Payload";
 
 import * as print from "./print";
 

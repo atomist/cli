@@ -19,8 +19,13 @@ import * as glob from "glob";
 import * as path from "path";
 import * as util from "util";
 
+import {
+    libDir,
+} from "./gql";
 import * as print from "./print";
-import { spawnBinary } from "./spawn";
+import {
+    spawnBinary,
+} from "./spawn";
 
 /**
  * Command-line options for gql-gen.
@@ -41,9 +46,9 @@ export interface GqlGenOptions {
  * @return integer return value
  */
 export async function gqlGen(opts: GqlGenOptions): Promise<number> {
+    const lib = libDir(opts.cwd);
     // check if the project has a custom schema
-    const customSchemaLocation =
-        path.join(opts.cwd, "src", "graphql", "schema.json");
+    const customSchemaLocation = path.join(lib, "graphql", "schema.json");
     const defaultSchemaLocation =
         path.join(opts.cwd, "node_modules", "@atomist", "automation-client", "graph", "schema.cortex.json");
     const schema = fs.existsSync(customSchemaLocation) ? customSchemaLocation : defaultSchemaLocation;
@@ -54,7 +59,7 @@ export async function gqlGen(opts: GqlGenOptions): Promise<number> {
             "--file", schema,
             "--template", "typescript",
             "--no-schema",
-            "--out", "src/typings/types.ts",
+            "--out", path.join(lib, "typings", "types.ts"),
         ],
         cwd: opts.cwd,
         install: opts.install,

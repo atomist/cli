@@ -20,7 +20,12 @@ import * as path from "path";
 import {
     resolveCliConfig,
 } from "./cliConfig";
-import { spawnBinary } from "./spawn";
+import {
+    libDir,
+} from "./gql";
+import {
+    spawnBinary,
+} from "./spawn";
 
 /**
  * Command-line options and arguments for gql-fetch.
@@ -58,7 +63,7 @@ export async function gqlFetch(opts: GqlFetchOptions): Promise<number> {
         }
         opts.workspaceId = (opts.workspaceId) ? opts.workspaceId : teamId;
     }
-    const outDir = path.join(opts.cwd, "src", "graphql");
+    const outDir = path.join(libDir(opts.cwd), "graphql");
     const outSchema = path.join(outDir, "schema.json");
     await fs.ensureDir(outDir);
     const spawnOpts = {
