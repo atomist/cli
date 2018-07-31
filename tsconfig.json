@@ -7,7 +7,6 @@
         "jsx": "React",
         "declaration": true,
         "sourceMap": true,
-        "outDir": "build",
         "rootDir": ".",
         "lib": [
             "DOM",
@@ -22,7 +21,7 @@
         "emitDecoratorMetadata": true
     },
     "exclude": [
-        "build",
+        "legal",
         "node_modules",
         ".#*"
     ],

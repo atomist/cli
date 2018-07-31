@@ -8,10 +8,8 @@
 .travis.yml
 .atomist/
 node_modules/
-build/test/
-build/typedoc/
-src/
 test/
+/doc/
 CO*.md
 ts*.json
 **/*.log

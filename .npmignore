@@ -6,13 +6,11 @@
 .dockerignore
 .gitignore
 .npmrc*
-/build/
 /config/
 /scripts/
-/src/
 /test/
+/doc/
 /CO*.md
 /Dockerfile
-/ts*.json
 *.log
 *.txt

@@ -4,7 +4,6 @@
 *~
 .#*
 .npmrc
-/build/
 node_modules/
 *.d.ts
 *.js
@@ -12,3 +11,4 @@ node_modules/
 *.log
 *.txt
 git-info.json
+doc/

@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import "mocha";
 import * as assert from "power-assert";
 
-import { extractArgs } from "../../src/cli/commands";
+import { extractArgs } from "../lib/command";
 
-describe("atomist CLI", () => {
+describe("command", () => {
 
     describe("extractArgs", () => {
 

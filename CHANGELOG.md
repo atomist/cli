@@ -9,15 +9,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
--   Provide `--atomist-token` command-line option.
+-   Provide `--atomist-token` command-line option for config.
 
 ### Changed
 
--   Updated command-line options to latest terminology.
+-   **BREAKING** Updated command-line options and arguments to use
+    workspace rather than team and atomist-token rather than token.
+-   Reorganize package structure to be more standard Node.js.
+-   Standardize command line processing.
+-   **BREAKING** Workspace ID argument to gql-fetch is now an option
+    and will be read from the user config if not provided.
+-   Use async functions where possible.
+-   Improve the tslint configuration.
+
+### Fixed
+
+-   The kube command can be run repeatedly without error.
+-   Improve config error handling.
+-   The --version command-line option should always report the right
+    version.
 
 ### Removed
 
 -   SDM configuration helpers no longer necessary.
+-   **BREAKING** Remove gql alias for gql-gen.
 
 ## [0.1.0](https://github.com/atomist/cli/tree/0.1.0) - 2018-07-06
 
