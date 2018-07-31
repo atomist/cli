@@ -8,8 +8,11 @@
 .travis.yml
 .atomist/
 node_modules/
+build/
+doc/
+logs/
+src/
 test/
-/doc/
 CO*.md
 ts*.json
 **/*.log
