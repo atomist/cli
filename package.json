@@ -18,7 +18,7 @@
     "cli"
   ],
   "dependencies": {
-    "@atomist/automation-client": "^0.17.3",
+    "@atomist/automation-client": "^0.18.1",
     "@octokit/rest": "^15.9.4",
     "fs-extra": "^6.0.1",
     "glob": "^7.1.2",
