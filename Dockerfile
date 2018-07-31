@@ -10,7 +10,7 @@ ENV NPM_CONFIG_LOGLEVEL warn
 
 ENV SUPPRESS_NO_CONFIG_WARNING true
 
-CMD ["node", "build/src/atomist.js"]
+CMD ["node", "index.js"]
 
 RUN npm install -g npm@6.2.0
 
