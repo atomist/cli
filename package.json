@@ -66,10 +66,10 @@
     "compile": "npm-run-all compile:ts git:info",
     "compile:ts": "tsc --project .",
     "fmt": "tsfmt --replace",
-    "git:info": "atomist git",
+    "git:info": "node index.js git",
     "lint": "tslint --format verbose --project . --exclude \"node_modules/**\" --exclude \"**/*.d.ts\" \"**/*.ts\"",
     "lint:fix": "npm run lint -- --fix",
-    "start": "atomist",
+    "start": "node index.js",
     "test": "mocha --require espower-typescript/guess \"test/**/*.test.ts\"",
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\"",
     "typedoc": "typedoc --mode modules --exclude \"**/*.d.ts\" --out doc index.ts lib"
