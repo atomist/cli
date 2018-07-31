@@ -42,9 +42,11 @@ export interface GqlGenOptions {
  */
 export async function gqlGen(opts: GqlGenOptions): Promise<number> {
     // check if the project has a custom schema
-    const schema = (fs.existsSync(path.join(opts.cwd, "src", "graphql", "schema.json"))) ?
-        "node_modules/@atomist/automation-client/graph/schema.cortex.json" :
-        "./src/graphql/schema.json";
+    const customSchemaLocation =
+        path.join(opts.cwd, "src", "graphql", "schema.json");
+    const defaultSchemaLocation =
+        path.join(opts.cwd, "node_modules", "@atomist", "automation-client", "graph", "schema.cortex.json");
+    const schema = fs.existsSync(customSchemaLocation) ? customSchemaLocation : defaultSchemaLocation;
 
     const spawnOpts = {
         command: "gql-gen",
