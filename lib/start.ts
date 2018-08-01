@@ -22,7 +22,7 @@ import {
 /**
  * Command-line options for start.
  */
-export type StartOptions = Pick<SpawnOptions, "cwd" | "compile" | "install">;
+export type StartOptions = Pick<SpawnOptions, "cwd" | "compile" | "install"> & { local: boolean };
 
 /**
  * Start automation client server process.
@@ -31,6 +31,11 @@ export type StartOptions = Pick<SpawnOptions, "cwd" | "compile" | "install">;
  * @return integer return value
  */
 export async function start(opts: StartOptions): Promise<number> {
+    if (opts.local) {
+        process.env.ATOMIST_MODE = "local";
+    }
+    delete process.env.ATOMIST_DISABLE_LOGGING;
+
     const spawnOpts = {
         ...opts,
         command: "start.client.js",
