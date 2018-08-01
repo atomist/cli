@@ -16,7 +16,7 @@
 
 import {
     Arg,
-} from "@atomist/automation-client/internal/invoker/Payload";
+} from "@atomist/automation-client";
 
 import * as print from "./print";
 

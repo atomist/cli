@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import { obtainGitInfo } from "@atomist/automation-client/internal/env/gitInfo";
+import {
+    obtainGitInfo,
+} from "@atomist/automation-client";
 import * as fs from "fs-extra";
 import * as path from "path";
 

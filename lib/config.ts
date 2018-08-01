@@ -18,10 +18,8 @@ import {
     getUserConfig,
     userConfigPath,
     writeUserConfig,
-} from "@atomist/automation-client/configuration";
-import * as GitHubApi from "@octokit/rest";
+} from "@atomist/automation-client";
 import * as inquirer from "inquirer";
-import * as os from "os";
 
 import * as print from "./print";
 
@@ -29,14 +27,8 @@ import * as print from "./print";
  * Command-line options and arguments for config.
  */
 export interface ConfigOptions {
-    /** GitHub.com user login name */
-    githubUser?: string;
-    /** GitHub.com user login password */
-    githubPassword?: string;
-    /** GitHub.com user login multi-factor authentication token */
-    githubMfaToken?: string;
-    /** Atomist token, currently a GitHub personal access token with read:org scope */
-    token?: string;
+    /** Atomist API key */
+    apiKey?: string;
     /** Atomist workspace/team ID */
     workspaceId?: string;
 }
@@ -51,109 +43,59 @@ export interface ConfigOptions {
  */
 export async function config(opts: ConfigOptions): Promise<number> {
     const userConfig = getUserConfig() || {};
-    if (!userConfig.teamIds) {
-        userConfig.teamIds = [];
+    if (!userConfig.workspaceIds) {
+        userConfig.workspaceIds = [];
     }
-    if (opts.workspaceId) {
-        if (!userConfig.teamIds.includes(opts.workspaceId)) {
-            userConfig.teamIds.push(opts.workspaceId);
-        }
+    if (opts.workspaceId && !userConfig.workspaceIds.includes(opts.workspaceId)) {
+        userConfig.workspaceIds.push(opts.workspaceId);
     }
-    if (opts.token) {
-        if (userConfig.token && userConfig.token !== opts.token) {
-            print.warn(`Overwriting current token with value from command line.`);
+    if (opts.apiKey) {
+        if (userConfig.apiKey && userConfig.apiKey !== opts.apiKey) {
+            print.warn(`Overwriting current API key with value from command line.`);
         }
-        userConfig.token = opts.token;
+        userConfig.apiKey = opts.apiKey;
     }
 
     const questions: inquirer.Question[] = [];
 
     const teamsQuestion: inquirer.Question = {
         type: "input",
-        name: "teamIds",
+        name: "workspaceIds",
         message: "Atomist Workspace IDs (space delimited)",
         validate: value => {
-            if (!/\S/.test(value) && userConfig.teamIds.length < 1) {
+            if (!/\S/.test(value) && userConfig.workspaceIds.length < 1) {
                 return `The list of team IDs you entered is empty`;
             }
             return true;
         },
     };
-    if (userConfig.teamIds.length > 0) {
-        teamsQuestion.default = userConfig.teamIds.join(" ");
+    if (userConfig.workspaceIds.length > 0) {
+        teamsQuestion.default = userConfig.workspaceIds.join(" ");
     }
     questions.push(teamsQuestion);
 
     const configPath = userConfigPath();
-    if (!userConfig.token) {
+    if (!userConfig.apiKey) {
         print.log(`
-As part of the Atomist configuration, we need to create a GitHub
-personal access token for you that will be used to authenticate with
-the Atomist API.  The personal access token will have "read:org" and
-"repo" scopes, be labeled as being for the "Atomist API", and will be
-written to a file on your local machine.  Atomist does not retain the
-token nor your GitHub username and password.
+As part of the Atomist configuration, you need an Atomist API key.
+You can generate an Atomist API key can be generated on the the
+Atomist web application: https://app.atomist.com/apiKeys
 `);
-        if (!opts.githubUser) {
-            questions.push({
-                type: "input",
-                name: "user",
-                message: "GitHub Username",
-                validate: value => {
-                    if (!/^[-.A-Za-z0-9]+$/.test(value)) {
-                        return `The GitHub username you entered contains invalid characters: ${value}`;
-                    }
-                    return true;
-                },
-            });
-        }
-        if (!opts.githubPassword) {
-            questions.push({
-                type: "password",
-                name: "password",
-                message: "GitHub Password",
-                validate: value => {
-                    if (value.length < 1) {
-                        return `The GitHub password you entered is empty`;
-                    }
-                    return true;
-                },
-            });
-        }
-        if (!opts.githubMfaToken) {
-            questions.push({
-                type: "input",
-                name: "mfa",
-                message: "GitHub 2FA Code",
-                when: async ans => {
-                    const user = (opts.githubUser) ? opts.githubUser : ans.user;
-                    const password = (opts.githubPassword) ? opts.githubPassword : ans.password;
-                    try {
-                        const token = await createGitHubToken(user, password);
-                        userConfig.token = token;
-                    } catch (e) {
-                        if (e.code === 401 && e.message) {
-                            const msg = JSON.parse(e.message);
-                            const mfaErr = "Must specify two-factor authentication OTP code.";
-                            if ((msg.message as string).indexOf(mfaErr) > -1) {
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                },
-                validate: (value: string) => {
-                    if (!/^\d{6}$/.test(value)) {
-                        return `The GitHub 2FA you entered is invalid, it should be six digits: ${value}`;
-                    }
-                    return true;
-                },
-            });
-        }
+        questions.push({
+            type: "password",
+            name: "apiKey",
+            message: "API Key",
+            validate: value => {
+                if (value.length < 1) {
+                    return `The API key you entered is empty`;
+                }
+                return true;
+            },
+        });
     } else {
         print.log(`
-Your Atomist client configuration already has an access token.
-To generate a new token, remove the existing token from
+Your Atomist user configuration already has an API key.  To use
+a different API key, remove the existing API key from
 '${configPath}'
 and run \`atomist config\` again.
 `);
@@ -161,16 +103,12 @@ and run \`atomist config\` again.
 
     try {
         const answers = await inquirer.prompt(questions);
-        if (answers.teamIds) {
-            userConfig.teamIds = (answers.teamIds as string).split(/\s+/);
+        if (answers.workspaceIds) {
+            userConfig.workspaceIds = (answers.workspaceIds as string).split(/\s+/);
         }
 
-        if (!userConfig.token) {
-            const user = (opts.githubUser) ? opts.githubUser : answers.user;
-            const password = (opts.githubPassword) ? opts.githubPassword : answers.password;
-            const mfa = (opts.githubMfaToken) ? opts.githubMfaToken : answers.mfa;
-            const token = await createGitHubToken(user, password, mfa);
-            userConfig.token = token;
+        if (answers.apiKey) {
+            userConfig.apiKey = answers.apiKey;
         }
 
         await writeUserConfig(userConfig);
@@ -182,35 +120,3 @@ and run \`atomist config\` again.
     return 0;
 }
 /* tslint:enable:cyclomatic-complexity */
-
-/**
- * Create a GitHub.com personal access token using a GitHub.com user
- * name, password, and optionally MFA token.
- *
- * @param user GitHub.com user name
- * @param password GitHub.com user password
- * @param mfa GitHub.com user MFA token
- * @return Promise of the token
- */
-async function createGitHubToken(user: string, password: string, mfa?: string): Promise<string> {
-    const github = new GitHubApi();
-    github.authenticate({
-        type: "basic",
-        username: user,
-        password,
-    });
-    const host = os.hostname();
-    const params: GitHubApi.AuthorizationCreateParams = {
-        scopes: ["read:org", "repo"],
-        note: `Atomist API on ${host}`,
-        note_url: "http://www.atomist.com/",
-    };
-    if (mfa) {
-        (params as any).headers = { "X-GitHub-OTP": mfa };
-    }
-    const res = await github.authorization.create(params);
-    if (!res.data || !res.data.token) {
-        throw new Error(`GitHub API returned successful but there is no token`);
-    }
-    return res.data.token;
-}

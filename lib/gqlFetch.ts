@@ -23,6 +23,7 @@ import {
 import {
     libDir,
 } from "./gql";
+import * as print from "./print";
 import {
     spawnBinary,
 } from "./spawn";
@@ -31,10 +32,6 @@ import {
  * Command-line options and arguments for gql-fetch.
  */
 export interface GqlFetchOptions {
-    /** Atomist token, currently a GitHub personal access token with read:org scope */
-    token: string;
-    /** Atomist workspace/team ID */
-    workspaceId: string;
     /** Directory to run command in, must be an automation client directory */
     cwd?: string;
     /** If true or no node_modules directory exists, run "npm install" before running command */
@@ -48,21 +45,19 @@ export interface GqlFetchOptions {
  * @return integer return value
  */
 export async function gqlFetch(opts: GqlFetchOptions): Promise<number> {
-    if (!opts.token || !opts.workspaceId) {
-        const cliConfig = resolveCliConfig();
-        opts.token = (opts.token) ? opts.token : cliConfig.token;
-        let teamId: string;
-        if (cliConfig.teamIds) {
-            if (typeof cliConfig.teamIds === "string") {
-                teamId = cliConfig.teamIds;
-            } else if (Array.isArray(cliConfig.teamIds)) {
-                if (cliConfig.teamIds.length > 0) {
-                    teamId = cliConfig.teamIds[0];
-                }
-            }
-        }
-        opts.workspaceId = (opts.workspaceId) ? opts.workspaceId : teamId;
+    const cliConfig = resolveCliConfig();
+    if (!cliConfig.apiKey) {
+        print.error(`No API key set in user configuration, run 'atomist config' first`);
+        return Promise.resolve(1);
     }
+    if (!cliConfig.workspaceIds || cliConfig.workspaceIds.length < 1) {
+        print.error(`No workspace IDs set in use configuration, run 'atomist config' first`);
+        return Promise.resolve(1);
+    } else if (cliConfig.workspaceIds.length > 1) {
+        print.warn(`More than one workspace ID in user configuration, using first: ${cliConfig.workspaceIds[0]}`);
+    }
+    const workspaceId = cliConfig.workspaceIds[0];
+
     const outDir = path.join(libDir(opts.cwd), "graphql");
     const outSchema = path.join(outDir, "schema.json");
     await fs.ensureDir(outDir);
@@ -70,9 +65,9 @@ export async function gqlFetch(opts: GqlFetchOptions): Promise<number> {
         command: "apollo-codegen",
         args: [
             "introspect-schema",
-            `https://automation.atomist.com/graphql/team/${opts.workspaceId}`,
+            `https://automation.atomist.com/graphql/team/${workspaceId}`,
             "--output", outSchema,
-            "--header", `Authorization: token ${opts.token}`,
+            "--header", `Authorization: Bearer ${cliConfig.apiKey}`,
         ],
         cwd: opts.cwd,
         install: opts.install,

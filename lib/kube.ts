@@ -15,11 +15,9 @@
  */
 
 import {
-    webhookBaseUrl,
-} from "@atomist/automation-client/atomistWebhook";
-import {
     Configuration,
-} from "@atomist/automation-client/configuration";
+    webhookBaseUrl,
+} from "@atomist/automation-client";
 import * as fs from "fs-extra";
 import * as stringify from "json-stringify-safe";
 import * as tmp from "tmp-promise";
@@ -54,22 +52,22 @@ export async function kube(opts: KubeOptions): Promise<number> {
     const environment: string = (opts.env) ? opts.env : "kubernetes";
 
     const cliConfig = resolveCliConfig();
-    const token = cliConfig.token;
-    if (!token) {
-        print.error(`No token set, try running 'atomist config' first`);
+    const apiKey = cliConfig.apiKey;
+    if (!apiKey) {
+        print.error(`No API key set in user configuration, run 'atomist config' first`);
         return Promise.resolve(1);
     }
-    const teamIds = cliConfig.teamIds;
-    if (!teamIds || teamIds.length < 1) {
-        print.error(`No Atomist workspace/team IDs set, try running 'atomist config' first`);
+    const workspaceIds = cliConfig.workspaceIds;
+    if (!workspaceIds || workspaceIds.length < 1) {
+        print.error(`No workspace IDs set in user configuration, run 'atomist config' first`);
         return Promise.resolve(1);
     }
 
     const k8ventUrl = ghRawUrl("k8vent");
     const k8autoUrl = ghRawUrl("k8-automation");
 
-    const webhooks = kubeWebhookUrls(teamIds);
-    const k8Config: Configuration = { teamIds, token, environment };
+    const webhooks = kubeWebhookUrls(workspaceIds);
+    const k8Config: Configuration = { workspaceIds, apiKey, environment };
     if (ns) {
         k8Config.kubernetes = { mode: "namespace" };
     }

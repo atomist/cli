@@ -30,12 +30,6 @@ import { start } from "./lib/start";
 import { version } from "./lib/version";
 
 const commonOptions: { [key: string]: yargs.Options; } = {
-    atomistToken: {
-        alias: "T",
-        describe: "Atomist API authentication token",
-        default: process.env.ATOMIST_TOKEN || process.env.GITHUB_TOKEN,
-        type: "string",
-    },
     changeDir: {
         alias: "C",
         default: process.cwd(),
@@ -52,35 +46,22 @@ const commonOptions: { [key: string]: yargs.Options; } = {
             "'node_modules' directory exists",
         type: "boolean",
     },
-    workspaceId: {
-        describe: "Atomist workspace/team ID",
-        type: "string",
-    },
 };
 
 // tslint:disable-next-line:no-unused-expression
 yargs.completion("completion")
     .command("config", "Create Atomist user configuration", ya => {
         return ya
-            .option("atomist-token", commonOptions.atomistToken)
-            .option("github-user", {
-                describe: "GitHub user login",
+            .option("api-key", {
+                describe: "Atomist API key",
                 type: "string",
             })
-            .option("github-password", {
-                describe: "GitHub user password",
+            .option("workspace-id", {
+                describe: "Atomist workspace ID",
                 type: "string",
-            })
-            .option("github-mfa-token", {
-                describe: "GitHub user password",
-                type: "string",
-            })
-            .option("workspace-id", commonOptions.workspaceId);
+            });
     }, argv => cliCommand(() => config({
-        githubUser: argv["github-user"],
-        githubPassword: argv["github-password"],
-        githubMfaToken: argv["github-mfa-token"],
-        token: argv["atomist-token"],
+        apiKey: argv["api-key"],
         workspaceId: argv["workspace-id"],
     })))
     .command(["execute <name>", "exec <name>", "cmd <name>"], "Run a command", ya => {
@@ -106,15 +87,11 @@ yargs.completion("completion")
     })))
     .command(["gql-fetch"], "Retrieve GraphQL schema", ya => {
         return (ya as any)
-            .option("atomist-token", commonOptions.atomistToken)
             .option("change-dir", commonOptions.changeDir)
-            .option("install", commonOptions.install)
-            .option("workspace-id", commonOptions.workspaceId);
+            .option("install", commonOptions.install);
     }, argv => cliCommand(() => gqlFetch({
         cwd: argv["change-dir"],
         install: argv.install,
-        token: argv["atomist-token"],
-        workspaceId: argv["workspace-id"],
     })))
     .command("gql-gen <glob>", "Generate TypeScript code for GraphQL", ya => {
         return ya

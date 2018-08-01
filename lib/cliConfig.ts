@@ -17,15 +17,14 @@
 import {
     Configuration,
     getUserConfig,
-    resolveTeamIds,
-    resolveToken,
-} from "@atomist/automation-client/configuration";
+    resolveWorkspaceIds,
+} from "@atomist/automation-client";
 
-export type CliConfig = Pick<Configuration, "teamIds" | "token">;
+export type CliConfig = Pick<Configuration, "apiKey" | "workspaceIds">;
 
 export function resolveCliConfig(): CliConfig {
-    const userConfig = getUserConfig();
-    const teamIds = resolveTeamIds(userConfig);
-    const token = resolveToken(userConfig);
-    return { teamIds, token };
+    const userConfig = getUserConfig() || {};
+    const workspaceIds = resolveWorkspaceIds(userConfig);
+    const apiKey = userConfig.apiKey;
+    return { apiKey, workspaceIds };
 }

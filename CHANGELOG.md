@@ -7,7 +7,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/0.2.1...HEAD)
 
+### Added
+
+-   Add Command-line option for API key, `--api-key`.
+
+### Removed
+
+-   **BREAKING** Remove `--atomist-token` command-line option and its
+    `-T` alias, see `--api-key`.
+-   **BREAKING** Remove config GitHub-related command-line options,
+    see `--api-key`.
+
 ## [0.2.1](https://github.com/atomist/cli/compare/0.2.0...0.2.1) - 2018-07-31
+
+### Changed
+
+-   Update TypeScript and supporting packages.
 
 ### Fixed
 

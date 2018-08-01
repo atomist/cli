@@ -17,6 +17,8 @@
         ],
         "strict": true,
         "strictNullChecks": false,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true
     },
