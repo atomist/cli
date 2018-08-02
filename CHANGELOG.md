@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/0.3.0...HEAD)
 
+### Fixed
+
+-   Properly sanitize command line before printing
+
 ## [0.3.0](https://github.com/atomist/cli/compare/0.2.1...0.3.0) - 2018-08-01
 
 ### Added

@@ -205,13 +205,12 @@ export async function spawnPromise(options: SpawnPromiseOptions): Promise<number
         env: process.env,
         stdio: "inherit",
     };
-    const cmdString = options.command + (options.args ? ` '${options.args.join("' '")}'` : "");
-    const cleanCmdString = cmdString.replace(/token\s+\w+/g, "token <hidden>");
+    const cmdString = cleanCommandString(options.command, options.args);
     try {
         if (options.checkPackageJson && !checkPackageJson(cwd)) {
             return 1;
         }
-        print.info(`Running "${cleanCmdString}" in '${cwd}'`);
+        print.info(`Running "${cmdString}" in '${cwd}'`);
         const cp = child_process.spawn(options.command, options.args, spawnOptions);
         return new Promise<number>((resolve, reject) => {
             cp.on("exit", (code, signal) => {
@@ -253,4 +252,17 @@ function checkPackageJson(cwd: string): boolean {
         return false;
     }
     return true;
+}
+
+/**
+ * Create string representation of command and arguments, removing
+ * sensitive information.
+ *
+ * @param cmd command
+ * @param args command arguments
+ * @return sanitized string representing command
+ */
+export function cleanCommandString(cmd: string, args?: string[]): string {
+    const cmdString = cmd + ((args && args.length > 0) ? ` '${args.join("' '")}'` : "");
+    return cmdString.replace(/Authorization:\s+\w+\s+\w+/g, "Authorization: <hidden>");
 }
