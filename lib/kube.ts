@@ -113,6 +113,8 @@ export async function kube(opts: KubeOptions): Promise<number> {
         };
         const status = await spawnPromise(spawnOpts);
         if (status !== 0) {
+            k8ventTmp.cleanup();
+            k8autoTmp.cleanup();
             return status;
         }
     }
