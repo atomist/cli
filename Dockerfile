@@ -12,7 +12,7 @@ ENV SUPPRESS_NO_CONFIG_WARNING true
 
 ENTRYPOINT ["node", "index.js"]
 
-RUN npm install -g npm@6.2.0
+RUN npm install -g npm@6.3.0
 
 COPY package.json package-lock.json ./
 
