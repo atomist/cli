@@ -15,12 +15,14 @@
  */
 
 import {
-    getUserConfig,
     userConfigPath,
     writeUserConfig,
 } from "@atomist/automation-client";
 import * as inquirer from "inquirer";
 
+import {
+    resolveUserConfig,
+} from "./cliConfig";
 import * as print from "./print";
 
 /**
@@ -33,7 +35,6 @@ export interface ConfigOptions {
     workspaceId?: string;
 }
 
-/* tslint:disable:cyclomatic-complexity */
 /**
  * Generate Atomist user configuration file, potentially merging with
  * existing user configuration.
@@ -42,10 +43,7 @@ export interface ConfigOptions {
  * @return integer return value
  */
 export async function config(opts: ConfigOptions): Promise<number> {
-    const userConfig = getUserConfig() || {};
-    if (!userConfig.workspaceIds) {
-        userConfig.workspaceIds = [];
-    }
+    const userConfig = resolveUserConfig();
     if (opts.workspaceId && !userConfig.workspaceIds.includes(opts.workspaceId)) {
         userConfig.workspaceIds.push(opts.workspaceId);
     }
@@ -55,33 +53,38 @@ export async function config(opts: ConfigOptions): Promise<number> {
         }
         userConfig.apiKey = opts.apiKey;
     }
-
-    const questions: inquirer.Question[] = [];
-
-    const teamsQuestion: inquirer.Question = {
-        type: "input",
-        name: "workspaceIds",
-        message: "Atomist Workspace IDs (space delimited)",
-        validate: value => {
-            if (!/\S/.test(value) && userConfig.workspaceIds.length < 1) {
-                return `The list of team IDs you entered is empty`;
-            }
-            return true;
-        },
-    };
-    if (userConfig.workspaceIds.length > 0) {
-        teamsQuestion.default = userConfig.workspaceIds.join(" ");
-    }
-    questions.push(teamsQuestion);
-
     const configPath = userConfigPath();
-    if (!userConfig.apiKey) {
+
+    if (userConfig.apiKey) {
+        const safeKey = maskString(userConfig.apiKey);
+        print.log(`
+Your user configuration already has an API key.
+  ${safeKey}
+To leave your API key unchanged, press enter when prompted for the API
+key.
+`);
+    } else {
         print.log(`
 As part of the Atomist configuration, you need an Atomist API key.
 You can generate an Atomist API key can be generated on the the
 Atomist web application: https://app.atomist.com/apiKeys
 `);
-        questions.push({
+    }
+
+    const questions: inquirer.Question[] = [
+        {
+            type: "input",
+            name: "workspaceIds",
+            message: "Atomist Workspace IDs (space delimited)",
+            validate: value => {
+                if (!/\S/.test(value) && userConfig.workspaceIds.length < 1) {
+                    return `The list of team IDs you entered is empty`;
+                }
+                return true;
+            },
+            default: (userConfig.workspaceIds.length > 0) ? userConfig.workspaceIds.join(" ") : undefined,
+        },
+        {
             type: "password",
             name: "apiKey",
             message: "API Key",
@@ -91,15 +94,9 @@ Atomist web application: https://app.atomist.com/apiKeys
                 }
                 return true;
             },
-        });
-    } else {
-        print.log(`
-Your Atomist user configuration already has an API key.  To use
-a different API key, remove the existing API key from
-'${configPath}'
-and run \`atomist config\` again.
-`);
-    }
+            default: (userConfig.apiKey) ? userConfig.apiKey : undefined,
+        },
+    ];
 
     try {
         const answers = await inquirer.prompt(questions);
@@ -119,4 +116,16 @@ and run \`atomist config\` again.
     print.info(`Successfully created Atomist client configuration: ${configPath}`);
     return 0;
 }
-/* tslint:enable:cyclomatic-complexity */
+
+/**
+ * Mask secret string.
+ *
+ * @param secret string to mask
+ * @return masked string
+ */
+export function maskString(s: string): string {
+    if (s.length > 10) {
+        return s.charAt(0) + "*".repeat(s.length - 2) + s.charAt(s.length - 1);
+    }
+    return "*".repeat(s.length);
+}

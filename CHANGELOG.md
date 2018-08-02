@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/0.3.0...HEAD)
 
+### Changed
+
+-   Improve config handling of workspace/team IDs.
+-   Always have config prompt for API key.
+
 ### Fixed
 
 -   Properly sanitize command line before printing

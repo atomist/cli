@@ -10,10 +10,7 @@
             "ban-single-arg-parens"
         ],
         "await-promise": true,
-        "cyclomatic-complexity": [
-            true,
-            10
-        ],
+        "cyclomatic-complexity": true,
         "interface-name": [
             true,
             "never-prefix"

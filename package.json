@@ -1,6 +1,6 @@
 {
   "name": "@atomist/cli",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "The Atomist CLI",
   "author": "Atomist",
   "license": "Apache-2.0",
@@ -18,7 +18,7 @@
     "cli"
   ],
   "dependencies": {
-    "@atomist/automation-client": "^0.19.0",
+    "@atomist/automation-client": "^0.19.3",
     "@octokit/rest": "^15.9.4",
     "fs-extra": "^6.0.1",
     "glob": "^7.1.2",

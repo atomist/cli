@@ -18,13 +18,46 @@ import {
     Configuration,
     getUserConfig,
     resolveWorkspaceIds,
+    UserConfig,
 } from "@atomist/automation-client";
+
+import * as print from "./print";
 
 export type CliConfig = Pick<Configuration, "apiKey" | "workspaceIds">;
 
+/**
+ * Read user config and resolve workspace IDs then simplify config
+ * down to a CliConfig.
+ *
+ * @return CliConfig populated from user config
+ */
+export function resolveUserConfig(): UserConfig {
+    let userConfig: UserConfig;
+    try {
+        userConfig = getUserConfig() || {};
+    } catch (e) {
+        print.warn(`Failed to load user configuration, ignoring: ${e.message}`);
+        userConfig = {};
+    }
+    resolveWorkspaceIds(userConfig);
+    if (!userConfig.workspaceIds) {
+        userConfig.workspaceIds = [];
+    }
+    if (userConfig.teamIds) {
+        delete userConfig.teamIds;
+    }
+    return userConfig;
+}
+
+/**
+ * Read user config and simplify it down to a CliConfig.
+ *
+ * @return CliConfig populated from user config
+ */
 export function resolveCliConfig(): CliConfig {
-    const userConfig = getUserConfig() || {};
-    const workspaceIds = resolveWorkspaceIds(userConfig);
-    const apiKey = userConfig.apiKey;
-    return { apiKey, workspaceIds };
+    const userConfig = resolveUserConfig();
+    return {
+        apiKey: userConfig.apiKey,
+        workspaceIds: userConfig.workspaceIds,
+    };
 }
