@@ -43,7 +43,6 @@ export interface SpawnOptions {
  */
 export async function spawnBinary(opts: SpawnOptions): Promise<number> {
     opts.cwd = path.resolve(opts.cwd);
-    opts.command = (process.platform === "win32") ? `${opts.command}.cmd` : opts.command;
     opts.command = path.join(opts.cwd, "node_modules", ".bin", opts.command);
     opts.checks = [
         () => {
@@ -65,7 +64,7 @@ export async function spawnJs(opts: SpawnOptions): Promise<number> {
     opts.cwd = path.resolve(opts.cwd);
     const script = path.join(opts.cwd, "node_modules", "@atomist", "automation-client", opts.command);
     opts.args = [script, ...opts.args];
-    opts.command = (process.platform === "win32") ? "node.exe" : "node";
+    opts.command = process.execPath;
     opts.checks = [
         () => {
             if (!fs.existsSync(script)) {
@@ -204,6 +203,7 @@ export async function spawnPromise(options: SpawnPromiseOptions): Promise<number
         cwd,
         env: process.env,
         stdio: "inherit",
+        shell: true,
     };
     const cmdString = cleanCommandString(options.command, options.args);
     try {
