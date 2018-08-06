@@ -19,6 +19,9 @@
   ],
   "dependencies": {
     "@atomist/automation-client": "^0.19.3",
+    "@atomist/sdm": "^0.4.0-20180803232455",
+    "@atomist/sdm-core": "^0.4.0-20180806075122",
+    "@atomist/sdm-local": "^0.1.3-20180806122015",
     "@octokit/rest": "^15.9.4",
     "fs-extra": "^6.0.1",
     "glob": "^7.1.2",
