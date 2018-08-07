@@ -18,10 +18,10 @@
     "cli"
   ],
   "dependencies": {
-    "@atomist/automation-client": "^0.19.5-20180807011450",
-    "@atomist/sdm": "^0.4.0-20180807022858",
-    "@atomist/sdm-core": "https://registry.npmjs.org/@atomist/sdm-core/-/@atomist/sdm-core-0.4.0-20180807030718.tgz",
-    "@atomist/sdm-local": "https://registry.npmjs.org/@atomist/sdm-local/-/@atomist/sdm-local-0.1.3-20180807031509.tgz",
+    "@atomist/automation-client": "^0.19.5",
+    "@atomist/sdm": "^0.4.0",
+    "@atomist/sdm-core": "^0.4.0",
+    "@atomist/sdm-local": "^0.1.3",
     "@octokit/rest": "^15.9.4",
     "fs-extra": "^6.0.1",
     "glob": "^7.1.2",
