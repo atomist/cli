@@ -16,9 +16,74 @@
 
 import * as assert from "power-assert";
 
-import { extractArgs } from "../lib/command";
+import {
+    extractArgs,
+    isReservedCommand,
+} from "../lib/command";
 
 describe("command", () => {
+
+    describe("", () => {
+
+        it("should return true for empty args", () => {
+            const args: string[] = [];
+            assert(isReservedCommand(args));
+        });
+
+        it("should return true for no commands", () => {
+            const args = ["/usr/local/Cellar/node/10.8.0/bin/node", "/Users/rihanna/develop/atomist/cli/index.js"];
+            assert(isReservedCommand(args));
+        });
+
+        it("should return true for --help", () => {
+            const args = ["node", "index.js", "--help"];
+            assert(isReservedCommand(args));
+        });
+
+        it("should return true for --version", () => {
+            const args = ["node", "index.js", "--version"];
+            assert(isReservedCommand(args));
+        });
+
+        it("should return true for known commands", () => {
+            const firstArgs = ["node", "index.js"];
+            ["config", "git", "gql-fetch", "gql-gen", "kube", "start"].forEach(c => {
+                assert(isReservedCommand([...firstArgs, c]));
+            });
+        });
+
+        it("should return true for known commands with more arguments", () => {
+            const firstArgs = ["node", "index.js"];
+            const lastArgs = ["some", "--command", "line", "-o", "ptions"];
+            ["config", "git", "gql-fetch", "gql-gen", "kube", "start"].forEach(c => {
+                assert(isReservedCommand([...firstArgs, c, ...lastArgs]));
+            });
+        });
+
+        it("should return false for unknown commands", () => {
+            const firstArgs = ["node", "index.js"];
+            ["conf", "gt", "gql-fletch", "gql-generate", "kubernetes", "stop"].forEach(c => {
+                assert(!isReservedCommand([...firstArgs, c]));
+            });
+        });
+
+        it("should return false for unknown commands with more arguments", () => {
+            const firstArgs = ["node", "index.js"];
+            const lastArgs = ["some", "--command", "line", "-o", "ptions"];
+            ["umbrella", "betta", "have", "my", "money"].forEach(c => {
+                assert(!isReservedCommand([...firstArgs, c, ...lastArgs]));
+            });
+        });
+
+        it("should return ignore known commands later in the arguments", () => {
+            const firstArgs = ["node", "index.js"];
+            const lastArgs = ["config", "--git", "gql-fetch", "-k", "start"];
+            ["umbrella", "betta", "have", "my", "money"].forEach(c => {
+                assert(!isReservedCommand([...firstArgs, c, ...lastArgs]));
+            });
+        });
+
+    });
 
     describe("extractArgs", () => {
 

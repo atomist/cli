@@ -21,6 +21,23 @@ import {
 import * as print from "./print";
 
 /**
+ * Try to identify the subcommand being invoked and, if there is no
+ * command or the command is a reserved command, return true.
+ * Otherwise return false.
+ *
+ * @param args command-line arguments, typically process.argv
+ * @return true is the SDM local commands should be loaded
+ */
+export function isReservedCommand(args: string[]): boolean {
+    const command = args.slice(2).filter(a => !/^-/.test(a)).shift();
+    if (!command) {
+        return true;
+    }
+    const reservedCommands = ["config", "git", "gql-fetch", "gql-gen", "kube", "start"];
+    return reservedCommands.includes(command);
+}
+
+/**
  * Call the provided function with the provided arguments and capture
  * any errors.  When the function is complete, `process.exit` will be
  * called with the appropriate, i.e., this function will never return.

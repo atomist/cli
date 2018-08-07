@@ -21,7 +21,10 @@ process.env.ATOMIST_DISABLE_LOGGING = "true";
 import { addLocalSdmCommands } from "@atomist/sdm-local";
 import * as yargs from "yargs";
 
-import { cliCommand } from "./lib/command";
+import {
+    cliCommand,
+    isReservedCommand,
+} from "./lib/command";
 import { config } from "./lib/config";
 import { execute } from "./lib/execute";
 import { git } from "./lib/git";
@@ -31,11 +34,6 @@ import { kube } from "./lib/kube";
 import * as print from "./lib/print";
 import { start } from "./lib/start";
 import { version } from "./lib/version";
-
-function isReservedCommand() {
-    const knownCommands = ["config", "git", "gql-fetch", "gql-gen", "kube", "start"];
-    return process.argv.length >= 3 && knownCommands.includes(process.argv[2]);
-}
 
 function setupYargs() {
     const commonOptions: { [key: string]: yargs.Options; } = {
@@ -154,7 +152,7 @@ function setupYargs() {
 }
 
 async function main() {
-    if (!isReservedCommand()) {
+    if (!isReservedCommand(process.argv)) {
         await addLocalSdmCommands(yargs);
     }
     setupYargs();
