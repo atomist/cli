@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   SDM local mode
 
+### Fixed
+
+-   Improve argument processing to avoid loading SDM local commands
+    when it is unnecessary.
+
 ## [0.4.0](https://github.com/atomist/cli/compare/0.3.0...0.4.0) - 2018-08-04
 
 ### Changed
