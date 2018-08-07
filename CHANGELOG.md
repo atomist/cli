@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/0.4.0...HEAD)
 
+### Added
+
+-   SDM local mode
+
 ## [0.4.0](https://github.com/atomist/cli/compare/0.3.0...0.4.0) - 2018-08-04
 
 ### Changed
