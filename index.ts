@@ -145,7 +145,7 @@ function setupYargs() {
         .version(version())
         .alias("version", "v")
         .describe("version", "Show version information")
-        .demandCommand(1, "Missing command")
+        .demandCommand(1, "Missing command.\n\tType 'atomist new sdm' to create a new SDM")
         .strict()
         .wrap(Math.min(100, yargs.terminalWidth()))
         .argv;
