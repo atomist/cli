@@ -92,8 +92,8 @@ function setupYargs() {
         }, argv => cliCommand(() => git({
             cwd: argv["change-dir"],
         })))
-        .command("gql-fetch", "Retrieve GraphQL schema", ya => {
-            return (ya as any)
+        .command("gql-fetch", "Retrieve GraphQL schema", (ya: yargs.Argv) => {
+            return ya
                 .option("change-dir", commonOptions.changeDir)
                 .option("install", commonOptions.install);
         }, argv => cliCommand(() => gqlFetch({
