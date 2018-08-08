@@ -40,13 +40,13 @@ export function isReservedCommand(args: string[]): boolean {
 /**
  * Call the provided function with the provided arguments and capture
  * any errors.  When the function is complete, `process.exit` will be
- * called with the appropriate, i.e., this function will never return.
+ * called with the appropriate code, i.e., this function will never return.
  *
  * @param fn function providing the desired command and returning a
  *           Promise of an integer exit value.
  * @param argv command-line arguments
  */
-export async function cliCommand(fn: () => Promise<number>): Promise<void> {
+export async function cliCommand(fn: () => Promise<number>): Promise<never> {
     try {
         const status = await fn();
         process.exit(status);
@@ -54,6 +54,7 @@ export async function cliCommand(fn: () => Promise<number>): Promise<void> {
         print.error(`Unhandled Error: ${e.message}`);
         process.exit(101);
     }
+    throw new Error("You will not get here. You have exited.");
 }
 
 /**
