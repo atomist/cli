@@ -80,7 +80,8 @@
   },
   "bin": {
     "atomist": "./index.js",
-    "@atomist": "./index.js"
+    "@atomist": "./index.js",
+    "atomist-githook": "./githook.js"
   },
   "engines": {
     "node": "9.x.x",
