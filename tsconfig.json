@@ -24,7 +24,7 @@
     },
     "exclude": [
         "legal",
-        "./node_modules/*",
+        "node_modules",
         ".#*"
     ],
     "compileOnSave": true,
