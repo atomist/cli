@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/0.5.1...HEAD)
 
+### Fixed
+
+-   Update automation-client to make running "new sdm" outside a
+    package directory possible.
+
 ## [0.5.1](https://github.com/atomist/cli/compare/0.5.0...0.5.1) - 2018-08-09
 
 ### Fixed
 
--  Move Atomist dependencies back from devDependencies.
+-   Move Atomist dependencies back from devDependencies.
 
 ## [0.5.0](https://github.com/atomist/cli/compare/0.4.0...0.5.0) - 2018-08-09
 
