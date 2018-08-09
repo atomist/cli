@@ -29,12 +29,23 @@ import * as print from "./print";
  * @return true is the SDM local commands should be loaded
  */
 export function isReservedCommand(args: string[]): boolean {
-    const command = args.slice(2).filter(a => !/^-/.test(a)).shift();
-    if (!command) {
+    const command = guessCommand(args);
+    if (command === undefined) {
         return true;
     }
     const reservedCommands = ["config", "git", "gql-fetch", "gql-gen", "kube", "start"];
     return reservedCommands.includes(command);
+}
+
+/*
+  * Take a guess at what command they're going to run.
+  * This will be inaccurate if they pass a dash-arg with a parameter.
+  * But it's close enough for deciding whether to spend time loading SDM commands.
+  */
+function guessCommand(processArgv: string[]): string | undefined {
+    const realArgs = processArgv.slice(2); // remove 'node <script>'
+    const nonDashArgs = realArgs.filter(a => !a.startsWith("-"));
+    return nonDashArgs[0]; // might be undefined
 }
 
 /**
