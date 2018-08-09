@@ -68,7 +68,7 @@
     "clean:doc": "rimraf doc",
     "compile": "npm-run-all compile:ts git:info",
     "compile:ts": "tsc --project .",
-    "doc": "typedoc --mode modules --exclude \"**/*.d.ts\" --out doc index.ts lib",
+    "doc": "typedoc --mode modules --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc index.ts lib",
     "fmt": "tsfmt --replace",
     "git:info": "node index.js git",
     "lint": "tslint --format verbose --project . --exclude \"node_modules/**\" --exclude \"**/*.d.ts\" \"**/*.ts\"",
