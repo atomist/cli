@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   SDM local mode
 
+### Changed
+
+-   Update dependencies.
+
 ### Fixed
 
 -   Improve argument processing to avoid loading SDM local commands
