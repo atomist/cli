@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/0.5.0...HEAD)
 
+### Fixed
+
+-  Move Atomist dependencies back from devDependencies.
+
 ## [0.5.0](https://github.com/atomist/cli/compare/0.4.0...0.5.0) - 2018-08-09
 
 ### Added
 
--   SDM local mode
+-   Add SDM local mode.
 
 ### Changed
 
