@@ -38,6 +38,15 @@ export function isReservedCommand(args: string[]): boolean {
 }
 
 /**
+ * Does this command start up an embedded SDM?
+ * @param args command-line arguments, typically process.argv
+ */
+export function isEmbeddedSdmCommand(args: string[]) {
+    const relevant = args.slice(2);
+    return relevant.length > 0 && ["new sdm"].includes(relevant.join(" "));
+}
+
+/**
  * Call the provided function with the provided arguments and capture
  * any errors.  When the function is complete, `process.exit` will be
  * called with the appropriate code, i.e., this function will never return.

@@ -15,16 +15,20 @@
  * limitations under the License.
  */
 
+import {
+    cliCommand,
+    isEmbeddedSdmCommand,
+    isReservedCommand,
+} from "./lib/command";
+
 process.env.SUPPRESS_NO_CONFIG_WARNING = "true";
-process.env.ATOMIST_DISABLE_LOGGING = "true";
+if (!isEmbeddedSdmCommand(process.argv)) {
+    process.env.ATOMIST_DISABLE_LOGGING = "true";
+}
 
 import { addLocalSdmCommands } from "@atomist/sdm-local";
 import * as yargs from "yargs";
 
-import {
-    cliCommand,
-    isReservedCommand,
-} from "./lib/command";
 import { config } from "./lib/config";
 import { execute } from "./lib/execute";
 import { git } from "./lib/git";
