@@ -43,7 +43,7 @@ export function isReservedCommand(args: string[]): boolean {
  */
 export function isEmbeddedSdmCommand(args: string[]) {
     const relevant = args.slice(2);
-    return relevant.length > 0 && ["new sdm"].includes(relevant.join(" "));
+    return relevant.length > 0 && ["new sdm", "enable local"].includes(relevant.join(" "));
 }
 
 /**
