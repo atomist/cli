@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased](https://github.com/atomist/cli/compare/0.5.1...HEAD)
+## [Unreleased](https://github.com/atomist/cli/compare/0.5.2...HEAD)
+
+## [0.5.2](https://github.com/atomist/cli/compare/0.5.1...0.5.2) - 2018-08-09
 
 ### Fixed
 
