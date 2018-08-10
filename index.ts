@@ -15,18 +15,13 @@
  * limitations under the License.
  */
 
+import * as ys from "@atomist/sdm-local/src/cli/invocation/command/support/YargSaver";
+import * as yargs from "yargs";
 import {
     cliCommand,
     isEmbeddedSdmCommand,
     isReservedCommand,
 } from "./lib/command";
-
-process.env.SUPPRESS_NO_CONFIG_WARNING = "true";
-if (!isEmbeddedSdmCommand(process.argv)) {
-    process.env.ATOMIST_DISABLE_LOGGING = "true";
-}
-
-import * as yargs from "yargs";
 import { config } from "./lib/config";
 import { execute } from "./lib/execute";
 import { git } from "./lib/git";
@@ -36,11 +31,14 @@ import { kube } from "./lib/kube";
 import * as print from "./lib/print";
 import { start } from "./lib/start";
 import { version } from "./lib/version";
-import { YargSaver, CommandLineParameter } from "@atomist/sdm-local"; // types only, so it won't be loaded :-(
 
-function setupYargs(yargSaver: YargSaver) {
-    const sdmLocal = require("@atomist/sdm-local"); // I am not happy about this
-    const commonOptions: { [key: string]: CommandLineParameter } = {
+process.env.SUPPRESS_NO_CONFIG_WARNING = "true";
+if (!isEmbeddedSdmCommand(process.argv)) {
+    process.env.ATOMIST_DISABLE_LOGGING = "true";
+}
+
+function setupYargs(yargSaver: ys.YargSaver) {
+    const commonOptions: { [key: string]: ys.CommandLineParameter } = {
         changeDir: {
             parameterName: "change-dir",
             alias: "C",
@@ -84,7 +82,7 @@ function setupYargs(yargSaver: YargSaver) {
     });
     ["execute <name>", "exec <name>", "cmd <name>"].forEach(commandLine =>
         yargSaver.withSubcommand(
-            sdmLocal.yargCommandWithPositionalArguments({
+            ys.yargCommandWithPositionalArguments({
                 command: commandLine,
                 describe: "Run a command",
                 parameters: [commonOptions.changeDir, commonOptions.compile, commonOptions.install],
@@ -101,13 +99,13 @@ function setupYargs(yargSaver: YargSaver) {
                     args: argv._.filter((a: string) => a !== "execute" && a !== "exec" && a !== "cmd"),
                 }))
             })));
-    yargSaver.withSubcommand(sdmLocal.yargCommandFromSentence({
+    yargSaver.withSubcommand(ys.yargCommandFromSentence({
         command: "git", describe: "Create a git-info.json file for an Atomist client", parameters: [commonOptions.changeDir],
         handler: (argv: any) => cliCommand(() => git({
             cwd: argv["change-dir"],
         }))
     }));
-    yargSaver.withSubcommand(sdmLocal.yargCommandFromSentence({
+    yargSaver.withSubcommand(ys.yargCommandFromSentence({
         command: "gql-fetch", describe: "Retrieve GraphQL schema",
         parameters: [commonOptions.changeDir, commonOptions.install],
         handler: (argv: any) => cliCommand(() => gqlFetch({
@@ -115,45 +113,47 @@ function setupYargs(yargSaver: YargSaver) {
             install: argv.install,
         }))
     }));
-    yargSaver.withSubcommand(sdmLocal.yargCommandWithPositionalArguments({
+    yargSaver.withSubcommand(ys.yargCommandWithPositionalArguments({
         command: "gql-gen <glob>",
         describe: "Generate TypeScript code for GraphQL",
         parameters: [commonOptions.changeDir, commonOptions.install],
+        positional: [],
         handler: (argv: any) => cliCommand(() => gqlGen({
             glob: argv.glob,
             cwd: argv["change-dir"],
             install: argv.install,
         }))
     }));
-    yargSaver.withSubcommand(sdmLocal.yargCommandFromSentence({
+    yargSaver.withSubcommand(ys.yargCommandFromSentence({
         command: "kube", describe: "Deploy Atomist utilities to Kubernetes cluster",
         parameters: [{
             parameterName: "environment", opts: {
                 describe: "Informative name for yout Kubernetes cluster",
                 type: "string",
             }
-        }, {
+        } as ys.CommandLineParameter, {
             parameterName: "namespace", opts: {
                 describe: "Deploy utilities in namespace mode",
                 type: "string",
             }
-        }],
+        } as ys.CommandLineParameter],
         handler: (argv: any) => cliCommand(() => kube({
             env: argv.environment,
             ns: argv.namespace,
         }))
     }));
-    yargSaver.withSubcommand(sdmLocal.yargCommandFromSentence({
+    yargSaver.withSubcommand(ys.yargCommandFromSentence({
         command: "start",
         describe: "Start an SDM or automation client", parameters: [commonOptions.changeDir,
         commonOptions.compile,
         commonOptions.install, {
-            parameterName: "local", opts: {
+            parameterName: "local",
+            opts: {
                 default: false,
                 describe: "Start SDM in local mode",
                 type: "boolean",
             }
-        }],
+        } as ys.CommandLineParameter],
         handler: (argv: any) => cliCommand(() => start({
             cwd: argv["change-dir"],
             install: argv.install,
@@ -161,7 +161,7 @@ function setupYargs(yargSaver: YargSaver) {
             local: argv.local,
         }))
     }));
-    sdmLocal.optimizeOrThrow(yargSaver).save(yargs);
+    ys.optimizeOrThrow(yargSaver).save(yargs);
     yargs.completion("completion")
         .epilog("Copyright Atomist, Inc. 2018")
         .showHelpOnFail(false, "Specify --help for available options")
@@ -175,10 +175,10 @@ function setupYargs(yargSaver: YargSaver) {
 }
 
 async function main() {
-    // Lazily load sdm-local to prevent early initialization
-    const sdmLocal = require("@atomist/sdm-local");
-    const yargSaver = sdmLocal.freshYargSaver();
+    const yargSaver = ys.freshYargSaver();
     if (!isReservedCommand(process.argv)) {
+        // Lazily load sdm-local to prevent early initialization
+        const sdmLocal = require("@atomist/sdm-local");
         await sdmLocal.addLocalSdmCommands(yargSaver);
     }
     setupYargs(yargSaver);
