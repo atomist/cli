@@ -21,7 +21,7 @@
     "@atomist/automation-client": "^0.20.0",
     "@atomist/sdm": "^0.4.1",
     "@atomist/sdm-core": "^0.4.1",
-    "@atomist/sdm-local": "^0.1.6",
+    "@atomist/sdm-local": "^0.1.7-20180810224846",
     "@octokit/rest": "^15.9.4",
     "@types/fs-extra": "^5.0.3",
     "@types/glob": "^5.0.35",
