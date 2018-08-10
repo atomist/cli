@@ -26,9 +26,7 @@ if (!isEmbeddedSdmCommand(process.argv)) {
     process.env.ATOMIST_DISABLE_LOGGING = "true";
 }
 
-import { addLocalSdmCommands } from "@atomist/sdm-local";
 import * as yargs from "yargs";
-
 import { config } from "./lib/config";
 import { execute } from "./lib/execute";
 import { git } from "./lib/git";
@@ -157,7 +155,9 @@ function setupYargs() {
 
 async function main() {
     if (!isReservedCommand(process.argv)) {
-        await addLocalSdmCommands(yargs);
+        // Lazily load sdm-local to prevent early initialization
+        const sdmLocal = require("@atomist/sdm-local");
+        await sdmLocal.addLocalSdmCommands(yargs);
     }
     setupYargs();
 }
