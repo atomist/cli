@@ -60,8 +60,6 @@ function setupYargs(yargSaver: ys.YargSaver) {
         },
     };
 
-    // tslint:disable-next-line:no-unused-expression
-
     yargSaver.command({
         command: "config",
         describe: "Create Atomist user configuration",
@@ -78,7 +76,7 @@ function setupYargs(yargSaver: ys.YargSaver) {
         }, handler: argv => cliCommand(() => config({
             apiKey: argv["api-key"],
             workspaceId: argv["workspace-id"],
-        }))
+        })),
     });
     ["execute <name>", "exec <name>", "cmd <name>"].forEach(commandLine =>
         yargSaver.withSubcommand(
@@ -89,7 +87,7 @@ function setupYargs(yargSaver: ys.YargSaver) {
                 positional: [{
                     key: "name", opts: {
                         describe: "Name of command to run, command parameters PARAM=VALUE can follow",
-                    }
+                    },
                 }]
                 , handler: (argv: any) => cliCommand(() => execute({
                     name: argv.name,
@@ -97,13 +95,15 @@ function setupYargs(yargSaver: ys.YargSaver) {
                     compile: argv.compile,
                     install: argv.install,
                     args: argv._.filter((a: string) => a !== "execute" && a !== "exec" && a !== "cmd"),
-                }))
+                })),
             })));
     yargSaver.withSubcommand(ys.yargCommandFromSentence({
-        command: "git", describe: "Create a git-info.json file for an Atomist client", parameters: [commonOptions.changeDir],
+        command: "git",
+        describe: "Create a git-info.json file for an Atomist client",
+        parameters: [commonOptions.changeDir],
         handler: (argv: any) => cliCommand(() => git({
             cwd: argv["change-dir"],
-        }))
+        })),
     }));
     yargSaver.withSubcommand(ys.yargCommandFromSentence({
         command: "gql-fetch", describe: "Retrieve GraphQL schema",
@@ -111,7 +111,7 @@ function setupYargs(yargSaver: ys.YargSaver) {
         handler: (argv: any) => cliCommand(() => gqlFetch({
             cwd: argv["change-dir"],
             install: argv.install,
-        }))
+        })),
     }));
     yargSaver.withSubcommand(ys.yargCommandWithPositionalArguments({
         command: "gql-gen <glob>",
@@ -122,7 +122,7 @@ function setupYargs(yargSaver: ys.YargSaver) {
             glob: argv.glob,
             cwd: argv["change-dir"],
             install: argv.install,
-        }))
+        })),
     }));
     yargSaver.withSubcommand(ys.yargCommandFromSentence({
         command: "kube", describe: "Deploy Atomist utilities to Kubernetes cluster",
@@ -130,17 +130,17 @@ function setupYargs(yargSaver: ys.YargSaver) {
             parameterName: "environment", opts: {
                 describe: "Informative name for yout Kubernetes cluster",
                 type: "string",
-            }
+            },
         } as ys.CommandLineParameter, {
             parameterName: "namespace", opts: {
                 describe: "Deploy utilities in namespace mode",
                 type: "string",
-            }
+            },
         } as ys.CommandLineParameter],
         handler: (argv: any) => cliCommand(() => kube({
             env: argv.environment,
             ns: argv.namespace,
-        }))
+        })),
     }));
     yargSaver.withSubcommand(ys.yargCommandFromSentence({
         command: "start",
@@ -152,16 +152,17 @@ function setupYargs(yargSaver: ys.YargSaver) {
                 default: false,
                 describe: "Start SDM in local mode",
                 type: "boolean",
-            }
+            },
         } as ys.CommandLineParameter],
         handler: (argv: any) => cliCommand(() => start({
             cwd: argv["change-dir"],
             install: argv.install,
             compile: argv.compile,
             local: argv.local,
-        }))
+        })),
     }));
     ys.optimizeOrThrow(yargSaver).save(yargs);
+    // tslint:disable-next-line:no-unused-expression
     yargs.completion("completion")
         .epilog("Copyright Atomist, Inc. 2018")
         .showHelpOnFail(false, "Specify --help for available options")
@@ -187,6 +188,6 @@ async function main() {
 main()
     .catch((err: Error) => {
         print.error(`Unhandled error: ${err.message}`);
-        print.error(err.stack)
+        print.error(err.stack);
         process.exit(102);
     });
