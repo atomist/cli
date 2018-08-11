@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import * as ys from "@atomist/sdm-local/src/cli/invocation/command/support/YargSaver";
+import * as ys from "@atomist/sdm-local/src/cli/invocation/command/support/yargSaver/YargSaver";
 import * as yargs from "yargs";
 import {
     cliCommand,
@@ -161,7 +161,7 @@ function setupYargs(yargSaver: ys.YargSaver) {
             local: argv.local,
         })),
     }));
-    yargSaver.optimized(process.stdout.write).save(yargs);
+    yargSaver.optimized(s => process.stdout.write(s)).save(yargs);
     // tslint:disable-next-line:no-unused-expression
     yargs.completion("completion")
         .epilog("Copyright Atomist, Inc. 2018")
