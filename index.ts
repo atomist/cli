@@ -161,7 +161,7 @@ function setupYargs(yargSaver: ys.YargSaver) {
             local: argv.local,
         })),
     }));
-    ys.optimizeOrThrow(yargSaver).save(yargs);
+    yargSaver.optimized(process.stdout.write).save(yargs);
     // tslint:disable-next-line:no-unused-expression
     yargs.completion("completion")
         .epilog("Copyright Atomist, Inc. 2018")
