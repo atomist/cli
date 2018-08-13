@@ -61,7 +61,7 @@
     "autotest": "supervisor --watch index.ts,lib,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
     "build": "npm-run-all compile test lint doc",
     "clean": "npm-run-all clean:compile clean:doc clean:run",
-    "clean:compile": "rimraf build git-info.json \"index.{d.ts,js*}\" \"{lib,test}/**/*.{d.ts,js*}\" lib/typings/types.ts",
+    "clean:compile": "rimraf git-info.json \"index.{d.ts,js{,.map}}\" \"{lib,test}/**/*.{d.ts,js{,.map}}\" lib/typings/types.ts",
     "clean:dist": "npm-run-all clean clean:npm",
     "clean:npm": "rimraf node_modules",
     "clean:run": "rimraf *-v8.log profile.txt log",
@@ -84,7 +84,7 @@
     "atomist-githook": "./githook.js"
   },
   "engines": {
-    "node": "9.x.x",
-    "npm": "6.x.x"
+    "node": ">=8.0.0",
+    "npm": ">=5.0.0"
   }
 }
