@@ -18,7 +18,7 @@
 import {
     cliCommand,
     isEmbeddedSdmCommand,
-    isReservedCommand,
+    shouldAddLocalSdmCommands,
 } from "./lib/command";
 
 process.env.SUPPRESS_NO_CONFIG_WARNING = "true";
@@ -73,7 +73,7 @@ function setupYargs() {
             apiKey: argv["api-key"],
             workspaceId: argv["workspace-id"],
         })))
-        .command(["execute <name>", "exec <name>", "cmd <name>"], "Run a command", ya => {
+        .command("execute <name>", "Run a command", ya => {
             return ya
                 .positional("name", {
                     describe: "Name of command to run, command parameters PARAM=VALUE can follow",
@@ -88,7 +88,7 @@ function setupYargs() {
             install: argv.install,
             args: argv._.filter(a => a !== "execute" && a !== "exec" && a !== "cmd"),
         })))
-        .command("git", "Create a git-info.json file for an Atomist client", ya => {
+        .command("git", "[DEPRECATED] Create a git-info.json file for an Atomist client", ya => {
             return ya
                 .option("change-dir", commonOptions.changeDir);
         }, argv => cliCommand(() => git({
@@ -102,7 +102,7 @@ function setupYargs() {
             cwd: argv["change-dir"],
             install: argv.install,
         })))
-        .command("gql-gen <glob>", "Generate TypeScript code for GraphQL", ya => {
+        .command("gql-gen <glob>", "[DEPRECATED] Generate TypeScript code for GraphQL", ya => {
             return ya
                 .option("change-dir", commonOptions.changeDir)
                 .option("install", commonOptions.install);
@@ -154,7 +154,7 @@ function setupYargs() {
 }
 
 async function main() {
-    if (!isReservedCommand(process.argv)) {
+    if (shouldAddLocalSdmCommands(process.argv)) {
         // Lazily load sdm-local to prevent early initialization
         const sdmLocal = require("@atomist/sdm-local");
         await sdmLocal.addLocalSdmCommands(yargs);

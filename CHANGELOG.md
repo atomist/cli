@@ -17,6 +17,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   The `git` and `gql-gen` subcommands have been moved to automation-client.
 
+### Fixed
+
+-   Recognize `execute` as a reserved command.
+-   Show SDM local commands in `--help` output. [#9](https://github.com/atomist/cli/issues/9)
+
+### Removed
+
+-   **BREAKING** Remove `cmd` and `exec` aliases for `execute`.
+
 ## [0.5.2](https://github.com/atomist/cli/compare/0.5.1...0.5.2) - 2018-08-09
 
 ### Fixed
