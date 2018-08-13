@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/0.5.2...HEAD)
 
+### Changed
+
+-   Update automation-client dependency.
+-   Use automation-client scripts in package scripts.
+
+### Deprecated
+
+-   The `git` and `gql-gen` subcommands have been moved to automation-client.
+
 ## [0.5.2](https://github.com/atomist/cli/compare/0.5.1...0.5.2) - 2018-08-09
 
 ### Fixed

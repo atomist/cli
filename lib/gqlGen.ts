@@ -46,11 +46,13 @@ export interface GqlGenOptions {
  * @return integer return value
  */
 export async function gqlGen(opts: GqlGenOptions): Promise<number> {
+    print.warn(`The CLI version of gql-gen is deprecated.  Update your gql:gen package script to:`);
+    print.warn(`"node node_modules/@atomist/automation-client/start.gql-gen.js"`);
     const lib = libDir(opts.cwd);
     // check if the project has a custom schema
     const customSchemaLocation = path.join(lib, "graphql", "schema.json");
-    const defaultSchemaLocation =
-        path.join(opts.cwd, "node_modules", "@atomist", "automation-client", "graph", "schema.cortex.json");
+    const defaultSchemaLocation = path.join(opts.cwd, "node_modules", "@atomist", "automation-client",
+        "graph", "schema.cortex.json");
     const schema = fs.existsSync(customSchemaLocation) ? customSchemaLocation : defaultSchemaLocation;
 
     const spawnOpts = {
