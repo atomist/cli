@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Update automation-client dependency.
 -   Use automation-client scripts in package scripts.
+-   Use cross-spawn to make running commands more cross-platform.
 
 ### Deprecated
 

@@ -15,6 +15,7 @@
  */
 
 import * as child_process from "child_process";
+import * as spawn from "cross-spawn";
 import * as fs from "fs-extra";
 import * as path from "path";
 
@@ -203,7 +204,6 @@ export async function spawnPromise(options: SpawnPromiseOptions): Promise<number
         cwd,
         env: process.env,
         stdio: "inherit",
-        shell: true,
     };
     const cmdString = cleanCommandString(options.command, options.args);
     try {
@@ -211,7 +211,7 @@ export async function spawnPromise(options: SpawnPromiseOptions): Promise<number
             return 1;
         }
         print.info(`Running "${cmdString}" in '${cwd}'`);
-        const cp = child_process.spawn(options.command, options.args, spawnOptions);
+        const cp = spawn(options.command, options.args, spawnOptions);
         return new Promise<number>((resolve, reject) => {
             cp.on("exit", (code, signal) => {
                 if (code === 0) {
