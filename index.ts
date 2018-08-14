@@ -30,6 +30,7 @@ import * as yargs from "yargs";
 import { config } from "./lib/config";
 import { execute } from "./lib/execute";
 import { git } from "./lib/git";
+import { gitHook } from "./lib/gitHook";
 import { gqlFetch } from "./lib/gqlFetch";
 import { gqlGen } from "./lib/gqlGen";
 import { kube } from "./lib/kube";
@@ -94,6 +95,9 @@ function setupYargs() {
         }, argv => cliCommand(() => git({
             cwd: argv["change-dir"],
         })))
+        .command("git-hook", "Process Git hook data for local SDM", ya => {
+            return ya;
+        }, argv => cliCommand(() => gitHook(process.argv)))
         .command("gql-fetch", "Retrieve GraphQL schema", (ya: yargs.Argv) => {
             return ya
                 .option("change-dir", commonOptions.changeDir)

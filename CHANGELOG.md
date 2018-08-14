@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/0.5.2...HEAD)
 
+### Added
+
+-   Add `git-hook` subcommand.
+
 ### Changed
 
 -   Update automation-client dependency.
@@ -16,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Deprecated
 
 -   The `git` and `gql-gen` subcommands have been moved to automation-client.
+-   Deprecate `githook` script in favor of `git-hook` subcommand.
 
 ### Fixed
 
