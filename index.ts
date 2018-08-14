@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 import {
     cliCommand,
     isEmbeddedSdmCommand,
@@ -27,6 +26,8 @@ if (!isEmbeddedSdmCommand(process.argv)) {
     process.env.ATOMIST_DISABLE_LOGGING = "true";
 }
 
+import * as yb from "@atomist/sdm-local/src/cli/invocation/command/support/yargBuilder";
+import * as yargs from "yargs";
 import { config } from "./lib/config";
 import { execute } from "./lib/execute";
 import { git } from "./lib/git";
@@ -37,11 +38,6 @@ import { kube } from "./lib/kube";
 import * as print from "./lib/print";
 import { start } from "./lib/start";
 import { version } from "./lib/version";
-import * as yb from "@atomist/sdm-local/src/cli/invocation/command/support/yargBuilder";
-import * as yargs from "yargs";
-
-
-
 
 function setupYargs(yargBuilder: yb.YargBuilder) {
     const commonOptions: { [key: string]: yb.CommandLineParameter } = {
@@ -83,7 +79,7 @@ function setupYargs(yargBuilder: yb.YargBuilder) {
             apiKey: argv["api-key"],
             workspaceId: argv["workspace-id"],
 
-        }))
+        })),
     });
     yargBuilder.command({
         command: "execute <name>",
@@ -91,7 +87,7 @@ function setupYargs(yargBuilder: yb.YargBuilder) {
         positional: [{
             key: "name", opts: {
                 describe: "Name of command to run, command parameters PARAM=VALUE can follow",
-            }
+            },
         }],
         parameters: [commonOptions.changeDir, commonOptions.install, commonOptions.changeDir],
         handler: argv => cliCommand(() => execute({
@@ -111,12 +107,12 @@ function setupYargs(yargBuilder: yb.YargBuilder) {
 
             cwd: argv["change-dir"],
 
-        }))
+        })),
     });
     yargBuilder.command({
         command: "git-hook",
         describe: "Process Git hook data for local SDM",
-        handler: argv => cliCommand(() => gitHook(process.argv))
+        handler: argv => cliCommand(() => gitHook(process.argv)),
     });
     yargBuilder.command({
         command: "gql-fetch", describe: "Retrieve GraphQL schema",
@@ -124,7 +120,7 @@ function setupYargs(yargBuilder: yb.YargBuilder) {
         handler: argv => cliCommand(() => gqlFetch({
             cwd: argv["change-dir"],
             install: argv.install,
-        }))
+        })),
     });
     yargBuilder.command({
         command:
@@ -194,7 +190,6 @@ async function main() {
     }
     setupYargs(YargBuilder);
 }
-
 
 main()
     .catch((err: Error) => {
