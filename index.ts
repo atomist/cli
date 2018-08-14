@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-import * as ys from "@atomist/sdm-local/src/cli/invocation/command/support/yargSaver/YargSaver";
+
+import * as yb from "@atomist/sdm-local/src/cli/invocation/command/support/yargBuilder";
 import * as yargs from "yargs";
 import {
     cliCommand,
@@ -37,8 +38,9 @@ if (!isEmbeddedSdmCommand(process.argv)) {
     process.env.ATOMIST_DISABLE_LOGGING = "true";
 }
 
-function setupYargs(yargSaver: ys.YargSaver) {
-    const commonOptions: { [key: string]: ys.CommandLineParameter } = {
+
+function setupYargs(yargBuilder: yb.YargBuilder) {
+    const commonOptions: { [key: string]: yb.CommandLineParameter } = {
         changeDir: {
             parameterName: "change-dir",
             alias: "C",
@@ -60,7 +62,7 @@ function setupYargs(yargSaver: ys.YargSaver) {
         },
     };
 
-    yargSaver.command({
+    yargBuilder.command({
         command: "config",
         describe: "Create Atomist user configuration",
         builder: ya => {
@@ -79,8 +81,8 @@ function setupYargs(yargSaver: ys.YargSaver) {
         })),
     });
     ["execute <name>", "exec <name>", "cmd <name>"].forEach(commandLine =>
-        yargSaver.withSubcommand(
-            ys.yargCommandWithPositionalArguments({
+        yargBuilder.withSubcommand(
+            yb.yargCommandWithPositionalArguments({
                 command: commandLine,
                 describe: "Run a command",
                 parameters: [commonOptions.changeDir, commonOptions.compile, commonOptions.install],
@@ -97,7 +99,7 @@ function setupYargs(yargSaver: ys.YargSaver) {
                     args: argv._.filter((a: string) => a !== "execute" && a !== "exec" && a !== "cmd"),
                 })),
             })));
-    yargSaver.withSubcommand(ys.yargCommandFromSentence({
+    yargBuilder.withSubcommand(yb.yargCommandFromSentence({
         command: "git",
         describe: "Create a git-info.json file for an Atomist client",
         parameters: [commonOptions.changeDir],
@@ -105,7 +107,7 @@ function setupYargs(yargSaver: ys.YargSaver) {
             cwd: argv["change-dir"],
         })),
     }));
-    yargSaver.withSubcommand(ys.yargCommandFromSentence({
+    yargBuilder.withSubcommand(yb.yargCommandFromSentence({
         command: "gql-fetch", describe: "Retrieve GraphQL schema",
         parameters: [commonOptions.changeDir, commonOptions.install],
         handler: (argv: any) => cliCommand(() => gqlFetch({
@@ -113,7 +115,7 @@ function setupYargs(yargSaver: ys.YargSaver) {
             install: argv.install,
         })),
     }));
-    yargSaver.withSubcommand(ys.yargCommandWithPositionalArguments({
+    yargBuilder.withSubcommand(yb.yargCommandWithPositionalArguments({
         command: "gql-gen <glob>",
         describe: "Generate TypeScript code for GraphQL",
         parameters: [commonOptions.changeDir, commonOptions.install],
@@ -124,36 +126,38 @@ function setupYargs(yargSaver: ys.YargSaver) {
             install: argv.install,
         })),
     }));
-    yargSaver.withSubcommand(ys.yargCommandFromSentence({
+    yargBuilder.withSubcommand(yb.yargCommandFromSentence({
         command: "kube", describe: "Deploy Atomist utilities to Kubernetes cluster",
         parameters: [{
             parameterName: "environment", opts: {
                 describe: "Informative name for yout Kubernetes cluster",
                 type: "string",
             },
-        } as ys.CommandLineParameter, {
+        } as yb.CommandLineParameter, {
             parameterName: "namespace", opts: {
                 describe: "Deploy utilities in namespace mode",
                 type: "string",
             },
-        } as ys.CommandLineParameter],
+        } as yb.CommandLineParameter],
         handler: (argv: any) => cliCommand(() => kube({
             env: argv.environment,
             ns: argv.namespace,
         })),
     }));
-    yargSaver.withSubcommand(ys.yargCommandFromSentence({
+    yargBuilder.withSubcommand(yb.yargCommandFromSentence({
         command: "start",
-        describe: "Start an SDM or automation client", parameters: [commonOptions.changeDir,
-        commonOptions.compile,
-        commonOptions.install, {
-            parameterName: "local",
-            opts: {
-                default: false,
-                describe: "Start SDM in local mode",
-                type: "boolean",
-            },
-        } as ys.CommandLineParameter],
+        describe: "Start an SDM or automation client",
+        parameters: [
+            commonOptions.changeDir,
+            commonOptions.compile,
+            commonOptions.install, {
+                parameterName: "local",
+                opts: {
+                    default: false,
+                    describe: "Start SDM in local mode",
+                    type: "boolean",
+                },
+            } as yb.CommandLineParameter],
         handler: (argv: any) => cliCommand(() => start({
             cwd: argv["change-dir"],
             install: argv.install,
@@ -161,10 +165,9 @@ function setupYargs(yargSaver: ys.YargSaver) {
             local: argv.local,
         })),
     }));
-    yargSaver.optimized(s => process.stdout.write(s)).save(yargs);
+    yargBuilder.build().save(yargs);
     // tslint:disable-next-line:no-unused-expression
     yargs.completion("completion")
-        .epilog("Copyright Atomist, Inc. 2018")
         .showHelpOnFail(false, "Specify --help for available options")
         .alias("help", ["h", "?"])
         .version(version())
@@ -176,14 +179,15 @@ function setupYargs(yargSaver: ys.YargSaver) {
 }
 
 async function main() {
-    const yargSaver = ys.freshYargSaver();
+    const YargBuilder = yb.freshYargBuilder({ epilogForHelpMessage: "Copyright Atomist, Inc. 2018" });
     if (!isReservedCommand(process.argv)) {
         // Lazily load sdm-local to prevent early initialization
         const sdmLocal = require("@atomist/sdm-local");
-        await sdmLocal.addLocalSdmCommands(yargSaver);
+        await sdmLocal.addLocalSdmCommands(YargBuilder);
     }
-    setupYargs(yargSaver);
+    setupYargs(YargBuilder);
 }
+
 
 main()
     .catch((err: Error) => {
