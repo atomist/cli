@@ -5,7 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased](https://github.com/atomist/cli/compare/0.5.2...HEAD)
+## [Unreleased](https://github.com/atomist/cli/compare/0.6.0...HEAD)
+
+## [0.6.0](https://github.com/atomist/cli/compare/0.5.2...0.6.0) - 2018-08-14
+
+### Added
+
+-   Add `git-hook` subcommand.
+
+### Changed
+
+-   Update automation-client dependency.
+-   Use automation-client scripts in package scripts.
+-   Use cross-spawn to make running commands more cross-platform.
+
+### Deprecated
+
+-   The `git` and `gql-gen` subcommands have been moved to automation-client.
+-   Deprecate `githook` script in favor of `git-hook` subcommand.
+
+### Fixed
+
+-   Recognize `execute` as a reserved command.
+-   Show SDM local commands in `--help` output. [#9](https://github.com/atomist/cli/issues/9)
+
+### Removed
+
+-   **BREAKING** Remove `cmd` and `exec` aliases for `execute`.
 
 ## [0.5.2](https://github.com/atomist/cli/compare/0.5.1...0.5.2) - 2018-08-09
 

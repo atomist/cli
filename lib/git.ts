@@ -35,6 +35,8 @@ export type GitOptions = Pick<SpawnOptions, "cwd">;
  * @return integer return value
  */
 export async function git(opts: GitOptions): Promise<number> {
+    print.warn(`The CLI version of git is deprecated.  Update your git:info package script to:`);
+    print.warn(`"node node_modules/@atomist/automation-client/start.git-info.js"`);
     const gitInfoName = "git-info.json";
     const gitInfoPath = path.join(opts.cwd, gitInfoName);
     try {

@@ -18,68 +18,78 @@ import * as assert from "power-assert";
 
 import {
     extractArgs,
-    isReservedCommand,
+    shouldAddLocalSdmCommands,
 } from "../lib/command";
 
 describe("command", () => {
 
-    describe("", () => {
+    describe("shouldAddLocalSdmCommands", () => {
 
-        it("should return true for empty args", () => {
+        const knownCommands = [
+            "config",
+            "execute",
+            "git",
+            "gql-fetch",
+            "gql-gen",
+            "kube",
+            "start",
+        ];
+
+        it("should return false for empty args", () => {
             const args: string[] = [];
-            assert(isReservedCommand(args));
+            assert(!shouldAddLocalSdmCommands(args));
         });
 
-        it("should return true for no commands", () => {
+        it("should return false for no commands", () => {
             const args = ["/usr/local/Cellar/node/10.8.0/bin/node", "/Users/rihanna/develop/atomist/cli/index.js"];
-            assert(isReservedCommand(args));
+            assert(!shouldAddLocalSdmCommands(args));
         });
 
         it("should return true for --help", () => {
             const args = ["node", "index.js", "--help"];
-            assert(isReservedCommand(args));
+            assert(shouldAddLocalSdmCommands(args));
         });
 
-        it("should return true for --version", () => {
+        it("should return false for --version", () => {
             const args = ["node", "index.js", "--version"];
-            assert(isReservedCommand(args));
+            assert(!shouldAddLocalSdmCommands(args));
         });
 
-        it("should return true for known commands", () => {
+        it("should return false for known commands", () => {
             const firstArgs = ["node", "index.js"];
-            ["config", "git", "gql-fetch", "gql-gen", "kube", "start"].forEach(c => {
-                assert(isReservedCommand([...firstArgs, c]));
+            knownCommands.forEach(c => {
+                assert(!shouldAddLocalSdmCommands([...firstArgs, c]));
             });
         });
 
-        it("should return true for known commands with more arguments", () => {
+        it("should return false for known commands with more arguments", () => {
             const firstArgs = ["node", "index.js"];
             const lastArgs = ["some", "--command", "line", "-o", "ptions"];
-            ["config", "git", "gql-fetch", "gql-gen", "kube", "start"].forEach(c => {
-                assert(isReservedCommand([...firstArgs, c, ...lastArgs]));
+            knownCommands.forEach(c => {
+                assert(!shouldAddLocalSdmCommands([...firstArgs, c, ...lastArgs]));
             });
         });
 
-        it("should return false for unknown commands", () => {
+        it("should return true for unknown commands", () => {
             const firstArgs = ["node", "index.js"];
             ["conf", "gt", "gql-fletch", "gql-generate", "kubernetes", "stop"].forEach(c => {
-                assert(!isReservedCommand([...firstArgs, c]));
+                assert(shouldAddLocalSdmCommands([...firstArgs, c]));
             });
         });
 
-        it("should return false for unknown commands with more arguments", () => {
+        it("should return true for unknown commands with more arguments", () => {
             const firstArgs = ["node", "index.js"];
             const lastArgs = ["some", "--command", "line", "-o", "ptions"];
             ["umbrella", "betta", "have", "my", "money"].forEach(c => {
-                assert(!isReservedCommand([...firstArgs, c, ...lastArgs]));
+                assert(shouldAddLocalSdmCommands([...firstArgs, c, ...lastArgs]));
             });
         });
 
-        it("should return ignore known commands later in the arguments", () => {
+        it("should ignore known commands later in the arguments", () => {
             const firstArgs = ["node", "index.js"];
             const lastArgs = ["config", "--git", "gql-fetch", "-k", "start"];
             ["umbrella", "betta", "have", "my", "money"].forEach(c => {
-                assert(!isReservedCommand([...firstArgs, c, ...lastArgs]));
+                assert(shouldAddLocalSdmCommands([...firstArgs, c, ...lastArgs]));
             });
         });
 

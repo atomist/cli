@@ -21,11 +21,12 @@ import * as yargs from "yargs";
 import {
     cliCommand,
     isEmbeddedSdmCommand,
-    isReservedCommand,
+    shouldAddLocalSdmCommands,
 } from "./lib/command";
 import { config } from "./lib/config";
 import { execute } from "./lib/execute";
 import { git } from "./lib/git";
+import { gitHook } from "./lib/gitHook";
 import { gqlFetch } from "./lib/gqlFetch";
 import { gqlGen } from "./lib/gqlGen";
 import { kube } from "./lib/kube";
@@ -78,109 +79,126 @@ function setupYargs(yargBuilder: yb.YargBuilder) {
         }, handler: argv => cliCommand(() => config({
             apiKey: argv["api-key"],
             workspaceId: argv["workspace-id"],
-        })),
-    });
-    ["execute <name>", "exec <name>", "cmd <name>"].forEach(commandLine =>
-        yargBuilder.withSubcommand(
-            yb.yargCommandWithPositionalArguments({
-                command: commandLine,
-                describe: "Run a command",
-                parameters: [commonOptions.changeDir, commonOptions.compile, commonOptions.install],
-                positional: [{
-                    key: "name", opts: {
-                        describe: "Name of command to run, command parameters PARAM=VALUE can follow",
-                    },
-                }]
-                , handler: (argv: any) => cliCommand(() => execute({
-                    name: argv.name,
-                    cwd: argv["change-dir"],
-                    compile: argv.compile,
-                    install: argv.install,
-                    args: argv._.filter((a: string) => a !== "execute" && a !== "exec" && a !== "cmd"),
-                })),
-            })));
-    yargBuilder.withSubcommand(yb.yargCommandFromSentence({
-        command: "git",
-        describe: "Create a git-info.json file for an Atomist client",
-        parameters: [commonOptions.changeDir],
-        handler: (argv: any) => cliCommand(() => git({
+
+        })))
+        .command("execute <name>", "Run a command", ya => {
+            return ya
+                .positional("name", {
+                    describe: "Name of command to run, command parameters PARAM=VALUE can follow",
+                })
+                .option("change-dir", commonOptions.changeDir)
+                .option("compile", commonOptions.compile)
+                .option("install", commonOptions.install);
+        }, argv => cliCommand(() => execute({
+            name: argv.name,
             cwd: argv["change-dir"],
-        })),
-    }));
-    yargBuilder.withSubcommand(yb.yargCommandFromSentence({
-        command: "gql-fetch", describe: "Retrieve GraphQL schema",
-        parameters: [commonOptions.changeDir, commonOptions.install],
-        handler: (argv: any) => cliCommand(() => gqlFetch({
+            compile: argv.compile,
+            install: argv.install,
+            args: argv._.filter(a => a !== "execute" && a !== "exec" && a !== "cmd"),
+        })))
+        .command("git", "[DEPRECATED] Create a git-info.json file for an Atomist client", ya => {
+            return ya
+                .option("change-dir", commonOptions.changeDir);
+        }, argv => cliCommand(() => git({
+
+            cwd: argv["change-dir"],
+
+        })))
+        .command("gql-fetch", "Retrieve GraphQL schema", (ya: yargs.Argv) => {
+            return ya
+                .option("change-dir", commonOptions.changeDir)
+                .option("install", commonOptions.install);
+        }, argv => cliCommand(() => gqlFetch({
+        })))
+        .command("git-hook", "Process Git hook data for local SDM", ya => {
+            return ya;
+        }, argv => cliCommand(() => gitHook(process.argv)))
+        .command("gql-fetch", "Retrieve GraphQL schema", (ya: yargs.Argv) => {
+            return ya
+                .option("change-dir", commonOptions.changeDir)
+                .option("install", commonOptions.install);
+        }, argv => cliCommand(() => gqlFetch({
             cwd: argv["change-dir"],
             install: argv.install,
-        })),
-    }));
-    yargBuilder.withSubcommand(yb.yargCommandWithPositionalArguments({
-        command: "gql-gen <glob>",
-        describe: "Generate TypeScript code for GraphQL",
-        parameters: [commonOptions.changeDir, commonOptions.install],
-        positional: [],
-        handler: (argv: any) => cliCommand(() => gqlGen({
+
+        })))
+        .command("gql-gen <glob>", "Generate TypeScript code for GraphQL", ya => {
+            return ya
+                .option("change-dir", commonOptions.changeDir)
+                .option("install", commonOptions.install);
+        }, argv => cliCommand(() => gqlGen({
+        })))
+        .command("gql-gen <glob>", "[DEPRECATED] Generate TypeScript code for GraphQL", ya => {
+            return ya
+                .option("change-dir", commonOptions.changeDir)
+                .option("install", commonOptions.install);
+        }, argv => cliCommand(() => gqlGen({
             glob: argv.glob,
             cwd: argv["change-dir"],
             install: argv.install,
         })),
     }));
-    yargBuilder.withSubcommand(yb.yargCommandFromSentence({
-        command: "kube", describe: "Deploy Atomist utilities to Kubernetes cluster",
-        parameters: [{
-            parameterName: "environment", opts: {
-                describe: "Informative name for yout Kubernetes cluster",
-                type: "string",
-            },
-        } as yb.CommandLineParameter, {
-            parameterName: "namespace", opts: {
-                describe: "Deploy utilities in namespace mode",
-                type: "string",
+yargBuilder.withSubcommand(yb.yargCommandFromSentence({
+    command: "kube", describe: "Deploy Atomist utilities to Kubernetes cluster",
+    parameters: [{
+        parameterName: "environment", opts: {
+            describe: "Informative name for yout Kubernetes cluster",
+            type: "string",
+        },
+    } as yb.CommandLineParameter, {
+        parameterName: "namespace", opts: {
+            describe: "Deploy utilities in namespace mode",
+            type: "string",
+        },
+    } as yb.CommandLineParameter],
+    handler: (argv: any) => cliCommand(() => kube({
+        env: argv.environment,
+        ns: argv.namespace,
+    })),
+}));
+yargBuilder.withSubcommand(yb.yargCommandFromSentence({
+    command: "start",
+    describe: "Start an SDM or automation client",
+    parameters: [
+        commonOptions.changeDir,
+        commonOptions.compile,
+        commonOptions.install, {
+            parameterName: "local",
+            opts: {
+                default: false,
+                describe: "Start SDM in local mode",
+                type: "boolean",
             },
         } as yb.CommandLineParameter],
-        handler: (argv: any) => cliCommand(() => kube({
-            env: argv.environment,
-            ns: argv.namespace,
-        })),
-    }));
-    yargBuilder.withSubcommand(yb.yargCommandFromSentence({
-        command: "start",
-        describe: "Start an SDM or automation client",
-        parameters: [
-            commonOptions.changeDir,
-            commonOptions.compile,
-            commonOptions.install, {
-                parameterName: "local",
-                opts: {
-                    default: false,
-                    describe: "Start SDM in local mode",
-                    type: "boolean",
-                },
-            } as yb.CommandLineParameter],
-        handler: (argv: any) => cliCommand(() => start({
-            cwd: argv["change-dir"],
-            install: argv.install,
-            compile: argv.compile,
-            local: argv.local,
-        })),
-    }));
-    yargBuilder.build().save(yargs);
-    // tslint:disable-next-line:no-unused-expression
-    yargs.completion("completion")
-        .showHelpOnFail(false, "Specify --help for available options")
-        .alias("help", ["h", "?"])
-        .version(version())
-        .alias("version", "v")
-        .describe("version", "Show version information")
-        .strict()
-        .wrap(Math.min(100, yargs.terminalWidth()))
-        .argv;
+    handler: (argv: any) => cliCommand(() => start({
+        cwd: argv["change-dir"],
+        install: argv.install,
+        compile: argv.compile,
+        local: argv.local,
+    })),
+}));
+yargBuilder.build().save(yargs);
+// tslint:disable-next-line:no-unused-expression
+yargs.completion("completion")
+    .showHelpOnFail(false, "Specify --help for available options")
+    .alias("help", ["h", "?"])
+    .version(version())
+    .alias("version", "v")
+    .describe("version", "Show version information")
+    .strict()
+    .wrap(Math.min(100, yargs.terminalWidth()))
+    .argv;
 }
 
 async function main() {
+<<<<<<< HEAD
     const YargBuilder = yb.freshYargBuilder({ epilogForHelpMessage: "Copyright Atomist, Inc. 2018" });
     if (!isReservedCommand(process.argv)) {
+||||||| merged common ancestors
+    if (!isReservedCommand(process.argv)) {
+=======
+    if (shouldAddLocalSdmCommands(process.argv)) {
+>>>>>>> master
         // Lazily load sdm-local to prevent early initialization
         const sdmLocal = require("@atomist/sdm-local");
         await sdmLocal.addLocalSdmCommands(YargBuilder);
