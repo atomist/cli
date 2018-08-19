@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/0.6.0...HEAD)
 
+### Changed
+
+-   Delay loading sdm-local in gitHook.
+
 ## [0.6.0](https://github.com/atomist/cli/compare/0.5.2...0.6.0) - 2018-08-14
 
 ### Added
