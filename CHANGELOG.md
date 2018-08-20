@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
--   Update sdm-local to 0.1.8, automation-client to 0.21.1. [#ee928bc](https://github.com/atomist/cli/commit/ee928bcc578409117b78a2980c54ce3e7078ce97)
+-   Update to @atomist/sdm-local@0.1.8, @atomist/automation-client@0.21.1. [#ee928bc](https://github.com/atomist/cli/commit/ee928bcc578409117b78a2980c54ce3e7078ce97)
 
 ## [0.6.2](https://github.com/atomist/cli/compare/0.6.1...0.6.2) - 2018-08-20
 
