@@ -5,7 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased](https://github.com/atomist/cli/compare/0.6.0...HEAD)
+## [Unreleased](https://github.com/atomist/cli/compare/0.6.3...HEAD)
+
+## [0.6.3](https://github.com/atomist/cli/compare/0.6.2...0.6.3) - 2018-08-20
+
+### Changed
+
+-   Update to @atomist/sdm-local@0.1.8, @atomist/automation-client@0.21.1. [#ee928bc](https://github.com/atomist/cli/commit/ee928bcc578409117b78a2980c54ce3e7078ce97)
+
+## [0.6.2](https://github.com/atomist/cli/compare/0.6.1...0.6.2) - 2018-08-20
+
+### Changed
+
+-   Update to @atomist/sdm-local@0.1.7.
+
+## [0.6.1](https://github.com/atomist/cli/compare/0.6.0...0.6.1) - 2018-08-19
+
+### Changed
+
+-   Delay loading sdm-local in gitHook.
 
 ## [0.6.0](https://github.com/atomist/cli/compare/0.5.2...0.6.0) - 2018-08-14
 
@@ -24,21 +42,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   The `git` and `gql-gen` subcommands have been moved to automation-client.
 -   Deprecate `githook` script in favor of `git-hook` subcommand.
 
+### Removed
+
+-   **BREAKING** Remove `cmd` and `exec` aliases for `execute`.
+
 ### Fixed
 
 -   Recognize `execute` as a reserved command.
 -   Show SDM local commands in `--help` output. [#9](https://github.com/atomist/cli/issues/9)
-
-### Removed
-
--   **BREAKING** Remove `cmd` and `exec` aliases for `execute`.
 
 ## [0.5.2](https://github.com/atomist/cli/compare/0.5.1...0.5.2) - 2018-08-09
 
 ### Fixed
 
 -   Update automation-client to make running "new sdm" outside a
-    package directory possible.
 
 ## [0.5.1](https://github.com/atomist/cli/compare/0.5.0...0.5.1) - 2018-08-09
 
@@ -59,7 +76,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Improve argument processing to avoid loading SDM local commands
-    when it is unnecessary.
 
 ## [0.4.0](https://github.com/atomist/cli/compare/0.3.0...0.4.0) - 2018-08-04
 
@@ -81,9 +97,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 -   **BREAKING** Remove `--atomist-token` command-line option and its
-    `-T` alias, see `--api-key`.
 -   **BREAKING** Remove config GitHub-related command-line options,
-    see `--api-key`.
 
 ## [0.2.1](https://github.com/atomist/cli/compare/0.2.0...0.2.1) - 2018-07-31
 
@@ -104,25 +118,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   **BREAKING** Updated command-line options and arguments to use
-    workspace rather than team and atomist-token rather than token.
 -   Reorganize package structure to be more standard Node.js.
 -   Standardize command line processing.
 -   **BREAKING** Workspace ID argument to gql-fetch is now an option
-    and will be read from the user config if not provided.
 -   Use async functions where possible.
 -   Improve the tslint configuration.
+
+### Removed
+
+-   SDM configuration helpers no longer necessary.
+-   **BREAKING** Remove gql alias for gql-gen.
 
 ### Fixed
 
 -   The kube command can be run repeatedly without error.
 -   Improve config error handling.
 -   The --version command-line option should always report the right
-    version.
-
-### Removed
-
--   SDM configuration helpers no longer necessary.
--   **BREAKING** Remove gql alias for gql-gen.
 
 ## [0.1.0](https://github.com/atomist/cli/tree/0.1.0) - 2018-07-06
 

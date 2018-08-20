@@ -7,9 +7,24 @@ The Atomist CLI, a unified command-line tool for interacting with
 
 ## Prerequisites
 
-See the [Atomist getting started][enrollment] documentation.
+You will need [Node.js][node] installed to run the Atomist CLI.
 
-[enrollment]: https://docs.atomist.com/user/ (Atomist - Getting Started)
+To use local software delivery machine (SDM), you will need [Git][git]
+installed.  See the [Local SDM][sdm-local] documentation for more
+information.
+
+To interact with the Atomist API, you will need an Atomist workspace.
+See the [Atomist Getting Started Guide][atomist-start] for
+instructions on how to get an Atomist workspace and connect it to your
+source code repositories, continuous integration, chat platform, etc.
+See the [Atomist Developer Guide][atomist-dev] for more complete
+instructions on setting up your development environment.
+
+[atomist-start]: https://docs.atomist.com/user/ (Atomist - Getting Started)
+[atomist-dev]: https://docs.atomist.com/developer/prerequisites/ (Atomist - Developer Prerequisites)
+[git]: https://git-scm.com/ (Git)
+[node]: https://nodejs.org/ (Node.js)
+[sdm-local]: https://github.com/atomist/sdm-local#readme (Atomist - Local Software Delivery Machine SDM)
 
 ## Installation
 
@@ -26,6 +41,8 @@ information.
 
 ## Using
 
+You can run `atomist --help` to see the standard help message.
+
 ### Configuration
 
 You can use the Atomist CLI to configure your local environment to run
@@ -36,7 +53,7 @@ clients.
 $ atomist config
 ```
 
-See the [Atomist developer quick start][atomist-quick-start] for more
+See the [Atomist developer prerequisites][atomist-dev] for more
 information.
 
 [sdm]: https://docs.atomist.com/ (Atomist Documentation)
@@ -57,11 +74,23 @@ information.
 
 [atomist-k8]: https://docs.atomist.com/user/kubernetes/ (Atomist Kubernetes)
 
+### Fetch schema
+
+You can fetch the current version of the GraphQL schema for your
+Atomist workspace using the following command.
+
+```
+$ atomist gql-fetch
+```
+
+If you are defining custom types via registering ingestors in an SDM
+or other API client, you should download the schema in each of your
+SDM/API client projects prior to building them.
+
 ## Support
 
 General support questions should be discussed in the `#support`
-channel in our community Slack team
-at [atomist-community.slack.com][slack].
+channel in the [Atomist community Slack workspace][slack].
 
 If you find a problem, please create an [issue][].
 
@@ -75,22 +104,24 @@ You will need to install [node][] to build and test this project.
 
 ### Build and Test
 
+Use the following package scripts to build, test, and perform other
+development tasks.
+
 Command | Reason
 ------- | ------
-`npm install` | install all the required packages
-`npm run build` | lint, compile, and test
-`npm start` | start the Atomist automation client
-`npm run autostart` | run the client, refreshing when files change
-`npm run lint` | run tslint against the TypeScript
-`npm run compile` | compile all TypeScript into JavaScript
-`npm test` | run tests and ensure everything is working
-`npm run autotest` | run tests continuously
-`npm run clean` | remove stray compiled JavaScript files and build directory
+`npm install` | install project dependencies
+`npm run build` | compile, test, lint, and generate docs
+`npm start` | start the Atomist CLI
+`npm run lint` | run TSLint against the TypeScript
+`npm run compile` | compile TypeScript
+`npm test` | run tests
+`npm run autotest` | run tests every time a file changes
+`npm run clean` | remove files generated during the build
 
 ### Release
 
 Releases are managed by the [Atomist SDM][atomist-sdm].  Press the
-"Release" button in the Atomist dashboard or Slack.
+release button in the Atomist dashboard or Slack.
 
 [atomist-sdm]: https://github.com/atomist/atomist-sdm (Atomist Software Delivery Machine)
 

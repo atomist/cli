@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-import {
-    runOnGitHook,
-} from "@atomist/sdm-local";
-
 import * as print from "./print";
 
 /**
@@ -28,7 +24,8 @@ import * as print from "./print";
  */
 export async function gitHook(args: string[]): Promise<number> {
     try {
-        await runOnGitHook(args);
+        const sdmLocal = require("@atomist/sdm-local");
+        await sdmLocal.runOnGitHook(args);
     } catch (e) {
         print.error(`Failed to process Git hook: ${e.message}`);
         return 1;
