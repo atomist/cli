@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.6.2](https://github.com/atomist/cli/compare/0.6.1...0.6.2) - 2018-08-20
 
+### Changed
+
+-   Update to @atomist/sdm-local@0.1.7.
+
 ## [0.6.1](https://github.com/atomist/cli/compare/0.6.0...0.6.1) - 2018-08-19
 
 ### Changed
