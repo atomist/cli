@@ -26,6 +26,7 @@ if (!isEmbeddedSdmCommand(process.argv)) {
     process.env.ATOMIST_DISABLE_LOGGING = "true";
 }
 
+import * as yb from "@atomist/sdm-local/src/cli/invocation/command/support/yargBuilder";
 import * as yargs from "yargs";
 import { config } from "./lib/config";
 import { execute } from "./lib/execute";
@@ -38,136 +39,161 @@ import * as print from "./lib/print";
 import { start } from "./lib/start";
 import { version } from "./lib/version";
 
-function setupYargs() {
-    const commonOptions: { [key: string]: yargs.Options; } = {
+function setupYargs(yargBuilder: yb.YargBuilder) {
+    const commonOptions: { [key: string]: yb.CommandLineParameter } = {
         changeDir: {
+            parameterName: "change-dir",
             alias: "C",
             default: process.cwd(),
             describe: "Path to automation client project",
             type: "string",
         },
         compile: {
+            parameterName: "compile",
             default: true,
             describe: "Run 'npm run compile' before running",
             type: "boolean",
         },
         install: {
+            parameterName: "install",
             describe: "Run 'npm install' before running/compiling, default is to install if no " +
                 "'node_modules' directory exists",
             type: "boolean",
         },
     };
 
-    // tslint:disable-next-line:no-unused-expression
-    yargs.completion("completion")
-        .command("config", "Create Atomist user configuration", ya => {
-            return ya
-                .option("api-key", {
-                    describe: "Atomist API key",
-                    type: "string",
-                })
-                .option("workspace-id", {
-                    describe: "Atomist workspace ID",
-                    type: "string",
-                });
-        }, argv => cliCommand(() => config({
+    yargBuilder.command({
+        command: "config",
+        describe: "Create Atomist user configuration",
+        parameters: [{
+            parameterName: "api-key",
+            describe: "Atomist API key",
+            type: "string",
+
+        }, {
+            parameterName: "workspace-id",
+            describe: "Atomist workspace ID",
+            type: "string",
+        }],
+        handler: argv => cliCommand(() => config({
             apiKey: argv["api-key"],
             workspaceId: argv["workspace-id"],
-        })))
-        .command("execute <name>", "Run a command", ya => {
-            return ya
-                .positional("name", {
-                    describe: "Name of command to run, command parameters PARAM=VALUE can follow",
-                })
-                .option("change-dir", commonOptions.changeDir)
-                .option("compile", commonOptions.compile)
-                .option("install", commonOptions.install);
-        }, argv => cliCommand(() => execute({
+
+        })),
+    });
+    yargBuilder.command({
+        command: "execute <name>",
+        describe: "Run a command",
+        positional: [{
+            key: "name", opts: {
+                describe: "Name of command to run, command parameters PARAM=VALUE can follow",
+            },
+        }],
+        parameters: [commonOptions.changeDir, commonOptions.install, commonOptions.changeDir],
+        handler: argv => cliCommand(() => execute({
             name: argv.name,
             cwd: argv["change-dir"],
             compile: argv.compile,
             install: argv.install,
             args: argv._.filter(a => a !== "execute" && a !== "exec" && a !== "cmd"),
-        })))
-        .command("git", "[DEPRECATED] Create a git-info.json file for an Atomist client", ya => {
-            return ya
-                .option("change-dir", commonOptions.changeDir);
-        }, argv => cliCommand(() => git({
+        })),
+    });
+
+    yargBuilder.command({
+        command: "git",
+        describe: "[DEPRECATED] Create a git-info.json file for an Atomist client",
+        parameters: [commonOptions.changeDir],
+        handler: argv => cliCommand(() => git({
+
             cwd: argv["change-dir"],
-        })))
-        .command("git-hook", "Process Git hook data for local SDM", ya => {
-            return ya;
-        }, argv => cliCommand(() => gitHook(process.argv)))
-        .command("gql-fetch", "Retrieve GraphQL schema", (ya: yargs.Argv) => {
-            return ya
-                .option("change-dir", commonOptions.changeDir)
-                .option("install", commonOptions.install);
-        }, argv => cliCommand(() => gqlFetch({
+
+        })),
+    });
+    yargBuilder.command({
+        command: "git-hook",
+        describe: "Process Git hook data for local SDM",
+        handler: argv => cliCommand(() => gitHook(process.argv)),
+    });
+    yargBuilder.command({
+        command: "gql-fetch", describe: "Retrieve GraphQL schema",
+        parameters: [commonOptions.changeDir, commonOptions.install],
+        handler: argv => cliCommand(() => gqlFetch({
             cwd: argv["change-dir"],
             install: argv.install,
-        })))
-        .command("gql-gen <glob>", "[DEPRECATED] Generate TypeScript code for GraphQL", ya => {
-            return ya
-                .option("change-dir", commonOptions.changeDir)
-                .option("install", commonOptions.install);
-        }, argv => cliCommand(() => gqlGen({
+        })),
+    });
+    yargBuilder.command({
+        command:
+            "gql-gen <glob>",
+        describe: "Generate TypeScript code for GraphQL",
+        parameters: [commonOptions.changeDir, commonOptions.install],
+        handler: argv => cliCommand(() => gqlGen({
             glob: argv.glob,
             cwd: argv["change-dir"],
             install: argv.install,
-        })))
-        .command("kube", "Deploy Atomist utilities to Kubernetes cluster", ya => {
-            return ya
-                .option("environment", {
-                    describe: "Informative name for yout Kubernetes cluster",
-                    type: "string",
-                })
-                .option("namespace", {
-                    describe: "Deploy utilities in namespace mode",
-                    type: "string",
-                });
-        }, argv => cliCommand(() => kube({
+        })),
+    });
+    yargBuilder.withSubcommand({
+        command: "kube", describe: "Deploy Atomist utilities to Kubernetes cluster",
+        parameters: [{
+            parameterName: "environment",
+            describe: "Informative name for yout Kubernetes cluster",
+            type: "string",
+        }, {
+            parameterName: "namespace",
+            describe: "Deploy utilities in namespace mode",
+            type: "string",
+        }],
+        handler: (argv: any) => cliCommand(() => kube({
             env: argv.environment,
             ns: argv.namespace,
-        })))
-        .command("start", "Start an SDM or automation client", ya => {
-            return ya
-                .option("change-dir", commonOptions.changeDir)
-                .option("compile", commonOptions.compile)
-                .option("install", commonOptions.install)
-                .option("local", {
-                    default: false,
-                    describe: "Start SDM in local mode",
-                    type: "boolean",
-                });
-        }, argv => cliCommand(() => start({
+        })),
+    });
+    yargBuilder.withSubcommand({
+        command: "start",
+        describe: "Start an SDM or automation client",
+        parameters: [
+            commonOptions.changeDir,
+            commonOptions.compile,
+            commonOptions.install, {
+                parameterName: "local",
+                default: false,
+                describe: "Start SDM in local mode",
+                type: "boolean",
+            }],
+        handler: (argv: any) => cliCommand(() => start({
             cwd: argv["change-dir"],
             install: argv.install,
             compile: argv.compile,
             local: argv.local,
-        })))
-        .epilog("Copyright Atomist, Inc. 2018")
+        })),
+    });
+    yargBuilder.build().save(yargs);
+    // tslint:disable-next-line:no-unused-expression
+    yargs.completion("completion")
         .showHelpOnFail(false, "Specify --help for available options")
         .alias("help", ["h", "?"])
         .version(version())
         .alias("version", "v")
         .describe("version", "Show version information")
-        .demandCommand(1, "Missing command.\n\tType 'atomist new sdm' to create a new SDM")
         .strict()
         .wrap(Math.min(100, yargs.terminalWidth()))
         .argv;
 }
 
 async function main() {
+    const YargBuilder = yb.freshYargBuilder({ epilogForHelpMessage: "Copyright Atomist, Inc. 2018" });
     if (shouldAddLocalSdmCommands(process.argv)) {
         // Lazily load sdm-local to prevent early initialization
         const sdmLocal = require("@atomist/sdm-local");
-        await sdmLocal.addLocalSdmCommands(yargs);
+        await sdmLocal.addLocalSdmCommands(YargBuilder);
     }
-    setupYargs();
+    setupYargs(YargBuilder);
 }
 
 main()
-    .catch(err => {
+    .catch((err: Error) => {
         print.error(`Unhandled error: ${err.message}`);
+        print.error(err.stack);
         process.exit(102);
     });
