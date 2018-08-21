@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import * as path from "path";
 import {
     spawnJs,
     SpawnOptions,
@@ -38,7 +39,7 @@ export async function start(opts: StartOptions): Promise<number> {
 
     const spawnOpts = {
         ...opts,
-        command: "start.client.js",
+        command: path.join("bin", "start.js"),
         args: [] as string[],
     };
     return spawnJs(spawnOpts);
