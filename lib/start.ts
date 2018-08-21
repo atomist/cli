@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import * as path from "path";
 import {
-    spawnJs,
+    spawnBinary,
     SpawnOptions,
 } from "./spawn";
 
@@ -39,8 +38,8 @@ export async function start(opts: StartOptions): Promise<number> {
 
     const spawnOpts = {
         ...opts,
-        command: path.join("bin", "start.js"),
+        command: "atm-start",
         args: [] as string[],
     };
-    return spawnJs(spawnOpts);
+    return spawnBinary(spawnOpts);
 }

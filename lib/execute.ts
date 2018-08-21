@@ -20,7 +20,7 @@ import {
 import * as stringify from "json-stringify-safe";
 
 import { extractArgs } from "./command";
-import { spawnJs } from "./spawn";
+import { spawnBinary } from "./spawn";
 
 /**
  * Command-line options and arguments for execute.
@@ -52,8 +52,8 @@ export async function execute(opts: ExecuteOptions): Promise<number> {
     };
     const spawnOpts = {
         ...opts,
-        command: "start.command.js",
+        command: "atm-command",
         args: [stringify(ci)],
     };
-    return spawnJs(spawnOpts);
+    return spawnBinary(spawnOpts);
 }

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/0.6.4...HEAD)
 
+### Changed
+
+-   Use @atomist/automation-client bin scripts.
+
 ## [0.6.4](https://github.com/atomist/cli/compare/0.6.3...0.6.4) - 2018-08-21
 
 ### Fixed
