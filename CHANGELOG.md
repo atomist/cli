@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/0.6.3...HEAD)
 
+### Fixed
+
+-   Commands not working on MS Windows. [#2](https://github.com/atomist/cli/issues/2)
+
 ## [0.6.3](https://github.com/atomist/cli/compare/0.6.2...0.6.3) - 2018-08-20
 
 ### Changed
