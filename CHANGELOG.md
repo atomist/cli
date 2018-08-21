@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Commands not working on MS Windows. [#2](https://github.com/atomist/cli/issues/2)
+-   Get rid of deprecation warnings when installing cli. [#11](https://github.com/atomist/cli/issues/11)
 
 ## [0.6.3](https://github.com/atomist/cli/compare/0.6.2...0.6.3) - 2018-08-20
 
