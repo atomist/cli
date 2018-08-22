@@ -21,7 +21,7 @@
     "@atomist/automation-client": "^0.21.4",
     "@atomist/sdm": "^0.4.3",
     "@atomist/sdm-core": "^0.4.5",
-    "@atomist/sdm-local": "^0.1.10",
+    "@atomist/sdm-local": "^0.1.11",
     "@octokit/rest": "^15.10.0",
     "@types/cross-spawn": "^6.0.0",
     "@types/fs-extra": "^5.0.3",
