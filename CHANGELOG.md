@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/0.6.5...HEAD)
 
+### Added
+
+-   Add sourcemap support. [#12](https://github.com/atomist/cli/issues/12)
+
 ## [0.6.5](https://github.com/atomist/cli/compare/0.6.4...0.6.5) - 2018-08-22
 
 ### Changed
