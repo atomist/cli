@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+import "source-map-support/register";
+
 import {
     cliCommand,
     isEmbeddedSdmCommand,
