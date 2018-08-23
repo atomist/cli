@@ -18,7 +18,7 @@
     "cli"
   ],
   "dependencies": {
-    "@atomist/automation-client": "^0.21.5",
+    "@atomist/automation-client": "^0.21.6",
     "@atomist/sdm": "^0.4.5",
     "@atomist/sdm-core": "^0.4.7",
     "@atomist/sdm-local": "^0.1.12",
