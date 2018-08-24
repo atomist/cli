@@ -19,9 +19,9 @@
   ],
   "dependencies": {
     "@atomist/automation-client": "^0.21.7",
-    "@atomist/sdm": "^0.4.5",
-    "@atomist/sdm-core": "^0.4.7",
-    "@atomist/sdm-local": "^0.1.13",
+    "@atomist/sdm": "^0.4.7",
+    "@atomist/sdm-core": "^0.4.9",
+    "@atomist/sdm-local": "^0.1.14",
     "@octokit/rest": "^15.10.0",
     "@types/cross-spawn": "^6.0.0",
     "@types/fs-extra": "^5.0.3",
