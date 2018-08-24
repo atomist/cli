@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/0.6.6...HEAD)
 
+### Added
+
+-   Add postInstall message. [#11a7e91](https://github.com/atomist/cli/commit/11a7e9105582232e5f22c9a6bd9122472338972d)
+
 ## [0.6.6](https://github.com/atomist/cli/compare/0.6.5...0.6.6) - 2018-08-24
 
 ### Added
