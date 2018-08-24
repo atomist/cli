@@ -21,8 +21,7 @@
     "@atomist/automation-client": "^0.21.7",
     "@atomist/sdm": "^0.4.7",
     "@atomist/sdm-core": "^0.4.9",
-    "@atomist/sdm-local": "^0.1.14",
-    "@octokit/rest": "^15.10.0",
+    "@atomist/sdm-local": "^0.1.15-20180824091441",
     "@types/cross-spawn": "^6.0.0",
     "@types/fs-extra": "^5.0.3",
     "@types/glob": "^5.0.35",
@@ -54,8 +53,7 @@
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "typedoc": "^0.11.1",
-    "typescript": "^2.9.2",
-    "typescript-formatter": "^7.2.2"
+    "typescript": "^2.9.2"
   },
   "directories": {
     "test": "test"
@@ -71,9 +69,9 @@
     "clean:doc": "rimraf doc",
     "compile": "tsc --project .",
     "doc": "typedoc --mode modules --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc index.ts lib",
-    "fmt": "tsfmt --replace",
     "lint": "tslint --format verbose --project . --exclude \"node_modules/**\" --exclude \"**/*.d.ts\" \"**/*.ts\"",
     "lint:fix": "npm run lint -- --fix",
+    "postinstall": "node lib/postInstall.js",
     "start": "node index.js",
     "test": "mocha --require espower-typescript/guess \"test/**/*.test.ts\"",
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\"",
