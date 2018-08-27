@@ -1,14 +1,15 @@
-"use strict";
 /* Adding the JS directly because we can't depend on TS files for the postInstall hook */
-Object.defineProperty(exports, "__esModule", { value: true });
-const automation_client_1 = require("@atomist/automation-client");
-const fs = require("fs-extra");
-const TerminalRenderer = require("marked-terminal");
-const marked = require("marked");
+
+import { userConfigPath } from "@atomist/automation-client";
+import * as fs from "fs-extra";
+import * as TerminalRenderer from "marked-terminal";
+import marked = require("marked");
+
 marked.setOptions({
     // Define custom renderer
     renderer: new TerminalRenderer(),
 });
+
 const Banner = `┌──────────────────────────────────────────────────────────────────────────┐
 │                                                                          │
 │   🙌 @atomist/cli is now installed.                                      │
@@ -16,8 +17,8 @@ const Banner = `┌────────────────────�
 │   Head to the sdm repo (https://github.com/atomist/sdm) for more info.   │
 │                                                                          │
 └──────────────────────────────────────────────────────────────────────────┘`;
+
 // Show an informative and friendly welcome message
-if (!fs.existsSync(automation_client_1.userConfigPath())) {
+if (!fs.existsSync(userConfigPath())) {
     process.stdout.write(marked(Banner).trim() + "\n\n");
 }
-//# sourceMappingURL=postInstall.js.map
