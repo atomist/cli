@@ -2,8 +2,8 @@
 
 import { userConfigPath } from "@atomist/automation-client";
 import * as fs from "fs-extra";
-import * as TerminalRenderer from "marked-terminal";
 import marked = require("marked");
+import * as TerminalRenderer from "marked-terminal";
 
 marked.setOptions({
     // Define custom renderer
