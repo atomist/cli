@@ -9,7 +9,7 @@
 .atomist/
 node_modules/
 build/
-doc/
+docs/
 logs/
 src/
 test/

@@ -9,7 +9,6 @@
 /config/
 /scripts/
 /test/
-/doc/
 /CO*.md
 /Dockerfile
 *.log
