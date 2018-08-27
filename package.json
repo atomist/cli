@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "@atomist/automation-client": "^0.21.8",
-    "@atomist/sdm": "^0.4.7",
+    "@atomist/sdm": "^0.4.8",
     "@atomist/sdm-core": "^0.4.10",
     "@atomist/sdm-local": "^0.1.21",
     "@types/cross-spawn": "^6.0.0",
