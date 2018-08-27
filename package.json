@@ -72,7 +72,7 @@
     "lint": "tslint --format verbose --project . --exclude \"node_modules/**\" --exclude \"**/*.d.ts\" \"**/*.ts\"",
     "lint:fix": "npm run lint -- --fix",
     "postinstall": "run-s postinstall:compile postinstall:run",
-    "postinstall:compile": "tsc lib/postInstall.ts --lib ES2017,DOM,esnext.asynciterable",
+    "postinstall:compile": "tsc ./lib/postInstall.ts --lib ES2017,DOM,esnext.asynciterable",
     "postinstall:run": "node lib/postInstall.js",
     "start": "node index.js",
     "test": "mocha --require espower-typescript/guess \"test/**/*.test.ts\"",
