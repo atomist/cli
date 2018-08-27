@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/1.0.0-M.1...HEAD)
 
+### Fixed
+
+-   `atomist help` fails to show output. [#21](https://github.com/atomist/cli/issues/21)
+
 ## [1.0.0-M.1](https://github.com/atomist/cli/compare/0.6.7...1.0.0-M.1) - 2018-08-27
 
 ## [0.6.7](https://github.com/atomist/cli/compare/0.6.6...0.6.7) - 2018-08-25
