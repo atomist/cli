@@ -21,7 +21,7 @@
     "@atomist/automation-client": "1.0.0-M.1",
     "@atomist/sdm": "1.0.0-M.1",
     "@atomist/sdm-core": "1.0.0-M.1",
-    "@atomist/sdm-local": "1.0.0-M.1",
+    "@atomist/sdm-local": "1.0.0-master.20180827160515",
     "@types/cross-spawn": "^6.0.0",
     "@types/fs-extra": "^5.0.3",
     "@types/glob": "^5.0.35",
