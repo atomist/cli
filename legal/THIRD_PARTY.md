@@ -19,7 +19,7 @@ This page details all runtime OSS dependencies of `@atomist/cli`.
 |[Custom: https://github.com/douglascrockford/JSON-js](#custom-httpsgithubcomdouglascrockfordjson-js)|1|
 |[GPL-3.0](#gpl-30)|5|
 |[ISC](#isc)|114|
-|[MIT](#mit)|631|
+|[MIT](#mit)|632|
 |[Public Domain](#public-domain)|1|
 |[Unlicense](#unlicense)|1|
 |[WTFPL](#wtfpl)|4|
@@ -672,6 +672,7 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`make-dir`|`1.3.0`|Sindre Sorhus|[https://github.com/sindresorhus/make-dir](https://github.com/sindresorhus/make-dir)|
 |`marked-terminal`|`3.1.1`|Mikael Brevik|[https://github.com/mikaelbr/marked-terminal](https://github.com/mikaelbr/marked-terminal)|
 |`marked`|`0.4.0`|Christopher Jeffrey|[https://github.com/markedjs/marked](https://github.com/markedjs/marked)|
+|`marked`|`0.5.0`|Christopher Jeffrey|[https://github.com/markedjs/marked](https://github.com/markedjs/marked)|
 |`meant`|`1.0.1`|Daijiro Wachi|[https://github.com/watilde/meant](https://github.com/watilde/meant)|
 |`media-typer`|`0.3.0`|Douglas Christopher Wilson|[https://github.com/jshttp/media-typer](https://github.com/jshttp/media-typer)|
 |`mem`|`1.1.0`|Sindre Sorhus|[https://github.com/sindresorhus/mem](https://github.com/sindresorhus/mem)|
