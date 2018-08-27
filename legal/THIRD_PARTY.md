@@ -37,9 +37,9 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
-|`@atomist/sdm-core`|`0.4.9`|Atomist, Inc.|[https://github.com/atomist/sdm-core](https://github.com/atomist/sdm-core)|
-|`@atomist/sdm-local`|`0.1.20`|Atomist, Inc.|[https://github.com/atomist/sdm-local](https://github.com/atomist/sdm-local)|
-|`@atomist/sdm`|`0.4.7`|Atomist, Inc.|[https://github.com/atomist/sdm](https://github.com/atomist/sdm)|
+|`@atomist/sdm-core`|`1.0.0-M.1`|Atomist, Inc.|[https://github.com/atomist/sdm-core](https://github.com/atomist/sdm-core)|
+|`@atomist/sdm-local`|`1.0.0-M.1`|Atomist, Inc.|[https://github.com/atomist/sdm-local](https://github.com/atomist/sdm-local)|
+|`@atomist/sdm`|`1.0.0-M.1`|Atomist, Inc.|[https://github.com/atomist/sdm](https://github.com/atomist/sdm)|
 |`@atomist/slack-messages`|`0.12.1`|Atomist|[https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)|
 |`JSONStream`|`1.3.3`|Dominic Tarr|[https://github.com/dominictarr/JSONStream](https://github.com/dominictarr/JSONStream)|
 |`aws-sign2`|`0.7.0`|Mikeal Rogers|[https://github.com/mikeal/aws-sign](https://github.com/mikeal/aws-sign)|
@@ -171,7 +171,7 @@ GNU General Public License v3.0 only - [http://www.gnu.org/licenses/gpl-3.0-stan
 
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
-|`@atomist/automation-client`|`0.21.8`|Atomist, Inc.|[https://github.com/atomist/automation-client-ts](https://github.com/atomist/automation-client-ts)|
+|`@atomist/automation-client`|`1.0.0-M.1`|Atomist, Inc.|[https://github.com/atomist/automation-client-ts](https://github.com/atomist/automation-client-ts)|
 |`@atomist/microgrammar`|`0.7.0`|Atomist|[https://github.com/atomist/microgrammar](https://github.com/atomist/microgrammar)|
 |`@atomist/microgrammar`|`0.8.1`|Atomist|[https://github.com/atomist/microgrammar](https://github.com/atomist/microgrammar)|
 |`@atomist/microgrammar`|`0.9.1`|Atomist|[https://github.com/atomist/microgrammar](https://github.com/atomist/microgrammar)|
@@ -388,13 +388,13 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`ansicolors`|`0.3.2`|Thorsten Lorenz|[https://github.com/thlorenz/ansicolors](https://github.com/thlorenz/ansicolors)|
 |`ansistyles`|`0.1.3`|Thorsten Lorenz|[https://github.com/thlorenz/ansistyles](https://github.com/thlorenz/ansistyles)|
 |`apollo-cache-inmemory`|`1.2.8`|James Baxley|[https://github.com/apollographql/apollo-client](https://github.com/apollographql/apollo-client)|
-|`apollo-cache`|`1.1.15`|James Baxley|[https://github.com/apollographql/apollo-client](https://github.com/apollographql/apollo-client)|
-|`apollo-client`|`2.4.0`|Sashko Stubailo|[https://github.com/apollographql/apollo-client](https://github.com/apollographql/apollo-client)|
+|`apollo-cache`|`1.1.16`|James Baxley|[https://github.com/apollographql/apollo-client](https://github.com/apollographql/apollo-client)|
+|`apollo-client`|`2.4.1`|Sashko Stubailo|[https://github.com/apollographql/apollo-client](https://github.com/apollographql/apollo-client)|
 |`apollo-link-dedup`|`1.0.9`|Evans Hauser|[https://github.com/apollographql/apollo-link](https://github.com/apollographql/apollo-link)|
 |`apollo-link-http-common`|`0.2.4`|Evans Hauser|[https://github.com/apollographql/apollo-link](https://github.com/apollographql/apollo-link)|
 |`apollo-link-http`|`1.5.4`|Evans Hauser|[https://github.com/apollographql/apollo-link](https://github.com/apollographql/apollo-link)|
 |`apollo-link`|`1.2.2`|Evans Hauser|[https://github.com/apollographql/apollo-link](https://github.com/apollographql/apollo-link)|
-|`apollo-utilities`|`1.0.19`|James Baxley|[https://github.com/apollographql/apollo-client](https://github.com/apollographql/apollo-client)|
+|`apollo-utilities`|`1.0.20`|James Baxley|[https://github.com/apollographql/apollo-client](https://github.com/apollographql/apollo-client)|
 |`app-root-path`|`2.1.0`|Chris Morrell|[https://github.com/inxilpro/node-app-root-path](https://github.com/inxilpro/node-app-root-path)|
 |`archy`|`1.0.0`|James Halliday|[https://github.com/substack/node-archy](https://github.com/substack/node-archy)|
 |`array-filter`|`0.0.1`|Julian Gruber|[https://github.com/juliangruber/array-filter](https://github.com/juliangruber/array-filter)|
@@ -576,7 +576,7 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`glob-stream`|`6.1.0`|Gulp Team|[https://github.com/gulpjs/glob-stream](https://github.com/gulpjs/glob-stream)|
 |`global-dirs`|`0.1.1`|Sindre Sorhus|[https://github.com/sindresorhus/global-dirs](https://github.com/sindresorhus/global-dirs)|
 |`got`|`6.7.1`||[https://github.com/sindresorhus/got](https://github.com/sindresorhus/got)|
-|`graphql-anywhere`|`4.1.17`|Sashko Stubailo|[https://github.com/apollographql/graphql-anywhere](https://github.com/apollographql/graphql-anywhere)|
+|`graphql-anywhere`|`4.1.18`|Sashko Stubailo|[https://github.com/apollographql/graphql-anywhere](https://github.com/apollographql/graphql-anywhere)|
 |`graphql-code-generator`|`0.8.21`|Dotan Simha|[https://github.com/dotansimha/graphql-codegen](https://github.com/dotansimha/graphql-codegen)|
 |`graphql-codegen-compiler`|`0.8.21`|||
 |`graphql-codegen-core`|`0.8.21`|Dotan Simha|[https://github.com/dotansimha/graphql-codegen](https://github.com/dotansimha/graphql-codegen)|
@@ -708,9 +708,9 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`methods`|`1.1.2`||[https://github.com/jshttp/methods](https://github.com/jshttp/methods)|
 |`metrics`|`0.1.17`|Mike Ihbe|[https://github.com/mikejihbe/metrics](https://github.com/mikejihbe/metrics)|
 |`mime-db`|`1.33.0`||[https://github.com/jshttp/mime-db](https://github.com/jshttp/mime-db)|
-|`mime-db`|`1.35.0`||[https://github.com/jshttp/mime-db](https://github.com/jshttp/mime-db)|
+|`mime-db`|`1.36.0`||[https://github.com/jshttp/mime-db](https://github.com/jshttp/mime-db)|
 |`mime-types`|`2.1.18`||[https://github.com/jshttp/mime-types](https://github.com/jshttp/mime-types)|
-|`mime-types`|`2.1.19`||[https://github.com/jshttp/mime-types](https://github.com/jshttp/mime-types)|
+|`mime-types`|`2.1.20`||[https://github.com/jshttp/mime-types](https://github.com/jshttp/mime-types)|
 |`mime`|`1.4.1`|Robert Kieffer|[https://github.com/broofa/node-mime](https://github.com/broofa/node-mime)|
 |`mimic-fn`|`1.2.0`|Sindre Sorhus|[https://github.com/sindresorhus/mimic-fn](https://github.com/sindresorhus/mimic-fn)|
 |`minimist`|`0.0.10`|James Halliday|[https://github.com/substack/minimist](https://github.com/substack/minimist)|
