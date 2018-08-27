@@ -18,8 +18,6 @@ import {
     Arg,
 } from "@atomist/automation-client";
 
-import * as print from "./print";
-
 /**
  * Determine whether sdm-local commands should be loaded.  To improve
  * startup times and eliminate client startup when unnecessary, we do
@@ -72,7 +70,7 @@ export async function cliCommand(fn: () => Promise<number>): Promise<never> {
         const status = await fn();
         process.exit(status);
     } catch (e) {
-        print.error(`Unhandled Error: ${e.message}`);
+        process.stderr.write(`Unhandled Error: ${e.message}`);
         process.exit(101);
     }
     throw new Error("You will not get here. You have exited.");
