@@ -3,8 +3,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const automation_client_1 = require("@atomist/automation-client");
 const fs = require("fs-extra");
-const TerminalRenderer = require("marked-terminal");
 const marked = require("marked");
+const TerminalRenderer = require("marked-terminal");
 marked.setOptions({
     // Define custom renderer
     renderer: new TerminalRenderer(),
