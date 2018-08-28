@@ -15,6 +15,7 @@
  */
 
 import * as readPkgUp from "read-pkg-up";
+import * as _ from "lodash";
 
 import * as print from "./print";
 
@@ -22,13 +23,21 @@ import * as print from "./print";
  * Read package name and version from nearest package.json and return
  * standard CLI package and version string.
  *
- * @return Promise of standard version string
+ * @return standard version string
  */
 export function version(): string {
     try {
         // must be sync because yargs.version only accepts a string
         const pj = readPkgUp.sync({ cwd: __dirname });
-        return `${pj.pkg.name} ${pj.pkg.version}`;
+        const dependencies: string[] = [];
+        _.forEach(pj.pkg.dependencies, (v, k) => {
+            if (k.startsWith("@atomist/")) {
+                dependencies.push(`${k} ${v}`);
+            }
+        });
+        return `${pj.pkg.name} ${pj.pkg.version}
+
+${dependencies.sort((d1, d2) => d1.localeCompare(d2)).join("\n")}`;
     } catch (e) {
         print.error(`Failed to read package.json: ${e.message}`);
     }
