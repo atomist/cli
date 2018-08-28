@@ -2,7 +2,11 @@
   "name": "@atomist/cli",
   "version": "1.0.0",
   "description": "The Atomist CLI",
-  "author": "Atomist",
+  "author": {
+    "name": "Atomist",
+    "email": "support@atomist.com",
+    "url": "https://atomist.com/"
+  },
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -81,8 +85,7 @@
   },
   "bin": {
     "atomist": "./index.js",
-    "@atomist": "./index.js",
-    "atomist-githook": "./githook.js"
+    "@atomist": "./index.js"
   },
   "engines": {
     "node": ">=8.0.0",
