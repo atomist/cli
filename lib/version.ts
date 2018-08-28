@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import * as readPkgUp from "read-pkg-up";
 import * as _ from "lodash";
+import * as readPkgUp from "read-pkg-up";
 
 import * as print from "./print";
 
