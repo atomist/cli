@@ -55,14 +55,9 @@ export async function config(opts: ConfigOptions): Promise<number> {
     }
     const configPath = userConfigPath();
 
+    let safeKey: string;
     if (userConfig.apiKey) {
-        const safeKey = maskString(userConfig.apiKey);
-        print.log(`
-Your user configuration already has an API key.
-  ${safeKey}
-To leave your API key unchanged, press enter when prompted for the API
-key.
-`);
+        safeKey = maskString(userConfig.apiKey);
     } else {
         print.log(`
 As part of the Atomist configuration, you need an Atomist API key.
@@ -85,16 +80,17 @@ Atomist web application: https://app.atomist.com/apiKeys
             default: (userConfig.workspaceIds.length > 0) ? userConfig.workspaceIds.join(" ") : undefined,
         },
         {
-            type: "password",
+            type: "input",
             name: "apiKey",
             message: "API Key",
+            transformer: maskString,
             validate: value => {
                 if (value.length < 1) {
                     return `The API key you entered is empty`;
                 }
                 return true;
             },
-            default: (userConfig.apiKey) ? userConfig.apiKey : undefined,
+            default: (safeKey) ? safeKey : undefined,
         },
     ];
 
@@ -104,7 +100,7 @@ Atomist web application: https://app.atomist.com/apiKeys
             userConfig.workspaceIds = (answers.workspaceIds as string).split(/\s+/);
         }
 
-        if (answers.apiKey) {
+        if (answers.apiKey && answers.apiKey !== safeKey) {
             userConfig.apiKey = answers.apiKey;
         }
 

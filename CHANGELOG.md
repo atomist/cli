@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/1.0.0-M.1...HEAD)
 
+### Changed
+
+-   Provided masked API key default and input. [#23](https://github.com/atomist/cli/issues/23)
+
 ### Fixed
 
 -   `atomist help` fails to show output. [#21](https://github.com/atomist/cli/issues/21)
