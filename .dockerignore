@@ -9,8 +9,8 @@
 .atomist/
 node_modules/
 build/
-docs/
-logs/
+doc/
+log/
 src/
 test/
 CO*.md

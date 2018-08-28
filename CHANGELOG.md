@@ -5,17 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased](https://github.com/atomist/cli/compare/1.0.0-M.1...HEAD)
+## [Unreleased](https://github.com/atomist/cli/compare/1.0.0-M.2...HEAD)
 
 ### Changed
 
 -   Provided masked API key default and input. [#23](https://github.com/atomist/cli/issues/23)
 
+## [1.0.0-M.2](https://github.com/atomist/cli/compare/1.0.0-M.1...1.0.0-M.2)
+
+### Changed
+
+-   Update sdm-local and automation-client.
+
 ### Fixed
 
 -   `atomist help` fails to show output. [#21](https://github.com/atomist/cli/issues/21)
+-   Fix postInstall banner resolution.
 
 ## [1.0.0-M.1](https://github.com/atomist/cli/compare/0.6.7...1.0.0-M.1) - 2018-08-27
+
+### Changed
+
+-   Provide postInstall script as JavaScript.
+-   Update Atomist dependencies to 1.0.0 Milestone 1 versions.
 
 ## [0.6.7](https://github.com/atomist/cli/compare/0.6.6...0.6.7) - 2018-08-25
 

@@ -6,8 +6,14 @@
 .dockerignore
 .gitignore
 .npmrc*
+.travis.yml
+.atomist/
+/build/
+/doc/
 /config/
+/log/
 /scripts/
+/src/
 /test/
 /CO*.md
 /Dockerfile
