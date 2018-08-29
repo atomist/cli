@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Provided masked API key default and input. [#23](https://github.com/atomist/cli/issues/23)
 -   Print more version information in --version. [#26](https://github.com/atomist/cli/issues/26)
 
+### Removed
+
+-   Remove deprecated scripts. [#24](https://github.com/atomist/cli/issues/24)
+
 ## [1.0.0-M.2](https://github.com/atomist/cli/compare/1.0.0-M.1...1.0.0-M.2)
 
 ### Changed
