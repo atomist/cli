@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
  * Copyright © 2018 Atomist, Inc.
  *
@@ -16,12 +14,4 @@
  * limitations under the License.
  */
 
-process.env.ATOMIST_DISABLE_LOGGING = "true";
-
-import { runOnGitHook } from "@atomist/sdm-local";
-
-process.stderr.write(`githook: [WARN] The githook script is deprecated.  Use 'atomist git-hook'.`);
-runOnGitHook(process.argv).catch(err => {
-    process.stderr.write(err.message + "\n");
-    process.exit(1);
-});
+export {};
