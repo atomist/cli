@@ -29,7 +29,7 @@ if (!isEmbeddedSdmCommand(process.argv)) {
     process.env.ATOMIST_DISABLE_LOGGING = "true";
 }
 
-import * as yb from "@atomist/sdm-local/src/cli/invocation/command/support/yargBuilder";
+import * as yb from "@atomist/sdm-local/lib/cli/invocation/command/support/yargBuilder";
 import * as yargs from "yargs";
 import { config } from "./lib/config";
 import { execute } from "./lib/execute";
