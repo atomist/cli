@@ -76,7 +76,7 @@
     "clean:run": "rimraf *-v8.log profile.txt log",
     "clean:doc": "rimraf doc",
     "compile": "tsc --project .",
-    "doc": "typedoc --mode modules --ignoreCompilerErrors --exclude \"**/*.d.ts\" --out doc index.ts lib",
+    "doc": "typedoc --mode modules --ignoreCompilerErrors --excludeExternals --exclude \"**/*.d.ts\" --out doc index.ts lib",
     "lint": "tslint --format verbose --project . --exclude \"node_modules/**\" --exclude \"**/*.d.ts\" \"**/*.ts\"",
     "lint:fix": "npm run lint -- --fix",
     "postinstall": "node bin/postInstall.js",
