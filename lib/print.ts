@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-import {
-    LoggingConfig,
-} from "@atomist/automation-client";
-LoggingConfig.format = "cli";
-
 /** CLI package */
 const pkg = "atomist";
 

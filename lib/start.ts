@@ -34,8 +34,6 @@ export async function start(opts: StartOptions): Promise<number> {
     if (opts.local) {
         process.env.ATOMIST_MODE = "local";
     }
-    delete process.env.ATOMIST_DISABLE_LOGGING;
-
     const spawnOpts = {
         ...opts,
         command: "atm-start",
