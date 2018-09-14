@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    Arg,
-} from "@atomist/automation-client";
+import { Arg } from "@atomist/automation-client/lib/internal/invoker/Payload";
 
 /**
  * Determine whether sdm-local commands should be loaded.  To improve
