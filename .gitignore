@@ -10,7 +10,9 @@ node_modules/
 *.js.map
 *.log
 *.txt
+/.nyc_output/
 /build/
+/coverage/
 /doc/
 /log/
 git-info.json
