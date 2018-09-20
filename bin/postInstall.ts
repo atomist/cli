@@ -16,14 +16,12 @@
  */
 
 // If you change this file, commit both this file and the generated
-// .js, .d.ts., and .js.map because we cannot execite TypeScript in
+// .js, .d.ts., and .js.map because we cannot execute TypeScript in
 // the postInstall hook because the devDependencies might not be
 // available.
 
 import { userConfigPath } from "@atomist/automation-client";
 import * as fs from "fs-extra";
-import marked = require("marked");
-import * as TerminalRenderer from "marked-terminal";
 
 function printErr(e: Error): void {
     process.stderr.write(`@atomist/cli:postInstall [ERROR] ${e.message}\n`);
@@ -32,10 +30,6 @@ function printErr(e: Error): void {
 async function main() {
 
     try {
-        marked.setOptions({
-            // define custom renderer
-            renderer: new TerminalRenderer(),
-        });
 
         const banner = `┌──────────────────────────────────────────────────────────────────────────┐
 │                                                                          │
@@ -43,11 +37,13 @@ async function main() {
 │                                                                          │
 │   Head to the SDM repo (https://github.com/atomist/sdm) for more info.   │
 │                                                                          │
-└──────────────────────────────────────────────────────────────────────────┘`;
+└──────────────────────────────────────────────────────────────────────────┘
+
+`;
 
         // show an informative and friendly welcome message
-        if (fs.existsSync(userConfigPath())) {
-            process.stdout.write(marked(banner).trim() + "\n\n");
+        if (!fs.existsSync(userConfigPath())) {
+            process.stdout.write(banner);
         }
     } catch (e) {
         printErr(e);

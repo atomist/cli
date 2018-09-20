@@ -11,28 +11,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const automation_client_1 = require("@atomist/automation-client");
 const fs = require("fs-extra");
-const marked = require("marked");
-const TerminalRenderer = require("marked-terminal");
 function printErr(e) {
     process.stderr.write(`@atomist/cli:postInstall [ERROR] ${e.message}\n`);
 }
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            marked.setOptions({
-                // define custom renderer
-                renderer: new TerminalRenderer(),
-            });
             const banner = `┌──────────────────────────────────────────────────────────────────────────┐
 │                                                                          │
 │   @atomist/cli is now installed.                                         │
 │                                                                          │
 │   Head to the SDM repo (https://github.com/atomist/sdm) for more info.   │
 │                                                                          │
-└──────────────────────────────────────────────────────────────────────────┘`;
+└──────────────────────────────────────────────────────────────────────────┘
+
+`;
             // show an informative and friendly welcome message
-            if (fs.existsSync(automation_client_1.userConfigPath())) {
-                process.stdout.write(marked(banner).trim() + "\n\n");
+            if (!fs.existsSync(automation_client_1.userConfigPath())) {
+                process.stdout.write(banner);
             }
         }
         catch (e) {
