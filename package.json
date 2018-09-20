@@ -22,10 +22,10 @@
     "cli"
   ],
   "dependencies": {
-    "@atomist/automation-client": "1.0.0-M.4",
-    "@atomist/sdm": "1.0.0-M.4",
-    "@atomist/sdm-core": "1.0.0-M.4",
-    "@atomist/sdm-local": "1.0.0-M.4",
+    "@atomist/automation-client": "1.0.0-master.20180918193639",
+    "@atomist/sdm": "1.0.0-master.20180920130138",
+    "@atomist/sdm-core": "1.0.0-master.20180920133302",
+    "@atomist/sdm-local": "1.0.0-master.20180920134549",
     "@types/cross-spawn": "^6.0.0",
     "@types/fs-extra": "^5.0.3",
     "@types/glob": "^5.0.35",
