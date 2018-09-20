@@ -17,7 +17,12 @@ function printErr(e) {
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const banner = `┌──────────────────────────────────────────────────────────────────────────┐
+            if (fs.existsSync(automation_client_1.userConfigPath())) {
+                process.exit(0);
+            }
+            // show an informative and friendly welcome message
+            const banner = `
+┌──────────────────────────────────────────────────────────────────────────┐
 │                                                                          │
 │   @atomist/cli is now installed.                                         │
 │                                                                          │
@@ -26,10 +31,7 @@ function main() {
 └──────────────────────────────────────────────────────────────────────────┘
 
 `;
-            // show an informative and friendly welcome message
-            if (!fs.existsSync(automation_client_1.userConfigPath())) {
-                process.stdout.write(banner);
-            }
+            process.stdout.write(banner);
         }
         catch (e) {
             printErr(e);

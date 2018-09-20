@@ -31,7 +31,13 @@ async function main() {
 
     try {
 
-        const banner = `┌──────────────────────────────────────────────────────────────────────────┐
+        if (fs.existsSync(userConfigPath())) {
+            process.exit(0);
+        }
+
+        // show an informative and friendly welcome message
+        const banner = `
+┌──────────────────────────────────────────────────────────────────────────┐
 │                                                                          │
 │   @atomist/cli is now installed.                                         │
 │                                                                          │
@@ -40,11 +46,8 @@ async function main() {
 └──────────────────────────────────────────────────────────────────────────┘
 
 `;
+        process.stdout.write(banner);
 
-        // show an informative and friendly welcome message
-        if (!fs.existsSync(userConfigPath())) {
-            process.stdout.write(banner);
-        }
     } catch (e) {
         printErr(e);
     }
