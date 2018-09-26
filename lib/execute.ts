@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    CommandInvocation,
-} from "@atomist/automation-client";
+import { CommandInvocation } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
 
 import { extractArgs } from "./command";
