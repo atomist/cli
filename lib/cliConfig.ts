@@ -23,7 +23,7 @@ import {
 
 import * as print from "./print";
 
-export type CliConfig = Pick<Configuration, "apiKey" | "workspaceIds">;
+export type CliConfig = Pick<Configuration, "apiKey" | "workspaceIds" | "endpoints" >;
 
 /**
  * Read user config and resolve workspace IDs then simplify config
@@ -59,5 +59,6 @@ export function resolveCliConfig(): CliConfig {
     return {
         apiKey: userConfig.apiKey,
         workspaceIds: userConfig.workspaceIds,
+        endpoints: userConfig.endpoints,
     };
 }

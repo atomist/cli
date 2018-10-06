@@ -57,6 +57,8 @@ export async function gqlFetch(opts: GqlFetchOptions): Promise<number> {
         print.warn(`More than one workspace ID in user configuration, using first: ${cliConfig.workspaceIds[0]}`);
     }
     const workspaceId = cliConfig.workspaceIds[0];
+    const graphQL = cliConfig.endpoints && cliConfig.endpoints.graphql
+        ? cliConfig.endpoints : "https://automation.atomist.com/graphql/team";
 
     const outDir = path.join(libDir(opts.cwd), "graphql");
     const outSchema = path.join(outDir, "schema.json");
@@ -65,7 +67,7 @@ export async function gqlFetch(opts: GqlFetchOptions): Promise<number> {
         command: "apollo-codegen",
         args: [
             "introspect-schema",
-            `https://automation.atomist.com/graphql/team/${workspaceId}`,
+            `${graphQL}/${workspaceId}`,
             "--output", outSchema,
             "--header", `Authorization: Bearer ${cliConfig.apiKey}`,
         ],
