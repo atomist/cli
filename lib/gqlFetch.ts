@@ -58,7 +58,7 @@ export async function gqlFetch(opts: GqlFetchOptions): Promise<number> {
     }
     const workspaceId = cliConfig.workspaceIds[0];
     const graphQL = cliConfig.endpoints && cliConfig.endpoints.graphql
-        ? cliConfig.endpoints : "https://automation.atomist.com/graphql/team";
+        ? cliConfig.endpoints.graphql : "https://automation.atomist.com/graphql/team";
 
     const outDir = path.join(libDir(opts.cwd), "graphql");
     const outSchema = path.join(outDir, "schema.json");
