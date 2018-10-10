@@ -1,6 +1,6 @@
 {
   "name": "@atomist/cli",
-  "version": "1.0.4",
+  "version": "1.0.0",
   "description": "The Atomist CLI",
   "author": {
     "name": "Atomist",
