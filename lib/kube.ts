@@ -22,13 +22,9 @@ import * as fs from "fs-extra";
 import * as stringify from "json-stringify-safe";
 import * as tmp from "tmp-promise";
 
-import {
-    resolveCliConfig,
-} from "./cliConfig";
+import { resolveCliConfig } from "./cliConfig";
 import * as print from "./print";
-import {
-    spawnPromise,
-} from "./spawn";
+import { spawnPromise } from "./spawn";
 
 /**
  * Command-line options and arguments for kube.

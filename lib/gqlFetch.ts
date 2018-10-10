@@ -17,16 +17,10 @@
 import * as fs from "fs-extra";
 import * as path from "path";
 
-import {
-    resolveCliConfig,
-} from "./cliConfig";
-import {
-    libDir,
-} from "./gql";
+import { resolveCliConfig } from "./cliConfig";
+import { libDir } from "./gql";
 import * as print from "./print";
-import {
-    spawnBinary,
-} from "./spawn";
+import { spawnBinary } from "./spawn";
 
 /**
  * Command-line options and arguments for gql-fetch.

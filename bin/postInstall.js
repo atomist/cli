@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const automation_client_1 = require("@atomist/automation-client");
+const configuration_1 = require("@atomist/automation-client/lib/configuration");
 const fs = require("fs-extra");
 function printErr(e) {
     process.stderr.write(`@atomist/cli:postInstall [ERROR] ${e.message}\n`);
@@ -17,7 +17,7 @@ function printErr(e) {
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            if (fs.existsSync(automation_client_1.userConfigPath())) {
+            if (fs.existsSync(configuration_1.userConfigPath())) {
                 process.exit(0);
             }
             // show an informative and friendly welcome message

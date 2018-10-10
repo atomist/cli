@@ -16,9 +16,7 @@
 
 import * as assert from "power-assert";
 
-import {
-    cleanCommandString,
-} from "../lib/spawn";
+import { cleanCommandString } from "../lib/spawn";
 
 describe("spawn", () => {
 

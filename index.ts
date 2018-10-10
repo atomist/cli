@@ -15,22 +15,16 @@
  * limitations under the License.
  */
 
+import * as yb from "@atomist/sdm-local/lib/cli/invocation/command/support/yargBuilder";
 // tslint:disable-next-line:no-import-side-effect
 import "source-map-support/register";
+import * as yargs from "yargs";
 
 import {
     cliCommand,
     isEmbeddedSdmCommand,
     shouldAddLocalSdmCommands,
 } from "./lib/command";
-
-process.env.SUPPRESS_NO_CONFIG_WARNING = "true";
-if (!isEmbeddedSdmCommand(process.argv)) {
-    process.env.ATOMIST_DISABLE_LOGGING = "true";
-}
-
-import * as yb from "@atomist/sdm-local/lib/cli/invocation/command/support/yargBuilder";
-import * as yargs from "yargs";
 import { config } from "./lib/config";
 import { execute } from "./lib/execute";
 import { git } from "./lib/git";
@@ -41,6 +35,11 @@ import { kube } from "./lib/kube";
 import * as print from "./lib/print";
 import { start } from "./lib/start";
 import { version } from "./lib/version";
+
+process.env.SUPPRESS_NO_CONFIG_WARNING = "true";
+if (!isEmbeddedSdmCommand(process.argv)) {
+    process.env.ATOMIST_DISABLE_LOGGING = "true";
+}
 
 function setupYargs(yargBuilder: yb.YargBuilder) {
     const commonOptions: { [key: string]: yb.CommandLineParameter } = {

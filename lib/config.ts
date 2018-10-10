@@ -17,12 +17,9 @@
 import {
     userConfigPath,
     writeUserConfig,
-} from "@atomist/automation-client";
+} from "@atomist/automation-client/lib/configuration";
 import * as inquirer from "inquirer";
-
-import {
-    resolveUserConfig,
-} from "./cliConfig";
+import { resolveUserConfig } from "./cliConfig";
 import * as print from "./print";
 
 /**

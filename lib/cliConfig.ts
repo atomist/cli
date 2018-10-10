@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
+import { Configuration } from "@atomist/automation-client";
 import {
-    Configuration,
     getUserConfig,
     resolveWorkspaceIds,
     UserConfig,
-} from "@atomist/automation-client";
-
+} from "@atomist/automation-client/lib/configuration";
 import * as print from "./print";
 
 export type CliConfig = Pick<Configuration, "apiKey" | "workspaceIds" | "endpoints" >;

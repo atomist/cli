@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import * as assert from "power-assert";
-
 import * as fs from "fs-extra";
 import * as path from "path";
+import * as assert from "power-assert";
 import * as tmp from "tmp-promise";
 
 import { libDir } from "../lib/gql";

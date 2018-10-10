@@ -20,7 +20,7 @@
 // the postInstall hook because the devDependencies might not be
 // available.
 
-import { userConfigPath } from "@atomist/automation-client";
+import { userConfigPath } from "@atomist/automation-client/lib/configuration";
 import * as fs from "fs-extra";
 
 function printErr(e: Error): void {

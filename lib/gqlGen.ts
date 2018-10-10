@@ -19,13 +19,9 @@ import * as glob from "glob";
 import * as path from "path";
 import * as util from "util";
 
-import {
-    libDir,
-} from "./gql";
+import { libDir } from "./gql";
 import * as print from "./print";
-import {
-    spawnBinary,
-} from "./spawn";
+import { spawnBinary } from "./spawn";
 
 /**
  * Command-line options for gql-gen.
