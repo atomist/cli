@@ -23,8 +23,8 @@
   ],
   "dependencies": {
     "@atomist/automation-client": "1.0.0-master.20181010081045",
-    "@atomist/sdm": "1.0.0-master.20181010081849",
-    "@atomist/sdm-core": "1.0.0-master.20181010082939",
+    "@atomist/sdm": "1.0.0-master.20181010145707",
+    "@atomist/sdm-core": "1.0.0-master.20181010145734",
     "@atomist/sdm-local": "1.0.0-master.20181010083836",
     "@types/cross-spawn": "^6.0.0",
     "@types/fs-extra": "^5.0.3",
