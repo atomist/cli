@@ -27,10 +27,8 @@ import {
 } from "./lib/command";
 import { config } from "./lib/config";
 import { execute } from "./lib/execute";
-import { git } from "./lib/git";
 import { gitHook } from "./lib/gitHook";
 import { gqlFetch } from "./lib/gqlFetch";
-import { gqlGen } from "./lib/gqlGen";
 import { kube } from "./lib/kube";
 import * as print from "./lib/print";
 import { start } from "./lib/start";
@@ -100,17 +98,6 @@ function setupYargs(yargBuilder: yb.YargBuilder) {
             args: argv._.filter(a => a !== "execute" && a !== "exec" && a !== "cmd"),
         })),
     });
-
-    yargBuilder.command({
-        command: "git",
-        describe: "[DEPRECATED] Create a git-info.json file for an Atomist client",
-        parameters: [commonOptions.changeDir],
-        handler: argv => cliCommand(() => git({
-
-            cwd: argv["change-dir"],
-
-        })),
-    });
     yargBuilder.command({
         command: "git-hook",
         describe: "Process Git hook data for local SDM",
@@ -120,17 +107,6 @@ function setupYargs(yargBuilder: yb.YargBuilder) {
         command: "gql-fetch", describe: "Retrieve GraphQL schema",
         parameters: [commonOptions.changeDir, commonOptions.install],
         handler: argv => cliCommand(() => gqlFetch({
-            cwd: argv["change-dir"],
-            install: argv.install,
-        })),
-    });
-    yargBuilder.command({
-        command:
-            "gql-gen <glob>",
-        describe: "Generate TypeScript code for GraphQL",
-        parameters: [commonOptions.changeDir, commonOptions.install],
-        handler: argv => cliCommand(() => gqlGen({
-            glob: argv.glob,
             cwd: argv["change-dir"],
             install: argv.install,
         })),
