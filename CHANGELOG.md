@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/1.0.0-RC.1...HEAD)
 
+### Added
+
+-   Add homebrew formula template and bash completion. [#46](https://github.com/atomist/cli/issues/46)
+
 ### Removed
 
 -   **BREAKING** Remove deprecated git-info & gql-gen commands. [#45](https://github.com/atomist/cli/issues/45)
