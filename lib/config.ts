@@ -58,8 +58,8 @@ export async function config(opts: ConfigOptions): Promise<number> {
     } else {
         print.log(`
 As part of the Atomist configuration, you need an Atomist API key.
-You can generate an Atomist API key can be generated on the the
-Atomist web application: https://app.atomist.com/apiKeys
+You can generate an Atomist API key in the Atomist web application:
+https://app.atomist.com/apiKeys
 `);
     }
 
