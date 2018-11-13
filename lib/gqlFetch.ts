@@ -58,11 +58,11 @@ export async function gqlFetch(opts: GqlFetchOptions): Promise<number> {
     const outSchema = path.join(outDir, "schema.json");
     await fs.ensureDir(outDir);
     const spawnOpts = {
-        command: "apollo-codegen",
+        command: "apollo",
         args: [
-            "introspect-schema",
-            `${graphQL}/${workspaceId}`,
-            "--output", outSchema,
+            "schema:download",
+            outSchema,
+            "--endpoint", `${graphQL}/${workspaceId}`,
             "--header", `Authorization: Bearer ${cliConfig.apiKey}`,
         ],
         cwd: opts.cwd,

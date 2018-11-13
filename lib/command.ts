@@ -49,7 +49,7 @@ export function shouldAddLocalSdmCommands(args: string[]): boolean {
  * Does this command start up an embedded SDM?
  * @param args command-line arguments, typically process.argv
  */
-export function isEmbeddedSdmCommand(args: string[]) {
+export function isEmbeddedSdmCommand(args: string[]): boolean {
     const relevant = args.slice(2);
     return relevant.length > 0 && ["create sdm", "enable local"].includes(relevant.join(" "));
 }
