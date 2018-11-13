@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/1.0.2...HEAD)
 
+### Changed
+
+-   Update to apollo CLI for gql-fetch. [#52](https://github.com/atomist/cli/issues/52)
+
 ### Fixed
 
 -   Fix some typos in the text intro for config. [#50](https://github.com/atomist/cli/issues/50)
