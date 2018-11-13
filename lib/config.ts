@@ -39,6 +39,7 @@ export interface ConfigOptions {
  * @param opts see ConfigOptions
  * @return integer return value
  */
+// tslint:disable:cyclomatic-complexity
 export async function config(opts: ConfigOptions): Promise<number> {
     const userConfig = resolveUserConfig();
     if (opts.workspaceId && !userConfig.workspaceIds.includes(opts.workspaceId)) {

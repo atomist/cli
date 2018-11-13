@@ -27,7 +27,7 @@ function printErr(e: Error): void {
     process.stderr.write(`@atomist/cli:postInstall [ERROR] ${e.message}\n`);
 }
 
-async function main() {
+async function main(): Promise<void> {
 
     try {
 
