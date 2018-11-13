@@ -39,7 +39,7 @@ if (!isEmbeddedSdmCommand(process.argv)) {
     process.env.ATOMIST_DISABLE_LOGGING = "true";
 }
 
-function setupYargs(yargBuilder: yb.YargBuilder) {
+function setupYargs(yargBuilder: yb.YargBuilder): void {
     const commonOptions: { [key: string]: yb.CommandLineParameter } = {
         changeDir: {
             parameterName: "change-dir",
@@ -159,7 +159,7 @@ function setupYargs(yargBuilder: yb.YargBuilder) {
         .argv;
 }
 
-async function main() {
+async function main(): Promise<any> {
     const YargBuilder = yb.freshYargBuilder({ epilogForHelpMessage: "Copyright Atomist, Inc. 2018" });
     if (shouldAddLocalSdmCommands(process.argv)) {
         // Lazily load sdm-local to prevent early initialization
