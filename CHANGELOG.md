@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/1.0.2...HEAD)
 
+### Fixed
+
+-   Fix some typos in the text intro for config. [#50](https://github.com/atomist/cli/issues/50)
+
 ## [1.0.2](https://github.com/atomist/cli/compare/1.0.1...1.0.2) - 2018-11-09
 
 ## [1.0.1](https://github.com/atomist/cli/compare/1.0.0-RC.2...1.0.1) - 2018-11-09
