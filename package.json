@@ -22,7 +22,7 @@
     "cli"
   ],
   "dependencies": {
-    "@atomist/automation-client": "1.1.0-update-graphql-code-generator.20181113133345",
+    "@atomist/automation-client": "1.1.0-update-graphql-code-generator.20181113135015",
     "@atomist/sdm": "^1.0.1",
     "@atomist/sdm-core": "^1.0.2",
     "@atomist/sdm-local": "^1.0.2",
