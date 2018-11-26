@@ -62,7 +62,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         },
     };
 
-    yargBuilder.command({
+    yargBuilder.withSubcommand({
         command: "config",
         describe: "Create Atomist user configuration",
         parameters: [{
@@ -81,7 +81,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
 
         })),
     });
-    yargBuilder.command({
+    yargBuilder.withSubcommand({
         command: "execute <name>",
         describe: "Run a command",
         positional: [{
@@ -98,12 +98,12 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             args: argv._.filter(a => a !== "execute" && a !== "exec" && a !== "cmd"),
         })),
     });
-    yargBuilder.command({
+    yargBuilder.withSubcommand({
         command: "git-hook",
         describe: "Process Git hook data for local SDM",
         handler: argv => cliCommand(() => gitHook(process.argv)),
     });
-    yargBuilder.command({
+    yargBuilder.withSubcommand({
         command: "gql-fetch", describe: "Retrieve GraphQL schema",
         parameters: [commonOptions.changeDir, commonOptions.install],
         handler: argv => cliCommand(() => gqlFetch({
