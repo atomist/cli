@@ -33,7 +33,7 @@ export type StartOptions = Pick<SpawnOptions, "cwd" | "compile" | "install"> & {
 export async function start(opts: StartOptions): Promise<number> {
     if (opts.local) {
         process.env.ATOMIST_MODE = "local";
-    }
+    } 
     delete process.env.ATOMIST_DISABLE_LOGGING;
 
     const spawnOpts = {
