@@ -64,12 +64,12 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
 
     yargBuilder.withSubcommand({
         command: "config",
-        describe: "Create Atomist user configuration",
+        aliases: ["connect", "login"] as any, // TODO cd something odd in sdm-local on these typings
+        describe: "Connect to Atomist",
         parameters: [{
             parameterName: "api-key",
             describe: "Atomist API key",
             type: "string",
-
         }, {
             parameterName: "workspace-id",
             describe: "Atomist workspace ID",
@@ -77,8 +77,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         }],
         handler: argv => cliCommand(() => config({
             apiKey: argv["api-key"],
-            workspaceId: argv["workspace-id"],
-
+            workspaceIds: argv["workspace-id"],
         })),
     });
     yargBuilder.withSubcommand({
