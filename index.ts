@@ -30,6 +30,7 @@ import { execute } from "./lib/execute";
 import { gitHook } from "./lib/gitHook";
 import { gqlFetch } from "./lib/gqlFetch";
 import { kube } from "./lib/kube";
+import { login } from "./lib/login";
 import * as print from "./lib/print";
 import { start } from "./lib/start";
 import { version } from "./lib/version";
@@ -79,6 +80,19 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             apiKey: argv["api-key"],
             workspaceId: argv["workspace-id"],
 
+        })),
+    });
+    yargBuilder.withSubcommand({
+        command: "login",
+        describe: "Login or create an Atomist workspace",
+        parameters: [{
+            parameterName: "create-workspace",
+            describe: "Create Workspace",
+            type: "boolean",
+
+        }],
+        handler: argv => cliCommand(() => login({
+            createWorkspace: argv["create-workspace"],
         })),
     });
     yargBuilder.withSubcommand({
