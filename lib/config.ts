@@ -142,6 +142,9 @@ export async function config(opts: ConfigOptions): Promise<number> {
         return 1;
     }
 
+    userCfg.apiKey = apiKey;
+    await writeUserConfig(userCfg);
+
     let workspaceIds;
     if (!opts.workspaceId) {
         try {
@@ -155,7 +158,6 @@ export async function config(opts: ConfigOptions): Promise<number> {
         workspaceIds = opts.workspaceId.split(/\s+/);
     }
 
-    userCfg.apiKey = apiKey;
     userCfg.workspaceIds = workspaceIds;
     await writeUserConfig(userCfg);
 
