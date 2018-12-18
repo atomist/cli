@@ -25,12 +25,11 @@ import {
     isEmbeddedSdmCommand,
     shouldAddLocalSdmCommands,
 } from "./lib/command";
-import { config } from "./lib/config";
+import { connect } from "./lib/connect";
 import { execute } from "./lib/execute";
 import { gitHook } from "./lib/gitHook";
 import { gqlFetch } from "./lib/gqlFetch";
 import { kube } from "./lib/kube";
-import { login } from "./lib/login";
 import * as print from "./lib/print";
 import { start } from "./lib/start";
 import { version } from "./lib/version";
@@ -64,35 +63,21 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
     };
 
     yargBuilder.withSubcommand({
-        command: "config",
-        describe: "Create Atomist user configuration",
+        command: "connect",
+        aliases: ["config", "login"] as any, // TODO cd something odd in sdm-local on these typings
+        describe: "Connect to Atomist",
         parameters: [{
             parameterName: "api-key",
             describe: "Atomist API key",
             type: "string",
-
         }, {
             parameterName: "workspace-id",
             describe: "Atomist workspace ID",
             type: "string",
         }],
-        handler: argv => cliCommand(() => config({
+        handler: argv => cliCommand(() => connect({
             apiKey: argv["api-key"],
-            workspaceId: argv["workspace-id"],
-
-        })),
-    });
-    yargBuilder.withSubcommand({
-        command: "login",
-        describe: "Login or create an Atomist workspace",
-        parameters: [{
-            parameterName: "create-workspace",
-            describe: "Create Workspace",
-            type: "boolean",
-
-        }],
-        handler: argv => cliCommand(() => login({
-            createWorkspace: argv["create-workspace"],
+            workspaceIds: argv["workspace-id"],
         })),
     });
     yargBuilder.withSubcommand({

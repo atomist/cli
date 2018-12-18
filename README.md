@@ -50,7 +50,7 @@ You can use the Atomist CLI to configure your local environment to run
 clients.
 
 ```
-$ atomist config
+$ atomist connect
 ```
 
 See the [Atomist developer prerequisites][atomist-dev] for more
