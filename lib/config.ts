@@ -33,33 +33,42 @@ import * as express from "express";
 import * as inquirer from "inquirer";
 import { sha256 } from "js-sha256";
 import * as _ from "lodash";
-import opn = require("opn");
 import * as os from "os";
 import { resolveUserConfig } from "./cliConfig";
 import * as print from "./print";
+import opn = require("opn");
 
 /**
  * Command-line options and arguments for config
  */
 export interface ConfigOptions {
+
     /** Atomist API key */
     apiKey?: string;
-    /** Atomist workspace/team ID */
-    workspaceIds?: string;
+
+    /** Atomist workspace ID */
+    workspaceId?: string;
+}
+
+const UserQuery = `query User {
+  user {
+    person {
+      email
+    }
+  }
+}`;
+
+interface User {
+    user: {
+        person: Array<{ email: string }>;
+    }
 }
 
 const PersonByIdentityQuery = `query PersonByIdentity {
   personByIdentity {
-    email
     team {
       id
       name
-    }
-    user {
-      principal {
-        pid
-        sub
-      }
     }
   }
 }`;
@@ -103,23 +112,29 @@ interface CreateApiKey {
     };
 }
 
+/**
+ * Set up local configuration with Atomist api key and workspaces
+ * @param opts
+ */
 export async function config(opts: ConfigOptions): Promise<number> {
     const cfgPath = userConfigPath();
     const userCfg = resolveUserConfig();
     const defaultCfg = defaultConfiguration();
     const cfg = mergeConfigs(defaultCfg, userCfg);
 
+    let apiKey = opts.apiKey || cfg.apiKey;
+
     // No api key; config and create a new key
-    if (!opts.apiKey && !cfg.apiKey) {
+    if (!apiKey) {
         try {
-            await createApiKey(cfg, userCfg);
+            apiKey = await createApiKey(cfg);
+            userCfg.apiKey = apiKey;
+            await writeUserConfig(userCfg);
         } catch (e) {
             print.error(`Failed to create API key: ${e.message}`);
             return 1;
         }
     }
-
-    const apiKey = opts.apiKey || cfg.apiKey;
 
     try {
         // Validate api key
@@ -129,24 +144,31 @@ export async function config(opts: ConfigOptions): Promise<number> {
         return 1;
     }
 
-    if (!opts.workspaceIds || opts.workspaceIds.length === 0) {
+    let workspaceIds;
+    if (!opts.workspaceId) {
         try {
             // Retrieve list and configure workspaces
-            await configureWorkspaces(apiKey, cfg, userCfg);
+            workspaceIds = await configureWorkspaces(apiKey, cfg);
         } catch (e) {
             print.error(`Failed to configure workspaces: ${e.message}`);
             return 1;
         }
     } else {
-        userCfg.workspaceIds = opts.workspaceIds.split(/\s+/);
-        await writeUserConfig(userCfg);
+        workspaceIds = opts.workspaceId.split(/\s+/);
     }
+
+    userCfg.apiKey = apiKey;
+    userCfg.workspaceIds = workspaceIds;
 
     print.log(`Successfully wrote configuration: ${chalk.green(cfgPath)}`);
     return 0;
 }
 
-async function createApiKey(cfg: Configuration, userCfg: Configuration): Promise<void> {
+/**
+ * Initiate a login flow using a selected auth provider to create a new api key
+ * @param cfg
+ */
+async function createApiKey(cfg: Configuration): Promise<string> {
     const providers = await axios.get(`${cfg.endpoints.auth}/providers`);
 
     let questions: inquirer.Question[] = [
@@ -177,6 +199,7 @@ async function createApiKey(cfg: Configuration, userCfg: Configuration): Promise
         ];
 
         let authUrl;
+
         answers = await inquirer.prompt(questions);
         if (answers.provider) {
             authUrl = answers.provider;
@@ -232,25 +255,33 @@ async function createApiKey(cfg: Configuration, userCfg: Configuration): Promise
             },
         });
 
-        userCfg.apiKey = result.createApiKey.key;
-        cfg.apiKey = result.createApiKey.key;
-        await writeUserConfig(userCfg);
         spinner.stop(true);
+        return result.createApiKey.key;
+    } else {
+        return answers.apiKey;
     }
 }
 
+/**
+ * Validate a given api key by making a backend call to the GraplQL endpoint
+ * @param apiKey
+ * @param cfg
+ */
 async function validateApiKey(apiKey: string, cfg: Configuration): Promise<void> {
     const spinner = createSpinner("Validating API key");
     const graphClient = new ApolloGraphClient(
         cfg.endpoints.graphql.replace("/team", ""),
         { Authorization: `Bearer ${apiKey}` });
     try {
-        const result = await graphClient.query<PersonByIdentity, void>({
-            query: PersonByIdentityQuery,
+        const result = await graphClient.query<User, void>({
+            query: UserQuery,
         });
         spinner.stop(true);
-        if (result && result.personByIdentity && result.personByIdentity.length > 0) {
-            print.log(`Logged in as ${chalk.green(result.personByIdentity[0].email)}`);
+
+        // If there is no workspace yet, there is also now record returned
+        const email = _.get(result, "user.person[0].email");
+        if (email) {
+            print.log(`Logged in as ${chalk.green(email)}`);
         } else {
             print.log(`Logged in`);
         }
@@ -261,7 +292,12 @@ async function validateApiKey(apiKey: string, cfg: Configuration): Promise<void>
     }
 }
 
-async function configureWorkspaces(apiKey: string, cfg: Configuration, userCfg: Configuration): Promise<void> {
+/**
+ * Read the list of workspaces and let the user choose to which workspacs to connect to
+ * @param apiKey
+ * @param cfg
+ */
+async function configureWorkspaces(apiKey: string, cfg: Configuration): Promise<string[]> {
     const graphClient = new ApolloGraphClient(
         cfg.endpoints.graphql.replace("/team", ""),
         { Authorization: `Bearer ${apiKey}` });
@@ -269,11 +305,11 @@ async function configureWorkspaces(apiKey: string, cfg: Configuration, userCfg: 
         query: PersonByIdentityQuery,
         options: QueryNoCacheOptions,
     });
-    const teams = _.get(result, "personByIdentity") || [];
+    const workspaces = _.get(result, "personByIdentity") || [];
 
-    if (teams.length === 0) {
+    if (workspaces.length === 0) {
         print.log(`No workspaces available. Run ${chalk.cyan("atomist workspace create")}`);
-        return;
+        return [];
     }
 
     print.log(`Select one or more workspaces to connect to:`);
@@ -283,7 +319,7 @@ async function configureWorkspaces(apiKey: string, cfg: Configuration, userCfg: 
             type: "checkbox",
             name: "workspaceIds",
             message: "Workspace IDs",
-            choices: teams.sort((p1, p2) => p1.team.name.localeCompare(p2.team.name))
+            choices: workspaces.sort((p1, p2) => p1.team.name.localeCompare(p2.team.name))
                 .map(p => ({
                     name: `${p.team.id} - ${p.team.name}`,
                     value: p.team.id,
@@ -293,10 +329,7 @@ async function configureWorkspaces(apiKey: string, cfg: Configuration, userCfg: 
     ];
 
     const answers: any = await inquirer.prompt(questions);
-    if (answers.workspaceIds) {
-        userCfg.workspaceIds = answers.workspaceIds;
-        await writeUserConfig(userCfg);
-    }
+    return answers.workspaceIds || [];
 }
 
 function createSpinner(text: string): any {

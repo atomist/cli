@@ -77,7 +77,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         }],
         handler: argv => cliCommand(() => config({
             apiKey: argv["api-key"],
-            workspaceIds: argv["workspace-id"],
+            workspaceId: argv["workspace-id"],
         })),
     });
     yargBuilder.withSubcommand({
