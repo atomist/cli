@@ -33,10 +33,10 @@ import * as express from "express";
 import * as inquirer from "inquirer";
 import { sha256 } from "js-sha256";
 import * as _ from "lodash";
+import opn = require("opn");
 import * as os from "os";
 import { resolveUserConfig } from "./cliConfig";
 import * as print from "./print";
-import opn = require("opn");
 
 /**
  * Command-line options and arguments for config
@@ -61,7 +61,7 @@ const UserQuery = `query User {
 interface User {
     user: {
         person: Array<{ email: string }>;
-    }
+    };
 }
 
 const PersonByIdentityQuery = `query PersonByIdentity {
