@@ -16,9 +16,9 @@
 
 import * as assert from "power-assert";
 
-import { maskString } from "../lib/config";
+import { maskString } from "../lib/connect";
 
-describe("config", () => {
+describe("connect", () => {
 
     describe("maskString", () => {
 
