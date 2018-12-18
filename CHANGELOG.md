@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/1.0.3...HEAD)
 
+### Added
+
+-   Add login command to connect to an workspace. [#57](https://github.com/atomist/cli/issues/57)
+
 ## [1.0.3](https://github.com/atomist/cli/compare/1.0.2...1.0.3) - 2018-12-08
 
 ### Changed
