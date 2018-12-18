@@ -82,7 +82,7 @@ interface PersonByIdentity {
 
 const CreateApiKeyMutation = `mutation createKey($description: String!){
   createApiKey(description: $description) {
-  	id
+    id
     key
     description
     createdAt
