@@ -216,7 +216,10 @@ async function createApiKey(cfg: Configuration): Promise<string> {
         const callback = new Deferred<{ jwt: string }>();
         app.get("/callback", async (req, res) => {
             if (state !== req.query.state) {
-                // Do something with this error
+                callback.reject("State parameter not correct after authentication. Abort!");
+                // TODO this page should change to a proper error page
+                res.status(500).json({ message: "State parameter not correct after authentication" });
+                return;
             }
             try {
                 const token = await axios.post(`${cfg.endpoints.auth}/token`, {
@@ -228,14 +231,20 @@ async function createApiKey(cfg: Configuration): Promise<string> {
                 // TODO this page should change
                 res.redirect("https://atomist.com/success-github.html");
             } catch (e) {
-                res.status(500).json(e);
+                // TODO this page should change to a proper error page
+                res.status(500).json({ message: e.message });
+                callback.reject(new Error(`Authentication failed: ${e.message}`));
             }
         });
 
         const server = app.listen(port);
-        const jwt = (await callback.promise).jwt;
-        server.close();
-        spinner.stop(true);
+        let jwt;
+        try {
+            jwt = (await callback.promise).jwt;
+        } finally {
+            server.close();
+            spinner.stop(true);
+        }
 
         const graphClient = new ApolloGraphClient(
             cfg.endpoints.graphql.replace("/team", ""),
