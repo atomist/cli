@@ -52,8 +52,9 @@ export interface ConfigOptions {
 
 const UserQuery = `query User {
   user {
-    person {
-      email
+    principal {
+      sub 
+      pid
     }
   }
 }`;
@@ -277,15 +278,19 @@ async function validateApiKey(apiKey: string, cfg: Configuration): Promise<void>
         cfg.endpoints.graphql.replace("/team", ""),
         { Authorization: `Bearer ${apiKey}` });
     try {
+        const providers = await axios.get(`${cfg.endpoints.auth}/providers`);
         const result = await graphClient.query<User, void>({
             query: UserQuery,
         });
         spinner.stop(true);
 
         // If there is no workspace yet, there is also now record returned
-        const email = _.get(result, "user.person[0].email");
-        if (email) {
-            print.log(`Logged in as ${chalk.green(email)}`);
+        const sub = _.get(result, "user.principal.sub");
+        const pid = _.get(result, "user.principal.pid");
+        const provider = providers.data.find((p: any) => p.id === pid);
+        if (!!sub && !!pid) {
+            print.log(`Logged in as ${chalk.green(sub)} using ${
+                chalk.green(_.get(provider, "display_name", "n/a"))}`);
         } else {
             print.log(`Logged in`);
         }
@@ -295,7 +300,7 @@ async function validateApiKey(apiKey: string, cfg: Configuration): Promise<void>
 }
 
 /**
- * Read the list of workspaces and let the user choose to which workspacs to connect to
+ * Read the list of workspaces and let the user choose to which workspaces to connect to
  * @param apiKey
  * @param cfg
  */
