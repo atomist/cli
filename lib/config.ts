@@ -53,7 +53,7 @@ export interface ConfigOptions {
 const UserQuery = `query User {
   user {
     principal {
-      sub 
+      sub
       pid
     }
   }
