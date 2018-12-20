@@ -163,7 +163,7 @@ export async function config(opts: ConfigOptions): Promise<number> {
     userCfg.workspaceIds = workspaceIds;
     await writeUserConfig(userCfg);
 
-    print.log(`Successfully wrote configuration: ${chalk.green(cfgPath)}`);
+    print.log(`Successfully wrote configuration ${chalk.green(cfgPath)}`);
     return 0;
 }
 
