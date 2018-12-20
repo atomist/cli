@@ -26,6 +26,7 @@
     "@atomist/sdm": "1.2.0-master.20181218005143",
     "@atomist/sdm-core": "1.2.0-master.20181213212357",
     "@atomist/sdm-local": "1.0.4-master.20181211132012",
+    "@octokit/rest": "^16.3.0",
     "@types/cross-spawn": "^6.0.0",
     "@types/express": "^4.16.0",
     "@types/fs-extra": "^5.0.3",

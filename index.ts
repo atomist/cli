@@ -31,8 +31,10 @@ import { gitHook } from "./lib/gitHook";
 import { gqlFetch } from "./lib/gqlFetch";
 import { kube } from "./lib/kube";
 import * as print from "./lib/print";
+import * as provider from "./lib/provider";
 import { start } from "./lib/start";
 import { version } from "./lib/version";
+import * as workspace from "./lib/workspace";
 
 process.env.SUPPRESS_NO_CONFIG_WARNING = "true";
 if (!isEmbeddedSdmCommand(process.argv)) {
@@ -81,6 +83,40 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         })),
     });
     yargBuilder.withSubcommand({
+        command: "workspace create",
+        describe: "Create a new workspace",
+        parameters: [{
+            parameterName: "api-key",
+            describe: "Atomist API key",
+            type: "string",
+        }, {
+            parameterName: "workspace-name",
+            describe: "Workspace name",
+            type: "string",
+        }],
+        handler: argv => cliCommand(() => workspace.create({
+            apiKey: argv["api-key"],
+            workspaceName: argv["workspace-name"],
+        })),
+    });
+    yargBuilder.withSubcommand({
+        command: "provider create",
+        describe: "Create a new provider",
+        parameters: [{
+            parameterName: "api-key",
+            describe: "Atomist API key",
+            type: "string",
+        }, {
+            parameterName: "workspace-id",
+            describe: "Atomist workspace ID",
+            type: "string",
+        }],
+        handler: argv => cliCommand(() => provider.create({
+            apiKey: argv["api-key"],
+            workspaceId: argv["workspace-id"],
+        })),
+    });
+    yargBuilder.withSubcommand({
         command: "execute <name>",
         describe: "Run a command",
         positional: [{
@@ -114,7 +150,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         command: "kube", describe: "Deploy Atomist utilities to Kubernetes cluster",
         parameters: [{
             parameterName: "environment",
-            describe: "Informative name for yout Kubernetes cluster",
+            describe: "Informative name for your Kubernetes cluster",
             type: "string",
         }, {
             parameterName: "namespace",
