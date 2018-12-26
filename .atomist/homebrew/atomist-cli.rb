@@ -19,5 +19,18 @@ class AtomistCli < Formula
     assert_predicate bin/"atomist", :executable?
     assert_predicate bin/"@atomist", :exist?
     assert_predicate bin/"@atomist", :executable?
+
+    run_output = shell_output("#{bin}/atomist 2>&1")
+    assert_match "Not enough non-option arguments", run_output
+    assert_match "Specify --help for available options", run_output
+
+    version_output = shell_output("#{bin}/atomist --version")
+    assert_match "@atomist/cli", version_output
+    assert_match "@atomist/sdm ", version_output
+    assert_match "@atomist/sdm-core", version_output
+    assert_match "@atomist/sdm-local", version_output
+
+    skill_output = shell_output("#{bin}/atomist show skills")
+    assert_match(/\d+ commands are available from \d+ connected SDMs/, skill_output)
   end
 end
