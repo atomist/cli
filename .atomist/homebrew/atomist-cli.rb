@@ -4,7 +4,6 @@ class AtomistCli < Formula
   desc "The Atomist CLI"
   homepage "https://github.com/atomist/cli#readme"
   url "%URL%"
-  version "%VERSION%"
   sha256 "%SHA256%"
 
   depends_on "node"
@@ -16,7 +15,7 @@ class AtomistCli < Formula
   end
 
   test do
-    assert File.exist? "#{bin}/atomist"
-    assert File.exist? "#{bin}/@atomist"
+    assert_predicate "#{bin}/atomist", :exist?
+    assert_predicate "#{bin}/@atomist", :exist?
   end
 end
