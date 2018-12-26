@@ -15,7 +15,9 @@ class AtomistCli < Formula
   end
 
   test do
-    assert_predicate "#{bin}/atomist", :exist?
-    assert_predicate "#{bin}/@atomist", :exist?
+    assert_predicate bin/"atomist", :exist?
+    assert_predicate bin/"atomist", :executable?
+    assert_predicate bin/"@atomist", :exist?
+    assert_predicate bin/"@atomist", :executable?
   end
 end
