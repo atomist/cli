@@ -64,7 +64,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
 
     yargBuilder.withSubcommand({
         command: "config",
-        aliases: ["connect", "login"] as any, // TODO cd something odd in sdm-local on these typings
+        aliases: ["connect", "login"],
         describe: "Connect to Atomist",
         parameters: [{
             parameterName: "api-key",
@@ -94,7 +94,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             cwd: argv["change-dir"],
             compile: argv.compile,
             install: argv.install,
-            args: argv._.filter(a => a !== "execute" && a !== "exec" && a !== "cmd"),
+            args: argv._.filter((a: any) => a !== "execute" && a !== "exec" && a !== "cmd"),
         })),
     });
     yargBuilder.withSubcommand({
