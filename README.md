@@ -1,5 +1,6 @@
-# @atomist/cli
+# Atomist CLI - `@atomist/cli`
 
+[![atomist sdm goals](https://badge.atomist.com/T29E48P34/atomist/cli/8b6783d7-2658-4ca0-b9a7-e684ad1dbcc3)](https://app.atomist.com/workspace/T29E48P34)
 [![npm version](https://badge.fury.io/js/%40atomist%2Fcli.svg)](https://badge.fury.io/js/%40atomist%2Fcli)
 
 The Atomist CLI, a unified command-line tool for interacting with
