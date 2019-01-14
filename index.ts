@@ -29,6 +29,7 @@ import { config } from "./lib/config";
 import { execute } from "./lib/execute";
 import { gitHook } from "./lib/gitHook";
 import { gqlFetch } from "./lib/gqlFetch";
+import { install } from "./lib/install";
 import { kube } from "./lib/kube";
 import * as print from "./lib/print";
 import { start } from "./lib/start";
@@ -98,6 +99,29 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         })),
     });
     yargBuilder.withSubcommand({
+        command: "install [keywords]",
+        describe: "Search and install an SDM extension pack",
+        positional: [{
+            key: "keywords",
+            opts: {
+                describe: "keywords to search for",
+            },
+        }],
+        parameters: [
+            commonOptions.changeDir,
+            {
+                parameterName: "registry",
+                describe: "NPM registry to search",
+                type: "string",
+                required: false,
+            }],
+        handler: argv => cliCommand(() => install({
+            keywords: [argv.keywords, ...argv._.filter((a: any) => a !== "install")],
+            cwd: argv["change-dir"],
+            registry: argv.registry,
+        })),
+    });
+    yargBuilder.withSubcommand({
         command: "git-hook",
         describe: "Process Git hook data for local SDM",
         handler: argv => cliCommand(() => gitHook(process.argv)),
@@ -114,7 +138,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         command: "kube", describe: "Deploy Atomist utilities to Kubernetes cluster",
         parameters: [{
             parameterName: "environment",
-            describe: "Informative name for yout Kubernetes cluster",
+            describe: "Informative name for your Kubernetes cluster",
             type: "string",
         }, {
             parameterName: "namespace",

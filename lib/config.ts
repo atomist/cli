@@ -177,7 +177,7 @@ async function createApiKey(cfg: Configuration): Promise<string> {
             type: "input",
             name: "apiKey",
             transformer: maskString,
-            message: `Enter your ${chalk.cyan("api key")} from ${chalk.blue("https://app.atomist.com/apikeys")}
+            message: `Enter your ${chalk.cyan("api key")} from ${chalk.yellow("https://app.atomist.com/apikeys")}
     or hit ${chalk.cyan("<ENTER>")} to select an authentication provider to login with Atomist`,
         },
     ];
@@ -331,6 +331,7 @@ async function configureWorkspaces(apiKey: string, cfg: Configuration): Promise<
                     name: `${p.team.id} - ${p.team.name}`,
                     value: p.team.id,
                     checked: cfg.workspaceIds.includes(p.team.id),
+                    short: p.team.id,
                 })),
         },
     ];
@@ -339,7 +340,7 @@ async function configureWorkspaces(apiKey: string, cfg: Configuration): Promise<
     return answers.workspaceIds || [];
 }
 
-function createSpinner(text: string): any {
+export function createSpinner(text: string): any {
     const Spinner = require("cli-spinner").Spinner;
     const spinner = new Spinner(`${text} ${chalk.yellow("%s")} `);
     spinner.setSpinnerDelay(100);
