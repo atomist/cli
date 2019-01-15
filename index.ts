@@ -32,8 +32,10 @@ import { gqlFetch } from "./lib/gqlFetch";
 import { install } from "./lib/install";
 import { kube } from "./lib/kube";
 import * as print from "./lib/print";
+import * as provider from "./lib/provider";
 import { start } from "./lib/start";
 import { version } from "./lib/version";
+import * as workspace from "./lib/workspace";
 
 process.env.SUPPRESS_NO_CONFIG_WARNING = "true";
 if (!isEmbeddedSdmCommand(process.argv)) {
@@ -77,6 +79,40 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             type: "string",
         }],
         handler: argv => cliCommand(() => config({
+            apiKey: argv["api-key"],
+            workspaceId: argv["workspace-id"],
+        })),
+    });
+    yargBuilder.withSubcommand({
+        command: "workspace create",
+        describe: "Create a new workspace",
+        parameters: [{
+            parameterName: "api-key",
+            describe: "Atomist API key",
+            type: "string",
+        }, {
+            parameterName: "workspace-name",
+            describe: "Workspace name",
+            type: "string",
+        }],
+        handler: argv => cliCommand(() => workspace.create({
+            apiKey: argv["api-key"],
+            workspaceName: argv["workspace-name"],
+        })),
+    });
+    yargBuilder.withSubcommand({
+        command: "provider create",
+        describe: "Create a new provider",
+        parameters: [{
+            parameterName: "api-key",
+            describe: "Atomist API key",
+            type: "string",
+        }, {
+            parameterName: "workspace-id",
+            describe: "Atomist workspace ID",
+            type: "string",
+        }],
+        handler: argv => cliCommand(() => provider.create({
             apiKey: argv["api-key"],
             workspaceId: argv["workspace-id"],
         })),

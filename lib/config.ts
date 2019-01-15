@@ -17,6 +17,7 @@
 import {
     Configuration,
     QueryNoCacheOptions,
+    toStringArray,
 } from "@atomist/automation-client";
 import {
     defaultConfiguration,
@@ -162,7 +163,7 @@ export async function config(opts: ConfigOptions): Promise<number> {
     userCfg.workspaceIds = workspaceIds;
     await writeUserConfig(userCfg);
 
-    print.log(`Successfully wrote configuration: ${chalk.green(cfgPath)}`);
+    print.log(`Successfully wrote configuration ${chalk.green(cfgPath)}`);
     return 0;
 }
 
@@ -178,7 +179,8 @@ async function createApiKey(cfg: Configuration): Promise<string> {
             name: "apiKey",
             transformer: maskString,
             message: `Enter your ${chalk.cyan("api key")} from ${chalk.yellow("https://app.atomist.com/apikeys")}
-    or hit ${chalk.cyan("<ENTER>")} to select an authentication provider to login with Atomist`,
+    or hit ${chalk.cyan("<ENTER>")} to select an authentication provider
+    to login with Atomist:`,
         },
     ];
 
@@ -186,7 +188,7 @@ async function createApiKey(cfg: Configuration): Promise<string> {
     if (!answers.apiKey) {
         const providers = await axios.get(`${cfg.endpoints.auth}/providers`);
 
-        print.log(`Select one of the following authentication providers available to login with Atomist:`);
+        print.log(`Select one of the following authentication providers\navailable to login with Atomist:`);
 
         questions = [
             {
@@ -272,7 +274,7 @@ async function createApiKey(cfg: Configuration): Promise<string> {
  * @param apiKey
  * @param cfg
  */
-async function validateApiKey(apiKey: string, cfg: Configuration): Promise<void> {
+export async function validateApiKey(apiKey: string, cfg: Configuration): Promise<void> {
     const spinner = createSpinner("Validating API key");
     const graphClient = new ApolloGraphClient(
         cfg.endpoints.graphql.replace("/team", ""),
@@ -304,7 +306,9 @@ async function validateApiKey(apiKey: string, cfg: Configuration): Promise<void>
  * @param apiKey
  * @param cfg
  */
-async function configureWorkspaces(apiKey: string, cfg: Configuration): Promise<string[]> {
+export async function configureWorkspaces(apiKey: string,
+                                          cfg: Configuration,
+                                          multiple: boolean = true): Promise<string[]> {
     const graphClient = new ApolloGraphClient(
         cfg.endpoints.graphql.replace("/team", ""),
         { Authorization: `Bearer ${apiKey}` });
@@ -319,13 +323,17 @@ async function configureWorkspaces(apiKey: string, cfg: Configuration): Promise<
         return [];
     }
 
-    print.log(`Select one or more workspaces to connect to:`);
+    if (multiple) {
+        print.log(`Select one or more workspaces:`);
+    } else {
+        print.log(`Select a workspace:`);
+    }
 
     const questions: inquirer.Question[] = [
         {
-            type: "checkbox",
+            type: multiple ? "checkbox" : "list",
             name: "workspaceIds",
-            message: "Workspace IDs",
+            message: "Workspaces",
             choices: workspaces.sort((p1, p2) => p1.team.name.localeCompare(p2.team.name))
                 .map(p => ({
                     name: `${p.team.id} - ${p.team.name}`,
@@ -337,7 +345,7 @@ async function configureWorkspaces(apiKey: string, cfg: Configuration): Promise<
     ];
 
     const answers: any = await inquirer.prompt(questions);
-    return answers.workspaceIds || [];
+    return toStringArray(answers.workspaceIds) || [];
 }
 
 export function createSpinner(text: string): any {
@@ -350,12 +358,13 @@ export function createSpinner(text: string): any {
 }
 
 function nonce(length: number = 40): string {
-    let text = "";
-    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (let i = 0; i < length; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
+    const crypto = require("crypto");
+    return crypto
+        .randomBytes(Math.ceil((length * 3) / 4))
+        .toString("base64") // convert to base64 format
+        .slice(0, length) // return required number of characters
+        .replace(/\+/g, "0") // replace '+' with '0'
+        .replace(/\//g, "0"); // replace '/' with '0'
 }
 
 /**
