@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Add `install` command to search and install an SDM extension pack from an NPM registry. [#b706d70](https://github.com/atomist/cli/commit/b706d70831e98cfcb7738d537bfc89b6af10198d)
+-   Add provider and workspace create commands. [#61](https://github.com/atomist/cli/issues/61)
 
 ## [1.1.0](https://github.com/atomist/cli/compare/1.0.3...1.1.0) - 2018-12-27
 
