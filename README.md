@@ -6,9 +6,31 @@
 The Atomist CLI, a unified command-line tool for interacting with
 [Atomist][atomist] services.
 
-## Prerequisites
+## Installation
 
-You will need [Node.js][node] installed to run the Atomist CLI.
+### Homebrew
+
+If you are running [Homebrew][brew] on macOS, you can use it to
+install the Atomist CLI.
+
+```
+$ brew install atomist-cli
+```
+
+[brew]: https://brew.sh/ (Homebrew - The missing package manager for macOS)
+
+### Manually
+
+You will need [Node.js][node] installed to run the Atomist CLI.  Once
+Node.js is installed, you can use `npm` to install the Atomist CLI.
+
+```
+$ npm install -g @atomist/cli
+```
+
+[node]: https://nodejs.org/ (Node.js)
+
+## Using
 
 To use local software delivery machine (SDM), you will need [Git][git]
 installed.  See the [Local SDM][sdm-local] documentation for more
@@ -21,28 +43,15 @@ source code repositories, continuous integration, chat platform, etc.
 See the [Atomist Developer Guide][atomist-dev] for more complete
 instructions on setting up your development environment.
 
-[atomist-start]: https://docs.atomist.com/user/ (Atomist - Getting Started)
-[atomist-dev]: https://docs.atomist.com/developer/prerequisites/ (Atomist - Developer Prerequisites)
-[git]: https://git-scm.com/ (Git)
-[node]: https://nodejs.org/ (Node.js)
-[sdm-local]: https://github.com/atomist/sdm-local#readme (Atomist - Local Software Delivery Machine SDM)
-
-## Installation
-
-Briefly,
-
-```
-$ npm install -g @atomist/cli
-```
-
-see the [Atomist developer quick start][atomist-quick-start] for more
+You can run `atomist --help` to see the standard help message.  See
+the [Atomist developer quick start][atomist-quick-start] for more
 information.
 
+[git]: https://git-scm.com/ (Git)
+[sdm-local]: https://github.com/atomist/sdm-local#readme (Atomist - Local Software Delivery Machine SDM)
+[atomist-start]: https://docs.atomist.com/user/ (Atomist - Getting Started)
+[atomist-dev]: https://docs.atomist.com/developer/prerequisites/ (Atomist - Developer Prerequisites)
 [atomist-quick-start]: https://docs.atomist.com/quick-start/ (Atomist Developer Quick Start)
-
-## Using
-
-You can run `atomist --help` to see the standard help message.
 
 ### Configuration
 
@@ -133,4 +142,3 @@ Need Help?  [Join our Slack workspace][slack].
 
 [atomist]: https://atomist.com/ (Atomist - How Teams Deliver Software)
 [slack]: https://join.atomist.com/ (Atomist Community Slack Workspace)
- 
