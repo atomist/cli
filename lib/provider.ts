@@ -35,7 +35,7 @@ type ProviderTypes = Record<string, {
     label: string;
     create: (workspaceId: string,
              apiKey: string,
-             cfg: Configuration) => Promise<{ code: number, configuration: Partial<Configuration> }>;
+             cfg: Configuration) => Promise<{ code: number, configuration?: Partial<Configuration> }>;
 }>;
 
 /*const UnsupportedProvider = async (workspaceId: string,
@@ -132,7 +132,7 @@ export async function create(opts: CreateOptions): Promise<number> {
         const result = await Providers[answers.provider].create(workspaceId, apiKey, cfg);
         const newCfg = {
             ...userCfg,
-            ...result.configuration,
+            ...(result.configuration || {}),
         };
         await writeUserConfig(newCfg);
         print.log(`Successfully created SCM provider ${chalk.cyan(Providers[answers.provider].label)}`);
