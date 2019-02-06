@@ -23,6 +23,7 @@ import { scanFreePort } from "@atomist/automation-client/lib/util/port";
 import axios from "axios";
 import * as express from "express";
 import * as inquirer from "inquirer";
+import opn = require("opn");
 import {
     createSpinner,
     nonce,
@@ -32,7 +33,6 @@ import {
     ConfigureGitHubScmProviderMutation,
     CreateGitHubScmProviderMutation,
 } from "./util";
-import opn = require("opn");
 
 /**
  * Create a GitHub SCM provider for the provided team
