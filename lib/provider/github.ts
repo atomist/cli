@@ -17,20 +17,85 @@
 import {
     ApolloGraphClient,
     Configuration,
+    QueryNoCacheOptions,
 } from "@atomist/automation-client";
-import * as GitHubApi from "@octokit/rest";
+import { Deferred } from "@atomist/automation-client/lib/internal/util/Deferred";
+import { scanFreePort } from "@atomist/automation-client/lib/util/port";
+// tslint:disable-next-line:import-blacklist
+import axios from "axios";
 import chalk from "chalk";
+import * as express from "express";
 import * as inquirer from "inquirer";
-import * as os from "os";
+import { sha256 } from "js-sha256";
+import * as _ from "lodash";
+import opn = require("opn");
 import {
     createSpinner,
-    maskString,
+    nonce,
 } from "../config";
 import * as print from "../print";
 import {
-    CreateScmConfigurationItemMutation,
-    CreateScmProviderMutation,
+    ConfigureGitHubScmProviderMutation,
+    CreateGitHubScmProviderMutation,
 } from "./util";
+
+const OrgsQuery = `query Orgs {
+  orgs {
+    nodes {
+      owner
+      viewerCanAdminister
+    }
+  }
+}`;
+
+interface Orgs {
+    orgs: {
+        nodes: Array<{ owner: string, viewerCanAdminister: true }>;
+    };
+}
+
+const GitHubProviderQuery = `query ScmProviderById {
+  SCMProvider(providerType: github_com) {
+    apiUrl
+    url
+    gitUrl
+    providerType
+    id
+    providerId
+    name
+    targetConfiguration {
+      orgSpecs
+      repoSpecs {
+        ownerSpec
+        nameSpec
+      }
+    }
+    state {
+      error
+      name
+    }
+    authProviderId
+    webhooks {
+      id
+      url
+      tags {
+        name
+        value
+      }
+    }
+  }
+}`;
+
+interface GitHubProvider {
+    SCMProvider: Array<{
+        id: string;
+        targetConfiguration: Array<{ orgSpecs: string[] }>;
+        state: {
+            error: string;
+            name: string;
+        }
+    }>;
+}
 
 /**
  * Create a GitHub SCM provider for the provided team
@@ -40,182 +105,145 @@ import {
  */
 export async function createGitHubCom(workspaceId: string,
                                       apiKey: string,
-                                      cfg: Configuration):
-    Promise<{ code: number, configuration: Partial<Configuration> }> {
-
-    let token = cfg.token;
-    if (!token) {
-        try {
-            token = await obtainToken();
-        } catch (e) {
-            print.error(`Failed to obtain GitHub token: ${e.message}`);
-            return {
-                code: 1,
-                configuration: {},
-            };
-        }
-    }
-
-    print.log(`Please provide a comma separated lists of organization and
-repository names and/or glob patterns.`);
-    const questions: inquirer.Question[] = [{
-        type: "input",
-        name: "orgs",
-        message: "Organizations",
-    }, {
-        type: "input",
-        name: "repos",
-        message: "Repositories",
-    }];
-    const answers = await inquirer.prompt(questions);
-
-    const spinner = createSpinner(`Creating new GitHub SCM provider`);
+                                      cfg: Configuration): Promise<{ code: number }> {
+    let providerId: string;
+    let configuredOrgs: string[];
 
     const graphClient = new ApolloGraphClient(`${cfg.endpoints.graphql}/${workspaceId}`,
         { Authorization: `Bearer ${apiKey}` });
-    await graphClient.mutate<{}, any>({
-        mutation: CreateScmProviderMutation,
-        variables: {
-            name: "GitHub.com",
-            type: "github_com",
-            apiUrl: "https://api.github.com",
-            gitUrl: "git@github.com:",
+
+    let spinner = createSpinner(`Verifying GitHub SCM provider`);
+    const providerResult = await graphClient.query<GitHubProvider, {}>({
+        query: GitHubProviderQuery,
+    });
+    spinner.stop(true);
+
+    if (!!providerResult && !!providerResult.SCMProvider && !!providerResult.SCMProvider[0]) {
+        const provider = providerResult.SCMProvider[0];
+        providerId = provider.id;
+        configuredOrgs = _.get(providerResult, "SCMProvider[0].targetConfiguration.orgSpecs") || [];
+
+        if (!!provider.state && !!provider.state.error) {
+            print.log(`GitHub SCM provider is in state '${chalk.cyan(provider.state.name)}' with:
+${chalk.red(provider.state.error)}`);
+        }
+
+    } else {
+        spinner = createSpinner(`Creating new GitHub SCM provider`);
+        const result = await graphClient.mutate<{ createGitHubResourceProvider: { id: string } }, {}>({
+            mutation: CreateGitHubScmProviderMutation,
+        });
+        providerId = result.createGitHubResourceProvider.id;
+        configuredOrgs = [];
+        spinner.stop(true);
+    }
+
+    spinner = createSpinner(`Redirecting through GitHub oauth to collect required secret`);
+    const state = nonce(20);
+    const verifier = nonce();
+    const code = sha256(verifier);
+    const port = await scanFreePort();
+    const authUrl = cfg.endpoints.auth;
+    const url = `${authUrl}/teams/${workspaceId}/resource-providers/${providerId}/token?code-challenge=${code}&state=${
+        state}&link=true&redirect-uri=${encodeURIComponent(`http://127.0.0.1:${port}/callback`)}`;
+
+    let redirectUrl;
+    const redirect = await axios.get(
+        url,
+        {
+            headers: { Authorization: `Bearer ${apiKey}` },
+            maxRedirects: 0,
+            validateStatus: status => status === 302,
         },
+    );
+    redirectUrl = redirect.headers.location;
+
+    await opn(redirectUrl, { wait: false });
+
+    const app = express();
+    const callback = new Deferred<{}>();
+    app.get("/callback", async (req, res) => {
+        if (state !== req.query.state) {
+            callback.reject("State parameter not correct after authentication. Abort!");
+            // res.status(500).json({ message: "State parameter not correct after authentication" });
+            res.redirect("https://atomist.com/error-oauth.html");
+            return;
+        }
+        try {
+            await axios.post(`${authUrl}/teams/${workspaceId}/resource-providers/${providerId}/token`, {
+                "code": req.query.code,
+                "code-verifier": verifier,
+            }, {
+                headers: { Authorization: `Bearer ${apiKey}` },
+            });
+            callback.resolve();
+            res.redirect("https://atomist.com/success-oauth.html");
+        } catch (e) {
+            callback.reject(new Error(`Authentication failed: ${e.message}`));
+            // res.status(500).json({ message: e.message });
+            res.redirect("https://atomist.com/error-oauth.html");
+        }
     });
 
-    // TODO get provider id from the previous mutation result
-    const providerId = `${workspaceId}_zjlmxjzwhurspem`;
-
-    if (answers.orgs && answers.orgs.length > 0) {
-        await graphClient.mutate<{}, { id: string, name: string, value: string, description: string }>({
-            mutation: CreateScmConfigurationItemMutation,
-            variables: {
-                id: providerId,
-                value: answers.orgs.replace(/ /g, ""),
-                name: "orgs",
-                description: "Organizations",
-            },
-        });
-    }
-    if (answers.repos && answers.repos.length > 0) {
-        await graphClient.mutate<{}, { id: string, name: string, value: string, description: string }>({
-            mutation: CreateScmConfigurationItemMutation,
-            variables: {
-                id: providerId,
-                value: answers.repos.replace(/ /g, ""),
-                name: "repos",
-                description: "Repositories",
-            },
-        });
+    const server = app.listen(port);
+    try {
+        await callback.promise;
+    } finally {
+        server.close();
+        spinner.stop(true);
     }
 
-    spinner.stop(true);
+    await configure(workspaceId, apiKey, providerId, configuredOrgs, cfg);
 
     return {
         code: 0,
-        configuration: {
-            token,
-        },
     };
 }
 
-async function obtainToken(): Promise<string> {
-    let token: string;
+async function configure(workspaceId: string,
+                         apiKey: string,
+                         providerId: string,
+                         configuredOrgs: string[],
+                         cfg: Configuration): Promise<any> {
 
-    print.log(`In order to create a GitHub SCM resource provider,
-we need to obtain a GitHub token with ${chalk.cyan("admin:org_hook")}
-scope. The token will ${chalk.bold("not")} be stored with Atomist!`);
-    const questions: inquirer.Question[] = [
-        {
-            type: "input",
-            name: "username",
-            message: `GitHub username`,
-            when: !token,
-            validate: value => {
-                if (!/^[-.A-Za-z0-9]+$/.test(value)) {
-                    return `The GitHub username you entered contains invalid characters: ${value}`;
-                }
-                return true;
-            },
-        },
-        {
-            type: "input",
-            name: "password",
-            transformer: maskString,
-            message: `GitHub password`,
-            when: !token,
-            validate: value => {
-                if (value.length < 1) {
-                    return `The GitHub password you entered is empty`;
-                }
-                return true;
-            },
-        },
-        {
-            type: "input",
-            name: "mfa",
-            message: "GitHub 2FA code",
-            when: async ans => {
-                if (!token) {
-                    const username = ans.username;
-                    const password = ans.password;
-                    try {
-                        token = await createToken(username, password);
-                    } catch (e) {
-                        if (e.status === 401 && e.headers["x-github-otp"]) {
-                            return e.headers["x-github-otp"].includes("required");
-                        } else {
-                            throw e;
-                        }
-                    }
-                }
-                return false;
-            },
-            validate: (value: string) => {
-                if (!/^\d{6}$/.test(value)) {
-                    return `The GitHub 2FA you entered is invalid, it should be six digits: ${value}`;
-                }
-                return true;
-            },
-        },
-    ];
+    let spinner = createSpinner(`Loading GitHub organizations`);
 
+    let graphClient = new ApolloGraphClient(
+        cfg.endpoints.graphql.replace("/team", ""),
+        { Authorization: `Bearer ${apiKey}` });
+    const accessibleOrgs = await graphClient.query<Orgs, void>({
+        query: OrgsQuery,
+        options: QueryNoCacheOptions,
+    });
+    spinner.stop(true);
+
+    const orgs = _.uniq([...configuredOrgs, ...accessibleOrgs.orgs.nodes.map(o => o.owner)]);
+
+    print.log(`Please select organizations you want to enable:`);
+    const questions: inquirer.Question[] = [{
+        type: "checkbox",
+        name: "orgs",
+        message: "Organizations",
+        choices: orgs.sort((o1, o2) => o1.localeCompare(o2))
+            .map(o => ({
+                name: o,
+                value: o,
+                checked: configuredOrgs.includes(o),
+            })),
+    }];
     const answers = await inquirer.prompt(questions);
 
-    const spinner = createSpinner(`Creating new GitHub personal access token`);
-    token = await createToken(answers.username, answers.password, answers.mfa);
-    spinner.stop(true);
-    return token;
-}
+    spinner = createSpinner(`Configuring GitHub SCM provider`);
 
-/**
- * Create a GitHub.com personal access token using a GitHub.com user
- * name, password, and optionally MFA token.
- * @param user GitHub.com user name
- * @param password GitHub.com user password
- * @param mfa GitHub.com user MFA token
- * @return Promise of the token
- */
-async function createToken(user: string, password: string, mfa?: string): Promise<string> {
-    const github = new GitHubApi();
-    github.authenticate({
-        type: "basic",
-        username: user,
-        password,
+    graphClient = new ApolloGraphClient(`${cfg.endpoints.graphql}/${workspaceId}`,
+        { Authorization: `Bearer ${apiKey}` });
+    await graphClient.mutate<{}, { id: string, orgs: string[], repos: Array<{ owner: string, repo: string }> }>({
+        mutation: ConfigureGitHubScmProviderMutation,
+        variables: {
+            id: providerId,
+            orgs: !answers.orgs ? [] : answers.orgs,
+            repos: [],
+        },
     });
-    const host = os.hostname();
-    const params: any = {
-        scopes: ["repo", "admin:repo_hook", "admin:org_hook"],
-        note: `Atomist CLI on ${host}`,
-        note_url: "http://app.atomist.com/",
-        fingerprint: Date.now(),
-    };
-    if (mfa) {
-        (params).headers = { "X-GitHub-OTP": mfa };
-    }
-    const res = await github.oauthAuthorizations.createAuthorization(params);
-    if (!res.data || !res.data.token) {
-        throw new Error(`GitHub API returned successful but there is no token`);
-    }
-    return res.data.token;
+    spinner.stop(true);
 }
