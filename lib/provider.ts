@@ -29,7 +29,9 @@ import {
     validateApiKey,
 } from "./config";
 import * as print from "./print";
-import { createGitHubCom } from "./provider/github";
+import {
+    createGitHubCom,
+} from "./provider/github";
 
 type ProviderTypes = Record<string, {
     label: string;
@@ -138,6 +140,7 @@ export async function create(opts: CreateOptions): Promise<number> {
         print.log(`Successfully created SCM provider ${chalk.cyan(Providers[answers.provider].label)}`);
         return result.code;
     } catch (e) {
+        console.log(JSON.stringify(e, null, 2));
         print.error(`Failed to create SCM provider: ${e.message}`);
         return 1;
     }
