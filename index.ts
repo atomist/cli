@@ -101,7 +101,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         })),
     });
     yargBuilder.withSubcommand({
-        command: "provider create",
+        command: "provider config",
         describe: "Create a new provider",
         parameters: [{
             parameterName: "api-key",
@@ -112,7 +112,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             describe: "Atomist workspace ID",
             type: "string",
         }],
-        handler: argv => cliCommand(() => provider.create({
+        handler: argv => cliCommand(() => provider.configure({
             apiKey: argv["api-key"],
             workspaceId: argv["workspace-id"],
         })),

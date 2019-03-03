@@ -26,6 +26,7 @@ import * as express from "express";
 import * as inquirer from "inquirer";
 import { sha256 } from "js-sha256";
 import * as _ from "lodash";
+import opn = require("opn");
 import {
     createSpinner,
     nonce,
@@ -35,7 +36,6 @@ import {
     ConfigureGitHubScmProviderMutation,
     CreateGitHubScmProviderMutation,
 } from "./util";
-import opn = require("opn");
 
 const OrgsQuery = `query Orgs {
   orgs {
@@ -158,7 +158,7 @@ export async function createGitHubCom(workspaceId: string,
         }
         try {
             await axios.post(`${authUrl}/teams/${workspaceId}/resource-providers/${providerId}/token`, {
-                code: req.query.code,
+                "code": req.query.code,
                 "code-verifier": verifier,
             }, {
                 headers: { Authorization: `Bearer ${apiKey}` },
@@ -166,7 +166,6 @@ export async function createGitHubCom(workspaceId: string,
             callback.resolve();
             res.redirect("https://atomist.com/success-oauth.html");
         } catch (e) {
-            console.error(e.response.data);
             callback.reject(new Error(`Authentication failed: ${e.message}`));
             // res.status(500).json({ message: e.message });
             res.redirect("https://atomist.com/error-oauth.html");

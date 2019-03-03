@@ -57,26 +57,26 @@ const Providers: ProviderTypes = {
     },
     /*ghe: {
         label: "GitHub Enterprise",
-        create: UnsupportedProvider,
+        configure: UnsupportedProvider,
     },
     gitlab: {
         label: "GitLab",
-        create: UnsupportedProvider,
+        configure: UnsupportedProvider,
     },
     gitlab_com: {
         label: "GitLab.com",
-        create: UnsupportedProvider,
+        configure: UnsupportedProvider,
     },
     bitbucket: {
         label: "BitBucket",
-        create: UnsupportedProvider,
+        configure: UnsupportedProvider,
     },*/
 };
 
 /**
- * Command-line options and arguments for provider create
+ * Command-line options and arguments for provider configure
  */
-export interface CreateOptions {
+export interface ConfigureOptions {
     /** Atomist API key */
     apiKey?: string;
 
@@ -88,7 +88,7 @@ export interface CreateOptions {
  * Create a new SCM provider
  * @param opts
  */
-export async function create(opts: CreateOptions): Promise<number> {
+export async function configure(opts: ConfigureOptions): Promise<number> {
     const userCfg = resolveUserConfig();
     const defaultCfg = defaultConfiguration();
     const cfg = mergeConfigs(defaultCfg, userCfg);
@@ -119,7 +119,7 @@ export async function create(opts: CreateOptions): Promise<number> {
         return 1;
     }
 
-    print.log("Select an SCM provider to add to your workspace:");
+    print.log("Select an SCM provider type to configure:");
     const questions: inquirer.Question[] = [
         {
             type: "list",
@@ -137,11 +137,10 @@ export async function create(opts: CreateOptions): Promise<number> {
             ...(result.configuration || {}),
         };
         await writeUserConfig(newCfg);
-        print.log(`Successfully created SCM provider ${chalk.cyan(Providers[answers.provider].label)}`);
+        print.log(`Successfully configured SCM provider ${chalk.cyan(Providers[answers.provider].label)}`);
         return result.code;
     } catch (e) {
-        console.log(JSON.stringify(e, null, 2));
-        print.error(`Failed to create SCM provider: ${e.message}`);
+        print.error(`Failed to configure SCM provider: ${e.message}`);
         return 1;
     }
 

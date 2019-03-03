@@ -318,7 +318,7 @@ export async function configureWorkspaces(apiKey: string,
     const workspaces = _.get(result, "personByIdentity") || [];
 
     if (workspaces.length === 0) {
-        print.log(`No workspaces available. Run ${chalk.cyan("atomist workspace create")}`);
+        print.log(`No workspaces available. Run ${chalk.cyan("atomist workspace configure")}`);
         return [];
     }
 
