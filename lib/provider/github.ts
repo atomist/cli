@@ -21,6 +21,7 @@ import {
 } from "@atomist/automation-client";
 import { Deferred } from "@atomist/automation-client/lib/internal/util/Deferred";
 import { scanFreePort } from "@atomist/automation-client/lib/util/port";
+// tslint:disable-next-line:import-blacklist
 import axios from "axios";
 import chalk from "chalk";
 import * as express from "express";
@@ -123,7 +124,8 @@ export async function createGitHubCom(workspaceId: string,
         configuredOrgs = _.get(providerResult, "SCMProvider[0].targetConfiguration.orgSpecs") || [];
 
         if (!!provider.state && !!provider.state.error) {
-            print.log(`GitHub SCM provider is in state '${chalk.cyan(provider.state.name)}' with:\n${chalk.red(provider.state.error)}`);
+            print.log(`GitHub SCM provider is in state '${chalk.cyan(provider.state.name)}' with:
+${chalk.red(provider.state.error)}`);
         }
 
     } else {

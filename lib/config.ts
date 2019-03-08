@@ -28,6 +28,7 @@ import {
 import { ApolloGraphClient } from "@atomist/automation-client/lib/graph/ApolloGraphClient";
 import { Deferred } from "@atomist/automation-client/lib/internal/util/Deferred";
 import { scanFreePort } from "@atomist/automation-client/lib/util/port";
+// tslint:disable-next-line:import-blacklist
 import axios from "axios";
 import chalk from "chalk";
 import * as express from "express";

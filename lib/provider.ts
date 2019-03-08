@@ -103,7 +103,7 @@ export async function config(opts: ConfigureOptions): Promise<number> {
         return 1;
     }
 
-    if (!(opts.validateApiKey === false)) {
+    if (!(!opts.validateApiKey)) {
         try {
             // Validate api key
             await validateApiKey(apiKey, cfg);
