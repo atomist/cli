@@ -29,13 +29,15 @@ import {
     validateApiKey,
 } from "./config";
 import * as print from "./print";
-import { createGitHubCom } from "./provider/github";
+import {
+    createGitHubCom,
+} from "./provider/github";
 
 type ProviderTypes = Record<string, {
     label: string;
     create: (workspaceId: string,
              apiKey: string,
-             cfg: Configuration) => Promise<{ code: number, configuration: Partial<Configuration> }>;
+             cfg: Configuration) => Promise<{ code: number, configuration?: Partial<Configuration> }>;
 }>;
 
 /*const UnsupportedProvider = async (workspaceId: string,
@@ -55,38 +57,41 @@ const Providers: ProviderTypes = {
     },
     /*ghe: {
         label: "GitHub Enterprise",
-        create: UnsupportedProvider,
+        config: UnsupportedProvider,
     },
     gitlab: {
         label: "GitLab",
-        create: UnsupportedProvider,
+        config: UnsupportedProvider,
     },
     gitlab_com: {
         label: "GitLab.com",
-        create: UnsupportedProvider,
+        config: UnsupportedProvider,
     },
     bitbucket: {
         label: "BitBucket",
-        create: UnsupportedProvider,
+        config: UnsupportedProvider,
     },*/
 };
 
 /**
- * Command-line options and arguments for provider create
+ * Command-line options and arguments for provider config
  */
-export interface CreateOptions {
+export interface ConfigureOptions {
     /** Atomist API key */
     apiKey?: string;
 
     /** Atomist workspace id */
     workspaceId?: string;
+
+    /** Set to false to not validate apiKey */
+    validateApiKey?: boolean;
 }
 
 /**
  * Create a new SCM provider
  * @param opts
  */
-export async function create(opts: CreateOptions): Promise<number> {
+export async function config(opts: ConfigureOptions): Promise<number> {
     const userCfg = resolveUserConfig();
     const defaultCfg = defaultConfiguration();
     const cfg = mergeConfigs(defaultCfg, userCfg);
@@ -98,12 +103,14 @@ export async function create(opts: CreateOptions): Promise<number> {
         return 1;
     }
 
-    try {
-        // Validate api key
-        await validateApiKey(apiKey, cfg);
-    } catch (e) {
-        print.error(`Failed to validate API key: ${e.message}`);
-        return 1;
+    if (!(!opts.validateApiKey)) {
+        try {
+            // Validate api key
+            await validateApiKey(apiKey, cfg);
+        } catch (e) {
+            print.error(`Failed to validate API key: ${e.message}`);
+            return 1;
+        }
     }
 
     let workspaceId = opts.workspaceId;
@@ -117,7 +124,7 @@ export async function create(opts: CreateOptions): Promise<number> {
         return 1;
     }
 
-    print.log("Select an SCM provider to add to your workspace:");
+    print.log("Select an SCM provider type to config:");
     const questions: inquirer.Question[] = [
         {
             type: "list",
@@ -132,13 +139,13 @@ export async function create(opts: CreateOptions): Promise<number> {
         const result = await Providers[answers.provider].create(workspaceId, apiKey, cfg);
         const newCfg = {
             ...userCfg,
-            ...result.configuration,
+            ...(result.configuration || {}),
         };
         await writeUserConfig(newCfg);
-        print.log(`Successfully created SCM provider ${chalk.cyan(Providers[answers.provider].label)}`);
+        print.log(`Successfully configured SCM provider ${chalk.cyan(Providers[answers.provider].label)}`);
         return result.code;
     } catch (e) {
-        print.error(`Failed to create SCM provider: ${e.message}`);
+        print.error(`Failed to configure SCM provider: ${e.message}`);
         return 1;
     }
 

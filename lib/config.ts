@@ -28,6 +28,7 @@ import {
 import { ApolloGraphClient } from "@atomist/automation-client/lib/graph/ApolloGraphClient";
 import { Deferred } from "@atomist/automation-client/lib/internal/util/Deferred";
 import { scanFreePort } from "@atomist/automation-client/lib/util/port";
+// tslint:disable-next-line:import-blacklist
 import axios from "axios";
 import chalk from "chalk";
 import * as express from "express";
@@ -150,7 +151,7 @@ export async function config(opts: ConfigOptions): Promise<number> {
     let workspaceIds;
     if (!opts.workspaceId) {
         try {
-            // Retrieve list and configure workspaces
+            // Retrieve list and config workspaces
             workspaceIds = await configureWorkspaces(apiKey, cfg);
         } catch (e) {
             print.error(`Failed to configure workspaces: ${e.message}`);
@@ -220,8 +221,8 @@ async function createApiKey(cfg: Configuration): Promise<string> {
         app.get("/callback", async (req, res) => {
             if (state !== req.query.state) {
                 callback.reject("State parameter not correct after authentication. Abort!");
-                // TODO this page should change to a proper error page
-                res.status(500).json({ message: "State parameter not correct after authentication" });
+                // res.status(500).json({ message: "State parameter not correct after authentication" });
+                res.redirect("https://atomist.com/error-oauth.html");
                 return;
             }
             try {
@@ -231,12 +232,11 @@ async function createApiKey(cfg: Configuration): Promise<string> {
                     grant_type: "pkce",
                 });
                 callback.resolve({ jwt: token.data.access_token });
-                // TODO this page should change
-                res.redirect("https://atomist.com/success-github.html");
+                res.redirect("https://atomist.com/success-oauth.html");
             } catch (e) {
-                // TODO this page should change to a proper error page
-                res.status(500).json({ message: e.message });
                 callback.reject(new Error(`Authentication failed: ${e.message}`));
+                // res.status(500).json({ message: e.message });
+                res.redirect("https://atomist.com/error-oauth.html");
             }
         });
 
@@ -357,7 +357,7 @@ export function createSpinner(text: string): any {
     return spinner;
 }
 
-function nonce(length: number = 40): string {
+export function nonce(length: number = 40): string {
     const crypto = require("crypto");
     return crypto
         .randomBytes(Math.ceil((length * 3) / 4))

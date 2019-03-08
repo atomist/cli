@@ -14,6 +14,20 @@
  * limitations under the License.
  */
 
+export const CreateGitHubScmProviderMutation = `
+mutation CreateGitHubResourceProvider {
+  createGitHubResourceProvider {
+    id
+  }
+}`;
+
+export const ConfigureGitHubScmProviderMutation = `
+mutation ConfigureGitHubScmResourceProvider($id: ID!, $orgs: [String!]!, $repos: [SCMResourceProviderRepoInput!]!) {
+  configureGitHubResourceProvider(id: $id, config: {orgs: $orgs, repos: $repos}) {
+    id
+  }
+}`;
+
 export const CreateScmProviderMutation = `
 mutation CreateScmProvider($name: String!, $type: ProviderType!, $apiUrl: String!, $gitUrl: String!) {
   createSCMProvider(provider: {
