@@ -57,24 +57,24 @@ const Providers: ProviderTypes = {
     },
     /*ghe: {
         label: "GitHub Enterprise",
-        configure: UnsupportedProvider,
+        config: UnsupportedProvider,
     },
     gitlab: {
         label: "GitLab",
-        configure: UnsupportedProvider,
+        config: UnsupportedProvider,
     },
     gitlab_com: {
         label: "GitLab.com",
-        configure: UnsupportedProvider,
+        config: UnsupportedProvider,
     },
     bitbucket: {
         label: "BitBucket",
-        configure: UnsupportedProvider,
+        config: UnsupportedProvider,
     },*/
 };
 
 /**
- * Command-line options and arguments for provider configure
+ * Command-line options and arguments for provider config
  */
 export interface ConfigureOptions {
     /** Atomist API key */
@@ -82,13 +82,16 @@ export interface ConfigureOptions {
 
     /** Atomist workspace id */
     workspaceId?: string;
+
+    /** Set to false to not validate apiKey */
+    validateApiKey?: boolean;
 }
 
 /**
  * Create a new SCM provider
  * @param opts
  */
-export async function configure(opts: ConfigureOptions): Promise<number> {
+export async function config(opts: ConfigureOptions): Promise<number> {
     const userCfg = resolveUserConfig();
     const defaultCfg = defaultConfiguration();
     const cfg = mergeConfigs(defaultCfg, userCfg);
@@ -100,12 +103,14 @@ export async function configure(opts: ConfigureOptions): Promise<number> {
         return 1;
     }
 
-    try {
-        // Validate api key
-        await validateApiKey(apiKey, cfg);
-    } catch (e) {
-        print.error(`Failed to validate API key: ${e.message}`);
-        return 1;
+    if (!(opts.validateApiKey === false)) {
+        try {
+            // Validate api key
+            await validateApiKey(apiKey, cfg);
+        } catch (e) {
+            print.error(`Failed to validate API key: ${e.message}`);
+            return 1;
+        }
     }
 
     let workspaceId = opts.workspaceId;
@@ -119,7 +124,7 @@ export async function configure(opts: ConfigureOptions): Promise<number> {
         return 1;
     }
 
-    print.log("Select an SCM provider type to configure:");
+    print.log("Select an SCM provider type to config:");
     const questions: inquirer.Question[] = [
         {
             type: "list",

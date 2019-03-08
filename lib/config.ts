@@ -150,7 +150,7 @@ export async function config(opts: ConfigOptions): Promise<number> {
     let workspaceIds;
     if (!opts.workspaceId) {
         try {
-            // Retrieve list and configure workspaces
+            // Retrieve list and config workspaces
             workspaceIds = await configureWorkspaces(apiKey, cfg);
         } catch (e) {
             print.error(`Failed to configure workspaces: ${e.message}`);
@@ -318,7 +318,7 @@ export async function configureWorkspaces(apiKey: string,
     const workspaces = _.get(result, "personByIdentity") || [];
 
     if (workspaces.length === 0) {
-        print.log(`No workspaces available. Run ${chalk.cyan("atomist workspace configure")}`);
+        print.log(`No workspaces available. Run ${chalk.cyan("atomist workspace create")}`);
         return [];
     }
 

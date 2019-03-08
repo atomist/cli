@@ -22,6 +22,7 @@ import {
 import { Deferred } from "@atomist/automation-client/lib/internal/util/Deferred";
 import { scanFreePort } from "@atomist/automation-client/lib/util/port";
 import axios from "axios";
+import chalk from "chalk";
 import * as express from "express";
 import * as inquirer from "inquirer";
 import { sha256 } from "js-sha256";
@@ -88,6 +89,10 @@ interface GitHubProvider {
     SCMProvider: Array<{
         id: string;
         targetConfiguration: Array<{ orgSpecs: string[] }>;
+        state: {
+            error: string;
+            name: string;
+        }
     }>;
 }
 
@@ -113,8 +118,14 @@ export async function createGitHubCom(workspaceId: string,
     spinner.stop(true);
 
     if (!!providerResult && !!providerResult.SCMProvider && !!providerResult.SCMProvider[0]) {
-        providerId = providerResult.SCMProvider[0].id;
+        const provider = providerResult.SCMProvider[0];
+        providerId = provider.id;
         configuredOrgs = _.get(providerResult, "SCMProvider[0].targetConfiguration.orgSpecs") || [];
+
+        if (!!provider.state && !!provider.state.error) {
+            print.log(`GitHub SCM provider is in state '${chalk.cyan(provider.state.name)}' with:\n${chalk.red(provider.state.error)}`);
+        }
+
     } else {
         spinner = createSpinner(`Creating new GitHub SCM provider`);
         const result = await graphClient.mutate<{ createGitHubResourceProvider: { id: string } }, {}>({

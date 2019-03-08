@@ -112,7 +112,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             describe: "Atomist workspace ID",
             type: "string",
         }],
-        handler: argv => cliCommand(() => provider.configure({
+        handler: argv => cliCommand(() => provider.config({
             apiKey: argv["api-key"],
             workspaceId: argv["workspace-id"],
         })),
