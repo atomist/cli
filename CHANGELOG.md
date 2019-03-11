@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add provider and workspace create commands. [#61](https://github.com/atomist/cli/issues/61)
 -   Add `provider config` command. [#64](https://github.com/atomist/cli/issues/64)
 
+### Changed
+
+-   Deploy k8s-sdm as part of `atomist kube`. [#65](https://github.com/atomist/cli/issues/65)
+
 ## [1.1.0](https://github.com/atomist/cli/compare/1.0.3...1.1.0) - 2018-12-27
 
 ### Added
