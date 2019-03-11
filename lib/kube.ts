@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import {
 import * as fs from "fs-extra";
 import * as stringify from "json-stringify-safe";
 import * as tmp from "tmp-promise";
-
 import { resolveCliConfig } from "./cliConfig";
 import * as print from "./print";
 import { spawnPromise } from "./spawn";
@@ -60,23 +59,28 @@ export async function kube(opts: KubeOptions): Promise<number> {
     }
 
     const k8ventUrl = ghRawUrl("k8vent");
-    const k8autoUrl = ghRawUrl("k8-automation");
+    const k8sSdmUrl = ghRawUrl("k8s-sdm");
 
     const webhooks = kubeWebhookUrls(workspaceIds);
-    const k8Config: Configuration = { workspaceIds, apiKey, environment };
+    const k8Config: Configuration = {
+        workspaceIds,
+        apiKey,
+        environment,
+        name: `@atomist/k8s-sdm_${environment}`,
+    };
     if (ns) {
         k8Config.kubernetes = { mode: "namespace" };
     }
     const k8ventSecret = encodeSecret("k8vent", { environment, webhooks });
-    const k8autoSecret = encodeSecret("automation", { config: stringify(k8Config) });
+    const k8sSdmSecret = encodeSecret("k8s-sdm", { "client.config.json": stringify(k8Config) });
 
     let k8ventTmp: tmp.FileResult;
-    let k8autoTmp: tmp.FileResult;
+    let k8sSdmTmp: tmp.FileResult;
     try {
         k8ventTmp = await tmp.file();
         await fs.write(k8ventTmp.fd, stringify(k8ventSecret), 0, "utf8");
-        k8autoTmp = await tmp.file();
-        await fs.write(k8autoTmp.fd, stringify(k8autoSecret), 0, "utf8");
+        k8sSdmTmp = await tmp.file();
+        await fs.write(k8sSdmTmp.fd, stringify(k8sSdmSecret), 0, "utf8");
     } catch (e) {
         print.error(`Failed to create temporary file: ${e.message}`);
         return 10;
@@ -90,15 +94,15 @@ export async function kube(opts: KubeOptions): Promise<number> {
         kubectlArgs.push(
             ["apply", `--namespace=${ns}`, `--filename=${k8ventTmp.path}`],
             ["apply", `--namespace=${ns}`, `--filename=${k8ventUrl}/kube/kubectl/namespace-scoped.yaml`],
-            ["apply", `--namespace=${ns}`, `--filename=${k8autoTmp.path}`],
-            ["apply", `--namespace=${ns}`, `--filename=${k8autoUrl}/assets/kubectl/namespace-scoped.yaml`],
+            ["apply", `--namespace=${ns}`, `--filename=${k8sSdmTmp.path}`],
+            ["apply", `--namespace=${ns}`, `--filename=${k8sSdmUrl}/assets/kubectl/namespace-scoped.yaml`],
         );
     } else {
         kubectlArgs.push(
             ["apply", `--filename=${k8ventUrl}/kube/kubectl/cluster-wide.yaml`],
             ["apply", "--namespace=k8vent", `--filename=${k8ventTmp.path}`],
-            ["apply", `--filename=${k8autoUrl}/assets/kubectl/cluster-wide.yaml`],
-            ["apply", "--namespace=k8-automation", `--filename=${k8autoTmp.path}`],
+            ["apply", `--filename=${k8sSdmUrl}/assets/kubectl/cluster-wide.yaml`],
+            ["apply", "--namespace=sdm", `--filename=${k8sSdmTmp.path}`],
         );
     }
 
@@ -110,13 +114,13 @@ export async function kube(opts: KubeOptions): Promise<number> {
         const status = await spawnPromise(spawnOpts);
         if (status !== 0) {
             k8ventTmp.cleanup();
-            k8autoTmp.cleanup();
+            k8sSdmTmp.cleanup();
             return status;
         }
     }
 
     k8ventTmp.cleanup();
-    k8autoTmp.cleanup();
+    k8sSdmTmp.cleanup();
 
     return 0;
 }
