@@ -14,7 +14,7 @@ This page details all runtime OSS dependencies of `@atomist/cli`.
 |[Apache-2.0](#apache-20)|29|
 |[Artistic-2.0](#artistic-20)|4|
 |[BSD-2-Clause](#bsd-2-clause)|23|
-|[BSD-3-Clause](#bsd-3-clause)|33|
+|[BSD-3-Clause](#bsd-3-clause)|34|
 |[BSD](#bsd)|9|
 |[CC-BY-3.0](#cc-by-30)|2|
 |[CC0-1.0](#cc0-10)|1|
@@ -26,8 +26,8 @@ This page details all runtime OSS dependencies of `@atomist/cli`.
 |[Custom: https://flowtype.org/](#custom-httpsflowtypeorg)|1|
 |[Custom: https://github.com/graphql/graphql-language-service](#custom-httpsgithubcomgraphqlgraphql-language-service)|2|
 |[GPL-3.0](#gpl-30)|5|
-|[ISC](#isc)|137|
-|[MIT](#mit)|1011|
+|[ISC](#isc)|138|
+|[MIT](#mit)|1016|
 |[UNKNOWN](#unknown)|1|
 |[Unlicense](#unlicense)|1|
 |[WTFPL](#wtfpl)|5|
@@ -148,6 +148,7 @@ BSD 3-Clause "New" or "Revised" License - [http://www.opensource.org/licenses/BS
 |`express-handlebars`|`3.0.2`|Eric Ferraiuolo|[https://github.com/ericf/express-handlebars](https://github.com/ericf/express-handlebars)|
 |`flat`|`4.1.0`|Hugh Kennedy|[https://github.com/hughsk/flat](https://github.com/hughsk/flat)|
 |`heavy`|`6.1.2`||[https://github.com/hapijs/heavy](https://github.com/hapijs/heavy)|
+|`highlight.js`|`9.15.6`|Ivan Sagalaev|[https://github.com/highlightjs/highlight.js](https://github.com/highlightjs/highlight.js)|
 |`hoek`|`6.1.2`||[https://github.com/hapijs/hoek](https://github.com/hapijs/hoek)|
 |`isemail`|`3.2.0`||[https://github.com/hapijs/isemail](https://github.com/hapijs/isemail)|
 |`joi`|`14.3.1`||[https://github.com/hapijs/joi](https://github.com/hapijs/joi)|
@@ -253,6 +254,7 @@ ISC License - [https://www.isc.org/downloads/software-support-policy/isc-license
 |`cacache`|`11.3.2`|Kat Marchán|[https://github.com/zkat/cacache](https://github.com/zkat/cacache)|
 |`call-limit`|`1.1.0`|Rebecca Turner|[https://github.com/iarna/call-limit](https://github.com/iarna/call-limit)|
 |`chownr`|`1.1.1`|Isaac Z. Schlueter|[https://github.com/isaacs/chownr](https://github.com/isaacs/chownr)|
+|`cli-highlight`|`2.0.0`|Felix Becker|[https://github.com/felixfbecker/cli-highlight](https://github.com/felixfbecker/cli-highlight)|
 |`cli-width`|`2.2.0`|Ilya Radchenko|[https://github.com/knownasilya/cli-width](https://github.com/knownasilya/cli-width)|
 |`cliui`|`4.1.0`|Ben Coe|[https://github.com/yargs/cliui](https://github.com/yargs/cliui)|
 |`console-control-strings`|`1.1.0`|Rebecca Turner|[https://github.com/iarna/console-control-strings](https://github.com/iarna/console-control-strings)|
@@ -514,6 +516,7 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`ansicolors`|`0.3.2`|Thorsten Lorenz|[https://github.com/thlorenz/ansicolors](https://github.com/thlorenz/ansicolors)|
 |`ansistyles`|`0.1.3`|Thorsten Lorenz|[https://github.com/thlorenz/ansistyles](https://github.com/thlorenz/ansistyles)|
 |`any-observable`|`0.3.0`|Sindre Sorhus|[https://github.com/sindresorhus/any-observable](https://github.com/sindresorhus/any-observable)|
+|`any-promise`|`1.3.0`|Kevin Beaty|[https://github.com/kevinbeaty/any-promise](https://github.com/kevinbeaty/any-promise)|
 |`apollo-cache-control`|`0.4.1`|Martijn Walraven|[https://github.com/apollographql/apollo-cache-control-js](https://github.com/apollographql/apollo-cache-control-js)|
 |`apollo-cache-inmemory`|`1.5.1`|James Baxley|[https://github.com/apollographql/apollo-client](https://github.com/apollographql/apollo-client)|
 |`apollo-cache`|`1.2.1`|James Baxley|[https://github.com/apollographql/apollo-client](https://github.com/apollographql/apollo-client)|
@@ -1050,6 +1053,7 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`ms`|`2.0.0`||[https://github.com/zeit/ms](https://github.com/zeit/ms)|
 |`ms`|`2.1.1`||[https://github.com/zeit/ms](https://github.com/zeit/ms)|
 |`murmurhash3js`|`3.0.1`|Karan Lyons|[https://github.com/pid/murmurHash3js](https://github.com/pid/murmurHash3js)|
+|`mz`|`2.7.0`|Jonathan Ong|[https://github.com/normalize/mz](https://github.com/normalize/mz)|
 |`nan`|`2.12.1`||[https://github.com/nodejs/nan](https://github.com/nodejs/nan)|
 |`nanomatch`|`1.2.13`|Jon Schlinkert|[https://github.com/micromatch/nanomatch](https://github.com/micromatch/nanomatch)|
 |`natural-orderby`|`1.1.1`|Olaf Ennen|[https://github.com/yobacca/natural-orderby](https://github.com/yobacca/natural-orderby)|
@@ -1125,6 +1129,7 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`parse-json`|`4.0.0`|Sindre Sorhus|[https://github.com/sindresorhus/parse-json](https://github.com/sindresorhus/parse-json)|
 |`parse-path`|`4.0.1`|Ionică Bizău|[https://github.com/IonicaBizau/parse-path](https://github.com/IonicaBizau/parse-path)|
 |`parse-url`|`5.0.1`|Ionică Bizău|[https://github.com/IonicaBizau/parse-url](https://github.com/IonicaBizau/parse-url)|
+|`parse5`|`4.0.0`|Ivan Nikulin|[https://github.com/inikulin/parse5](https://github.com/inikulin/parse5)|
 |`parseurl`|`1.3.2`||[https://github.com/pillarjs/parseurl](https://github.com/pillarjs/parseurl)|
 |`pascal-case`|`2.0.1`|Blake Embrey|[https://github.com/blakeembrey/pascal-case](https://github.com/blakeembrey/pascal-case)|
 |`pascalcase`|`0.1.1`|Jon Schlinkert|[https://github.com/jonschlinkert/pascalcase](https://github.com/jonschlinkert/pascalcase)|
@@ -1302,6 +1307,8 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`terminal-kit`|`1.27.0`|Cédric Ronvel|[https://github.com/cronvel/terminal-kit](https://github.com/cronvel/terminal-kit)|
 |`text-hex`|`1.0.0`|Arnout Kazemier|[https://github.com/3rd-Eden/text-hex](https://github.com/3rd-Eden/text-hex)|
 |`text-table`|`0.2.0`|James Halliday|[https://github.com/substack/text-table](https://github.com/substack/text-table)|
+|`thenify-all`|`1.6.0`|Jonathan Ong|[https://github.com/thenables/thenify-all](https://github.com/thenables/thenify-all)|
+|`thenify`|`3.3.0`|Jonathan Ong|[https://github.com/thenables/thenify](https://github.com/thenables/thenify)|
 |`through2-filter`|`3.0.0`|Bryce B. Baril|[https://github.com/brycebaril/through2-filter](https://github.com/brycebaril/through2-filter)|
 |`through2`|`2.0.3`|Rod Vagg|[https://github.com/rvagg/through2](https://github.com/rvagg/through2)|
 |`through2`|`2.0.5`|Rod Vagg|[https://github.com/rvagg/through2](https://github.com/rvagg/through2)|
