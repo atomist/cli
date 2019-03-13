@@ -18,12 +18,19 @@ import {
     Configuration,
     webhookBaseUrl,
 } from "@atomist/automation-client";
+import { defaultConfiguration } from "@atomist/automation-client/lib/configuration";
+import { execPromise } from "@atomist/automation-client/lib/util/child_process";
+import chalk from "chalk";
 import * as fs from "fs-extra";
+import * as inquirer from "inquirer";
 import * as stringify from "json-stringify-safe";
 import * as tmp from "tmp-promise";
 import { resolveCliConfig } from "./cliConfig";
 import * as print from "./print";
-import { spawnPromise } from "./spawn";
+import {
+    cleanCommandString,
+    spawnPromise,
+} from "./spawn";
 
 /**
  * Command-line options and arguments for kube.
@@ -33,6 +40,10 @@ export interface KubeOptions {
     env?: string;
     /** Namespace to deploy Atomist Kubernetes utilities into */
     ns?: string;
+    /** Only dry-run the command */
+    dryRun?: boolean;
+    /** Confirm all questions */
+    yes?: boolean;
 }
 
 /**
@@ -45,6 +56,8 @@ export interface KubeOptions {
 export async function kube(opts: KubeOptions): Promise<number> {
     const ns: string = opts.ns;
     const environment: string = (opts.env) ? opts.env : "kubernetes";
+    const yes = opts.yes;
+    let dryRun = opts.dryRun;
 
     const cliConfig = resolveCliConfig();
     const apiKey = cliConfig.apiKey;
@@ -58,6 +71,43 @@ export async function kube(opts: KubeOptions): Promise<number> {
         return Promise.resolve(1);
     }
 
+    if (dryRun === undefined && yes === undefined) {
+        let context;
+        try {
+            const contextResult = await execPromise("kubectl", ["config", "current-context"]);
+            context = contextResult.stdout.trim();
+        } catch (e) {
+            print.error(`Failed to create obtain current kubectl context: ${e.message}`);
+            return 10;
+        }
+
+        const questions: inquirer.Question[] = [
+            {
+                type: "list",
+                name: "dryRun",
+                message: `Ready to deploy Atomist k8s utilities into context ${chalk.cyan(context)}:`,
+                choices: [
+                    {
+                        name: "Yes",
+                        value: "yes",
+                        short: "Yes",
+                    } as any, {
+                        name: "Dry-run (prints k8s specs)",
+                        value: "dry-run",
+                        short: "Dry-run",
+                        checked: dryRun,
+                    } as any],
+            },
+        ];
+
+        const answers = await inquirer.prompt(questions);
+        if (answers.dryRun === "no") {
+            return 0;
+        } else if (answers.dryRun === "dry-run") {
+            dryRun = true;
+        }
+    }
+
     const k8ventUrl = ghRawUrl("k8vent");
     const k8sSdmUrl = ghRawUrl("k8s-sdm");
 
@@ -67,10 +117,17 @@ export async function kube(opts: KubeOptions): Promise<number> {
         apiKey,
         environment,
         name: `@atomist/k8s-sdm_${environment}`,
+        logging: { level: "debug" },
     };
     if (ns) {
         k8Config.kubernetes = { mode: "namespace" };
     }
+
+    // For testing purpose, we add the staging endpoints into the config
+    if (process.env.ATOMIST_ENDPOINTS === "staging") {
+        k8Config.endpoints = defaultConfiguration().endpoints;
+    }
+
     const k8ventSecret = encodeSecret("k8vent", { environment, webhooks });
     const k8sSdmSecret = encodeSecret("k8s-sdm", { "client.config.json": stringify(k8Config) });
 
@@ -107,20 +164,42 @@ export async function kube(opts: KubeOptions): Promise<number> {
     }
 
     for (const args of kubectlArgs) {
+        print.log("---");
         const spawnOpts = {
             command: "kubectl",
             args,
         };
-        const status = await spawnPromise(spawnOpts);
-        if (status !== 0) {
-            k8ventTmp.cleanup();
-            k8sSdmTmp.cleanup();
-            return status;
+        if (dryRun) {
+            try {
+                const cmdString = cleanCommandString(spawnOpts.command, spawnOpts.args);
+                print.info(`Running "${cmdString}" in '${process.cwd()}'`);
+                spawnOpts.args.push("--dry-run=true", "--output=json");
+                const kubectlResult = await execPromise(spawnOpts.command, spawnOpts.args);
+                const highlight = require("cli-highlight").highlight;
+                print.log(highlight(kubectlResult.stdout.trim(), { language: "json" }));
+            } catch (e) {
+                print.error(`Failed to run 'kubectl apply --dry-run': ${e.message}`);
+                return 30;
+            }
+        } else {
+            const status = await spawnPromise(spawnOpts);
+            if (status !== 0) {
+                k8ventTmp.cleanup();
+                k8sSdmTmp.cleanup();
+                return status;
+            }
         }
     }
+    print.log("---");
 
     k8ventTmp.cleanup();
     k8sSdmTmp.cleanup();
+
+    if (!dryRun) {
+        print.log("");
+        print.log(`Successfully installed Atomist k8s utilities into your cluster`);
+        print.log(`Please confirm correct startup of k8s-sdm by running: ${chalk.yellow("kubectl get pod -n sdm")}`);
+    }
 
     return 0;
 }

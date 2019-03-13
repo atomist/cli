@@ -171,19 +171,32 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         })),
     });
     yargBuilder.withSubcommand({
-        command: "kube", describe: "Deploy Atomist utilities to Kubernetes cluster",
+        command: "kube",
+        aliases: ["k8s"],
+        describe: "Deploy Atomist utilities to Kubernetes cluster",
         parameters: [{
             parameterName: "environment",
+            required: true,
             describe: "Informative name for your Kubernetes cluster",
             type: "string",
         }, {
             parameterName: "namespace",
             describe: "Deploy utilities in namespace mode",
             type: "string",
+        }, {
+            parameterName: "dry-run",
+            describe: "Only print the k8s objects that would be deployed, without sending them",
+            type: "boolean",
+        }, {
+            parameterName: "yes",
+            describe: "Confirm all questions with yes",
+            type: "boolean",
         }],
         handler: (argv: any) => cliCommand(() => kube({
             env: argv.environment,
             ns: argv.namespace,
+            dryRun: argv["dry-run"],
+            yes: argv.yes,
         })),
     });
     yargBuilder.withSubcommand({
