@@ -78,11 +78,11 @@ export async function kube(opts: KubeOptions): Promise<number> {
                     name: "Yes",
                     value: "yes",
                     short: "Yes",
-                } as any,{
+                } as any, {
                     name: "Dry-run (prints k8s specs)",
                     value: "dry-run",
                     short: "Dry-run",
-                } as any,{
+                } as any, {
                     name: "No",
                     value: "no",
                     short: "No",
@@ -164,7 +164,7 @@ export async function kube(opts: KubeOptions): Promise<number> {
             print.info(`Running "${cmdString}" in '${process.cwd()}'`);
             spawnOpts.args.push("--dry-run=true", "--output=json");
             const kubectlResult = await execPromise(spawnOpts.command, spawnOpts.args);
-            const highlight = require('cli-highlight').highlight;
+            const highlight = require("cli-highlight").highlight;
             print.log(highlight(kubectlResult.stdout.trim(), { language: "json" }));
         } else {
             const status = await spawnPromise(spawnOpts);
