@@ -40,6 +40,7 @@
     "@types/yargs": "^12.0.1",
     "axios": "0.19.0-beta.1",
     "chalk": "^2.4.1",
+    "cli-highlight": "^2.0.0",
     "cli-spinner": "^0.2.8",
     "cross-spawn": "^6.0.5",
     "enquirer": "^2.1.1",
