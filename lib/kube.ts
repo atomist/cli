@@ -93,7 +93,6 @@ export async function kube(opts: KubeOptions): Promise<number> {
 
     if (dryRun === undefined && yes === undefined) {
 
-
         const questions: inquirer.Question[] = [
             {
                 type: "list",
