@@ -115,6 +115,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         handler: argv => cliCommand(() => provider.config({
             apiKey: argv["api-key"],
             workspaceId: argv["workspace-id"],
+            validateApiKey: true,
         })),
     });
     yargBuilder.withSubcommand({
