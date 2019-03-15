@@ -71,15 +71,28 @@ export async function kube(opts: KubeOptions): Promise<number> {
         return Promise.resolve(1);
     }
 
-    if (dryRun === undefined && yes === undefined) {
-        let context;
+    let context;
+    try {
+        const contextResult = await execPromise("kubectl", ["config", "current-context"]);
+        context = contextResult.stdout.trim();
+    } catch (e) {
+        print.error(`Failed to obtain current kubectl context: ${e.message}`);
+        return 10;
+    }
+
+    let url;
+    if (context === "minikube") {
         try {
-            const contextResult = await execPromise("kubectl", ["config", "current-context"]);
-            context = contextResult.stdout.trim();
+            const ipResult = await execPromise("minikube", ["ip"]);
+            url = `http://${ipResult.stdout.trim()}`;
         } catch (e) {
-            print.error(`Failed to create obtain current kubectl context: ${e.message}`);
-            return 10;
+            print.error(`Failed to obtain minikube ip: ${e.message}`);
+            return 15;
         }
+    }
+
+    if (dryRun === undefined && yes === undefined) {
+
 
         const questions: inquirer.Question[] = [
             {
@@ -118,10 +131,14 @@ export async function kube(opts: KubeOptions): Promise<number> {
         environment,
         name: `@atomist/k8s-sdm_${environment}`,
         logging: { level: "debug" },
+        sdm: {
+            kubernetes: {
+                provider: {
+                    url,
+                },
+            },
+        },
     };
-    if (ns) {
-        k8Config.kubernetes = { mode: "namespace" };
-    }
 
     // For testing purpose, we add the staging endpoints into the config
     if (process.env.ATOMIST_ENDPOINTS === "staging") {
