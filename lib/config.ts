@@ -346,7 +346,7 @@ export async function configureWorkspaces(apiKey: string,
                     return multiple ? "Please select at least one workspace" : "Please select one workspace";
                 }
                 return true;
-            }
+            },
         },
     ];
 
