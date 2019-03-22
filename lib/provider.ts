@@ -124,7 +124,7 @@ export async function config(opts: ConfigureOptions): Promise<number> {
         return 1;
     }
 
-    print.log("Select an SCM provider type to config:");
+    print.log("Select an SCM provider type to configure:");
     const questions: inquirer.Question[] = [
         {
             type: "list",
