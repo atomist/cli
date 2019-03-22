@@ -341,6 +341,12 @@ export async function configureWorkspaces(apiKey: string,
                     checked: cfg.workspaceIds.includes(p.team.id),
                     short: p.team.id,
                 })),
+            validate: value => {
+                if (value.length < 1) {
+                    return multiple ? "Please select at least one workspace" : "Please select one workspace";
+                }
+                return true;
+            }
         },
     ];
 
