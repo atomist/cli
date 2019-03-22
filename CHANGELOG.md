@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/1.2.0...HEAD)
 
+### Added
+
+-   Workspace selecter should validate that at least one is selected. [#62](https://github.com/atomist/cli/issues/62)
+
 ## [1.2.0](https://github.com/atomist/cli/compare/1.1.0...1.2.0) - 2019-03-15
 
 ### Added
