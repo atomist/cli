@@ -165,6 +165,8 @@ export async function config(opts: ConfigOptions): Promise<number> {
     await writeUserConfig(userCfg);
 
     print.log(`Successfully wrote configuration ${chalk.green(cfgPath)}`);
+    print.log(`You are ready to connect a software delivery machine.
+  To create one, try 'atomist create sdm'. More info: https://docs.atomist.com/quick-start/#create-a-software-delivery-machine`);
     return 0;
 }
 
