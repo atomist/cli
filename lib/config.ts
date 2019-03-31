@@ -343,7 +343,7 @@ export async function configureWorkspaces(apiKey: string,
                 })),
             validate: value => {
                 if (value.length < 1) {
-                    return multiple ? "Please select at least one workspace" : "Please select one workspace";
+                    return chalk.red(multiple ? "Please select at least one workspace" : "Please select one workspace");
                 }
                 return true;
             },
