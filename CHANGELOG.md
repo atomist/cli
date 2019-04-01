@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Workspace selecter should validate that at least one is selected. [#62](https://github.com/atomist/cli/issues/62)
+-   Add repository configuration to SCM provider command. [#75](https://github.com/atomist/cli/issues/75)
 
 ## [1.2.0](https://github.com/atomist/cli/compare/1.1.0...1.2.0) - 2019-03-15
 
