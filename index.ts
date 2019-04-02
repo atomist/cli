@@ -77,10 +77,16 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             parameterName: "workspace-id",
             describe: "Atomist workspace ID",
             type: "string",
+        }, {
+            parameterName: "create-api-key",
+            describe: "Create a new API key regardless if currently one is configured",
+            type: "boolean",
+            default: false,
         }],
         handler: argv => cliCommand(() => config({
             apiKey: argv["api-key"],
             workspaceId: argv["workspace-id"],
+            createApiKey: argv["create-api-key"],
         })),
     });
     yargBuilder.withSubcommand({

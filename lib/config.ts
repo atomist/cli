@@ -50,6 +50,9 @@ export interface ConfigOptions {
 
     /** Atomist workspace ID */
     workspaceId?: string;
+
+    /** Create new API key regardless of a configured one */
+    createApiKey?: boolean;
 }
 
 const UserQuery = `query User {
@@ -125,7 +128,7 @@ export async function config(opts: ConfigOptions): Promise<number> {
     const defaultCfg = defaultConfiguration();
     const cfg = mergeConfigs(defaultCfg, userCfg);
 
-    let apiKey = opts.apiKey || cfg.apiKey;
+    let apiKey = opts.createApiKey !== true ? (opts.apiKey || cfg.apiKey) : undefined;
 
     // No api key; config and create a new key
     if (!apiKey) {
@@ -273,7 +276,7 @@ async function createApiKey(cfg: Configuration): Promise<string> {
 }
 
 /**
- * Validate a given api key by making a backend call to the GraplQL endpoint
+ * Validate a given api key by making a backend call to the GraphQL endpoint
  * @param apiKey
  * @param cfg
  */
@@ -299,6 +302,13 @@ export async function validateApiKey(apiKey: string, cfg: Configuration): Promis
         } else {
             print.log(`Logged in`);
         }
+    } catch (e) {
+        if (!!e.networkError && e.networkError.statusCode === 401) {
+            print.log(`
+API key is invalid. Run ${chalk.cyan("atomist config --create-api-key")} to obtain a new API key.
+`);
+        }
+        throw e;
     } finally {
         spinner.stop(true);
     }
