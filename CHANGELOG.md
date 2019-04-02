@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/1.3.0...HEAD)
 
+### Changed
+
+-   When the APIkey is invalid, please ask for another one. [#69](https://github.com/atomist/cli/issues/69)
+
 ## [1.3.0](https://github.com/atomist/cli/compare/1.2.0...1.3.0) - 2019-04-01
 
 ### Added
