@@ -28,6 +28,7 @@ import * as express from "express";
 import * as inquirer from "inquirer";
 import { sha256 } from "js-sha256";
 import * as _ from "lodash";
+import opn = require("opn");
 import {
     createSpinner,
     nonce,
@@ -37,7 +38,6 @@ import {
     ConfigureGitHubScmProviderMutation,
     CreateGitHubScmProviderMutation,
 } from "./util";
-import opn = require("opn");
 
 const OrgsQuery = `query Orgs {
   orgs {
@@ -152,9 +152,9 @@ ${chalk.red(provider.state.error)}`);
     }
 
     const secret = _.get(providerResult, "SCMProvider[0].credential.secret");
-    const state = _.get(providerResult, "SCMProvider[0].state.name");
+    const stateName = _.get(providerResult, "SCMProvider[0].state.name");
 
-    if (!secret || state === "unauthorized") {
+    if (!secret || stateName === "unauthorized") {
 
         spinner = createSpinner(`Redirecting through GitHub oauth to collect required secret`);
         const state = nonce(20);
@@ -269,7 +269,7 @@ will install a webhook to receive events like pushes, issues and PRs.`);
         }, {
             name: "Repositories",
             value: "repos",
-        }]
+        }],
     }, {
         type: "checkbox",
         name: "orgs",

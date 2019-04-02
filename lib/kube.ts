@@ -53,9 +53,9 @@ export interface KubeOptions {
  * @param opts see KubeOptions
  * @return integer return value, 0 if successful, non-zero otherwise
  */
+// tslint:disable-next-line:cyclomatic-complexity
 export async function kube(opts: KubeOptions): Promise<number> {
     const ns: string = opts.ns;
-    const environment: string = (opts.env) ? opts.env : "kubernetes";
     const yes = opts.yes;
     let dryRun = opts.dryRun;
 
@@ -89,6 +89,13 @@ export async function kube(opts: KubeOptions): Promise<number> {
             print.error(`Failed to obtain minikube ip: ${e.message}`);
             return 15;
         }
+    }
+
+    let environment: string = opts.env ? opts.env : undefined;
+    if (!!context && !environment) {
+        environment = context;
+    } else {
+        environment = "kubernetes";
     }
 
     if (dryRun === undefined && yes === undefined) {

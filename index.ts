@@ -183,7 +183,6 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         describe: "Deploy Atomist utilities to Kubernetes cluster",
         parameters: [{
             parameterName: "environment",
-            required: true,
             describe: "Informative name for your Kubernetes cluster",
             type: "string",
         }, {
