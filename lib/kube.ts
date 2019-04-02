@@ -104,14 +104,14 @@ export async function kube(opts: KubeOptions): Promise<number> {
             {
                 type: "list",
                 name: "dryRun",
-                message: `Ready to deploy Atomist k8s utilities into context ${chalk.cyan(context)}:`,
+                message: `Ready to deploy Atomist's Kubernetes utilities into context ${chalk.cyan(context)}:`,
                 choices: [
                     {
                         name: "Yes",
                         value: "yes",
                         short: "Yes",
                     } as any, {
-                        name: "Dry-run (prints k8s specs)",
+                        name: "Dry-run (prints Kubernetes specs)",
                         value: "dry-run",
                         short: "Dry-run",
                         checked: dryRun,
