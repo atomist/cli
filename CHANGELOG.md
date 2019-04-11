@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   When the APIkey is invalid, please ask for another one. [#69](https://github.com/atomist/cli/issues/69)
 -   Spell out Kubernetes instead of k8s. [#78](https://github.com/atomist/cli/issues/78)
 -   Make a more clear prompt than '? (mapped parameter) target-owner'. [#47](https://github.com/atomist/cli/issues/47)
+-   If there is only one option, do not provide selector. [#80](https://github.com/atomist/cli/issues/80)
 
 ## [1.3.0](https://github.com/atomist/cli/compare/1.2.0...1.3.0) - 2019-04-01
 
