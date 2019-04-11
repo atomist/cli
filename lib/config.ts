@@ -186,8 +186,7 @@ async function createApiKey(cfg: Configuration): Promise<string> {
             name: "apiKey",
             transformer: maskString,
             message: `Enter your ${chalk.cyan("api key")} from ${chalk.yellow("https://app.atomist.com/apikeys")}
-    or hit ${chalk.cyan("<ENTER>")} to select an authentication provider
-    to login with Atomist:`,
+    or hit ${chalk.cyan("<ENTER>")} to login with Atomist:`,
         },
     ];
 
@@ -195,22 +194,27 @@ async function createApiKey(cfg: Configuration): Promise<string> {
     if (!answers.apiKey) {
         const providers = await axios.get(`${cfg.endpoints.auth}/providers`);
 
-        print.log(`Select one of the following authentication providers\navailable to login with Atomist:`);
+        let authUrl;
+        if (providers.data.length > 1) {
+            print.log(`Select one of the following authentication providers\navailable to login with Atomist:`);
 
-        questions = [
-            {
-                type: "list",
-                name: "provider",
-                message: "Authentication Provider",
-                choices: providers.data.map((p: any) => ({
-                    name: p.display_name,
-                    value: p.login_url,
-                })),
-            },
-        ];
+            questions = [
+                {
+                    type: "list",
+                    name: "provider",
+                    message: "Authentication Provider",
+                    choices: providers.data.map((p: any) => ({
+                        name: p.display_name,
+                        value: p.login_url,
+                    })),
+                },
+            ];
 
-        answers = await inquirer.prompt(questions);
-        const authUrl = answers.provider;
+            answers = await inquirer.prompt(questions);
+            authUrl = answers.provider;
+        } else {
+            authUrl = providers.data[0].login_url;
+        }
 
         let spinner = createSpinner(`Waiting for login flow to finish in your browser`);
 
@@ -292,7 +296,7 @@ export async function validateApiKey(apiKey: string, cfg: Configuration): Promis
         });
         spinner.stop(true);
 
-        // If there is no workspace yet, there is also now record returned
+        // If there is no workspace yet, there is also no record returned
         const sub = _.get(result, "user.principal.sub");
         const pid = _.get(result, "user.principal.pid");
         const provider = providers.data.find((p: any) => p.id === pid);
