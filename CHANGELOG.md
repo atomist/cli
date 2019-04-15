@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Make a more clear prompt than '? (mapped parameter) target-owner'. [#47](https://github.com/atomist/cli/issues/47)
 -   If there is only one option, do not provide selector. [#80](https://github.com/atomist/cli/issues/80)
 
+### Fixed
+
+-   Fix create sdm undefined bug. [d1a04be](https://github.com/atomist/cli/commit/d1a04be2c135bda5697a497a179dfa4983aab758)
+
 ## [1.3.0](https://github.com/atomist/cli/compare/1.2.0...1.3.0) - 2019-04-01
 
 ### Added
