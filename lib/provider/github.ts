@@ -113,8 +113,8 @@ interface GitHubProvider {
  * @param cfg
  */
 export async function createGitHubCom(workspaceId: string,
-    apiKey: string,
-    cfg: Configuration): Promise<{ code: number }> {
+                                      apiKey: string,
+                                      cfg: Configuration): Promise<{ code: number }> {
     let providerId: string;
     let configuredOrgs: string[];
     let configuredRepos: Array<{ ownerSpec: string, nameSpec: string }> = [];
@@ -232,12 +232,12 @@ ${chalk.red(provider.state.error)}`);
 }
 
 async function configure(workspaceId: string,
-    apiKey: string,
-    providerId: string,
-    configuredOrgs: string[],
-    configuredRepos: Array<{ ownerSpec: string, nameSpec: string }>,
-    token: string,
-    cfg: Configuration): Promise<any> {
+                         apiKey: string,
+                         providerId: string,
+                         configuredOrgs: string[],
+                         configuredRepos: Array<{ ownerSpec: string, nameSpec: string }>,
+                         token: string,
+                         cfg: Configuration): Promise<any> {
 
     let spinner = createSpinner(`Loading available GitHub organizations`);
 
