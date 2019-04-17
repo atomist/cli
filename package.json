@@ -50,7 +50,7 @@
     "js-sha256": "^0.9.0",
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.11",
-    "opn": "^5.4.0",
+    "open": "^6.1.0",
     "read-pkg-up": "^4.0.0",
     "source-map-support": "^0.5.11",
     "tmp-promise": "^1.0.5",
