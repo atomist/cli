@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/1.4.0...HEAD)
 
+### Added
+
+-   Add url to atomist kube command. [1b1a175](https://github.com/atomist/cli/commit/1b1a1754150243fcaf5a66894d607a4f95456901)
+
 ## [1.4.0](https://github.com/atomist/cli/compare/1.3.0...1.4.0) - 2019-04-15
 
 ### Changed
