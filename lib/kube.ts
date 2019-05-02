@@ -44,6 +44,8 @@ export interface KubeOptions {
     dryRun?: boolean;
     /** Confirm all questions */
     yes?: boolean;
+    /** URL of the public ingress */
+    url?: string;
 }
 
 /**
@@ -80,8 +82,8 @@ export async function kube(opts: KubeOptions): Promise<number> {
         return 10;
     }
 
-    let url;
-    if (context === "minikube") {
+    let url = opts.url;
+    if (context === "minikube" && !url) {
         try {
             const ipResult = await execPromise("minikube", ["ip"]);
             url = `http://${ipResult.stdout.trim()}`;
@@ -94,7 +96,7 @@ export async function kube(opts: KubeOptions): Promise<number> {
     let environment: string = opts.env ? opts.env : undefined;
     if (!!context && !environment) {
         environment = context;
-    } else {
+    } else if (!environment) {
         environment = "kubernetes";
     }
 

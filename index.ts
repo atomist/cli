@@ -190,6 +190,10 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             describe: "Deploy utilities in namespace mode",
             type: "string",
         }, {
+            parameterName: "url",
+            describe: "URL of publicly accessible hostname (e.g. http://a.atomist.io)",
+            type: "string",
+        }, {
             parameterName: "dry-run",
             describe: "Only print the k8s objects that would be deployed, without sending them",
             type: "boolean",
@@ -203,6 +207,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             ns: argv.namespace,
             dryRun: argv["dry-run"],
             yes: argv.yes,
+            url: argv.url,
         })),
     });
     yargBuilder.withSubcommand({
