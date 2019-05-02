@@ -30,6 +30,8 @@ import { execute } from "./lib/execute";
 import { gitHook } from "./lib/gitHook";
 import { gqlFetch } from "./lib/gqlFetch";
 import { install } from "./lib/install";
+import { init } from "./lib/job/init";
+import { monitor } from "./lib/job/monitor";
 import { kube } from "./lib/kube";
 import * as print from "./lib/print";
 import * as provider from "./lib/provider";
@@ -64,6 +66,69 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             type: "boolean",
         },
     };
+
+    yargBuilder.withSubcommand({
+        command: "goal init",
+        describe: "Init a goal job",
+        parameters: [{
+            parameterName: "goal-set-id",
+            describe: "ID of goal set",
+            type: "string",
+            required: true,
+        }, {
+            parameterName: "repository-url",
+            describe: "Git URL to clone",
+            type: "string",
+            required: true,
+        }, {
+            parameterName: "sha",
+            describe: "Git sha to checkout",
+            type: "string",
+            required: true,
+        }],
+        handler: argv => cliCommand(() => init({
+            goalSetId: argv["goal-set-id"],
+            sha: argv["sha"],
+            cloneUrl: argv["repository-url"],
+        })),
+    });
+
+    yargBuilder.withSubcommand({
+        command: "goal monitor",
+        describe: "Monitor a goal job",
+        parameters: [{
+            parameterName: "goal-set-id",
+            describe: "ID of goal set",
+            type: "string",
+            required: true,
+        }, {
+            parameterName: "job-namespace",
+            describe: "Namespace of the job",
+            type: "string",
+            default: "default",
+        }, {
+            parameterName: "job-name",
+            describe: "Name of the job",
+            type: "string",
+            required: true,
+        }, {
+            parameterName: "container-name",
+            describe: "Name of the container",
+            type: "string",
+            required: true,
+        }],
+
+        handler: argv => cliCommand(() => monitor({
+            goalSetId: argv["goal-set-id"],
+            job: {
+                namespace: argv["job-namespace"],
+                name: argv["job-name"],
+            },
+            container: {
+                name: argv["container-name"],
+            }
+        })),
+    });
 
     yargBuilder.withSubcommand({
         command: "config",

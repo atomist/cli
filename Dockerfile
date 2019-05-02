@@ -1,4 +1,4 @@
-FROM node:9
+FROM node:11
 
 LABEL maintainer="Atomist <docker@atomist.com>"
 
@@ -10,9 +10,9 @@ ENV NPM_CONFIG_LOGLEVEL warn
 
 ENV SUPPRESS_NO_CONFIG_WARNING true
 
-ENTRYPOINT ["node", "index.js"]
+ENTRYPOINT ["node", "/opt/app/index.js"]
 
-RUN npm install -g npm@6.4.1
+RUN npm install -g npm
 
 COPY package.json package-lock.json ./
 
