@@ -49,7 +49,7 @@ export async function wrap(opts: CreateOptions): Promise<number> {
     // copy over package.json, tsconfig.json
     try {
         print.info("Cloning seed...");
-        await execPromise("git", ["clone", "git@github.com:atomist-seeds/empty-sdm.git", seed]);
+        await execPromise("git", ["clone", "https://github.com/atomist-seeds/empty-sdm.git", seed]);
         print.info("Finished");
     } catch (e) {
         print.error(`Failed to checkout seed: ${e.message}`);
