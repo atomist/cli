@@ -24,6 +24,7 @@ import gitUrlParse = require("git-url-parse");
 export interface CreateOptions {
     cloneUrl: string;
     sha?: string;
+    local?: boolean;
 }
 
 const FilesToCopy = ["package.json", "tsconfig.json", "tslint.json"];
@@ -76,5 +77,5 @@ export async function wrap(opts: CreateOptions): Promise<number> {
         }
     }
 
-    return await start({ compile: true, install: true, cwd, local: false });
+    return await start({ compile: true, install: true, cwd, local: opts.local });
 }

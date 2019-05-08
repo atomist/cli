@@ -127,28 +127,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             },
             container: {
                 name: argv["container-name"],
-            }
-        })),
-    });
-
-    yargBuilder.withSubcommand({
-        command: "wrap",
-        describe: "Wrap and start and SDM from a repository",
-        parameters: [{
-            parameterName: "repository-url",
-            describe: "Git URL to clone",
-            type: "string",
-            required: true,
-        }, {
-            parameterName: "sha",
-            describe: "Git sha to checkout",
-            type: "string",
-            required: false,
-        }],
-
-        handler: argv => cliCommand(() => wrap({
-            sha: argv["sha"],
-            cloneUrl: argv["repository-url"],
+            },
         })),
     });
 
@@ -308,13 +287,33 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 default: false,
                 describe: "Start SDM in local mode",
                 type: "boolean",
+            }, {
+                parameterName: "repository-url",
+                describe: "Git URL to clone",
+                type: "string",
+                required: false,
+            }, {
+                parameterName: "sha",
+                describe: "Git sha to checkout",
+                type: "string",
+                required: false,
             }],
-        handler: (argv: any) => cliCommand(() => start({
-            cwd: argv["change-dir"],
-            install: argv.install,
-            compile: argv.compile,
-            local: argv.local,
-        })),
+        handler: (argv: any) => cliCommand(() => {
+            if (!!argv["repository-url"]) {
+                return wrap({
+                    cloneUrl: argv["repository-url"],
+                    sha: argv.sha,
+                    local: argv.local,
+                });
+            } else {
+                return start({
+                    cwd: argv["change-dir"],
+                    install: argv.install,
+                    compile: argv.compile,
+                    local: argv.local,
+                });
+            }
+        }),
     });
     yargBuilder.build().save(yargs);
     // tslint:disable-next-line:no-unused-expression
