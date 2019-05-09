@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { guid } from "@atomist/automation-client";
 import { execPromise } from "@atomist/automation-client/lib/util/child_process";
 import * as fs from "fs-extra";
 import * as path from "path";
@@ -31,19 +32,30 @@ const FilesToCopy = ["package.json", "tsconfig.json", "tslint.json"];
 
 export async function wrap(opts: CreateOptions): Promise<number> {
 
-    const cwd = path.join(process.cwd(), "sdm");
-    const seed = path.join(process.cwd(), "seed");
+    const gitUrl = gitUrlParse(opts.cloneUrl);
+
+    const cwd = path.join(process.cwd(), "sdm", gitUrl.owner, gitUrl.name);
+    const seed = path.join(process.cwd(), `sdm-${guid().slice(0, 7)}`);
 
     // Git clone
     try {
-        print.info("Cloning repository...");
-        await execPromise("git", ["clone", opts.cloneUrl, cwd]);
-        if (!!opts.sha) {
-            await execPromise("git", ["checkout", opts.sha], { cwd });
+        if (!(await fs.pathExists(cwd))) {
+            print.info("Cloning repository...");
+            await execPromise("git", ["clone", opts.cloneUrl, cwd]);
+            print.info("Finished");
+        } else {
+            print.info("Updating repository...");
+            await execPromise("git", ["reset", "--hard"], { cwd });
+            await execPromise("git", ["pull"], { cwd });
+            print.info("Finished");
         }
-        print.info("Finished");
+        if (!!opts.sha) {
+            print.info(`Checking out '${opts.sha}'...`);
+            await execPromise("git", ["checkout", opts.sha], { cwd });
+            print.info("Finished");
+        }
     } catch (e) {
-        print.error(`Failed to checkout repository: ${e.message}`);
+        print.error(`Failed to clone/checkout repository: ${e.message}`);
         return 5;
     }
 
@@ -66,7 +78,6 @@ export async function wrap(opts: CreateOptions): Promise<number> {
 
             if (f === "package.json") {
                 const pj = await fs.readJson(fp);
-                const gitUrl = gitUrlParse(opts.cloneUrl);
                 pj.name = `@${gitUrl.owner}/${gitUrl.name}`;
 
                 const sha = await execPromise("git", ["log", "--pretty=format:%h", "-n", "1"], { cwd });
@@ -76,6 +87,8 @@ export async function wrap(opts: CreateOptions): Promise<number> {
             }
         }
     }
+
+    await fs.remove(seed);
 
     return await start({ compile: true, install: true, cwd, local: opts.local });
 }
