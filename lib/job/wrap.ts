@@ -17,6 +17,7 @@
 import { guid } from "@atomist/automation-client";
 import { execPromise } from "@atomist/automation-client/lib/util/child_process";
 import * as fs from "fs-extra";
+import * as os from "os";
 import * as path from "path";
 import * as print from "../print";
 import { start } from "../start";
@@ -34,8 +35,8 @@ export async function wrap(opts: CreateOptions): Promise<number> {
 
     const gitUrl = gitUrlParse(opts.cloneUrl);
 
-    const cwd = path.join(process.cwd(), "sdm", gitUrl.owner, gitUrl.name);
-    const seed = path.join(process.cwd(), `sdm-${guid().slice(0, 7)}`);
+    const cwd = path.join(os.hostname(), ".atomist", "sdm", gitUrl.owner, gitUrl.name);
+    const seed = path.join(os.hostname(), ".atomist", "cache", `sdm-${guid().slice(0, 7)}`);
 
     // Git clone
     try {
