@@ -35,8 +35,8 @@ export async function wrap(opts: CreateOptions): Promise<number> {
 
     const gitUrl = gitUrlParse(opts.cloneUrl);
 
-    const cwd = path.join(os.hostname(), ".atomist", "sdm", gitUrl.owner, gitUrl.name);
-    const seed = path.join(os.hostname(), ".atomist", "cache", `sdm-${guid().slice(0, 7)}`);
+    const cwd = path.join(os.homedir(), ".atomist", "sdm", gitUrl.owner, gitUrl.name);
+    const seed = path.join(os.homedir(), ".atomist", "cache", `sdm-${guid().slice(0, 7)}`);
 
     // Git clone
     try {
