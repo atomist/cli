@@ -54,6 +54,9 @@ export async function remoteStart(opts: CreateOptions): Promise<number> {
             print.info("Finished");
         } else {
             print.info("Updating repository...");
+            for (const f of FilesToCopy) {
+                await fs.remove(path.join(cwd, f));
+            }
             await execPromise("git", ["reset", "--hard"], { cwd });
             await execPromise("git", ["pull"], { cwd });
             print.info("Finished");
