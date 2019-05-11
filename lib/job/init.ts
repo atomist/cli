@@ -16,9 +16,9 @@
 
 import { execPromise } from "@atomist/sdm";
 import * as fs from "fs-extra";
+import * as glob from "glob";
 import * as path from "path";
 import * as print from "..//print";
-import * as glob from "glob";
 
 export interface InitOptions {
     goalSetId: string;

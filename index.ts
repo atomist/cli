@@ -32,10 +32,10 @@ import { gqlFetch } from "./lib/gqlFetch";
 import { install } from "./lib/install";
 import { init } from "./lib/job/init";
 import { monitor } from "./lib/job/monitor";
-import { wrap } from "./lib/job/wrap";
 import { kube } from "./lib/kube";
 import * as print from "./lib/print";
 import * as provider from "./lib/provider";
+import { remoteStart } from "./lib/remoteStart";
 import { start } from "./lib/start";
 import { version } from "./lib/version";
 import * as workspace from "./lib/workspace";
@@ -89,7 +89,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         }],
         handler: argv => cliCommand(() => init({
             goalSetId: argv["goal-set-id"],
-            sha: argv["sha"],
+            sha: argv.sha,
             cloneUrl: argv["repository-url"],
         })),
     });
@@ -297,11 +297,17 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 describe: "Git sha to checkout",
                 type: "string",
                 required: false,
+            }, {
+                parameterName: "file",
+                describe: "Name of the file that exports the configuration",
+                type: "string",
+                required: false,
             }],
         handler: (argv: any) => cliCommand(() => {
             if (!!argv["repository-url"]) {
-                return wrap({
+                return remoteStart({
                     cloneUrl: argv["repository-url"],
+                    file: argv.file,
                     sha: argv.sha,
                     local: argv.local,
                 });

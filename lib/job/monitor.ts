@@ -31,7 +31,7 @@ export interface MonitorOptions {
     };
     container: {
         name: string;
-    }
+    };
 }
 
 export async function monitor(opts: MonitorOptions): Promise<number> {
