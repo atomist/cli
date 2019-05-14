@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Add url to atomist kube command. [1b1a175](https://github.com/atomist/cli/commit/1b1a1754150243fcaf5a66894d607a4f95456901)
 -   Publish latest tag for docker image on release. [#70](https://github.com/atomist/cli/issues/70)
+-   Add support for starting an SDM from a remote repo. [#87](https://github.com/atomist/cli/issues/87)
 
 ## [1.4.0](https://github.com/atomist/cli/compare/1.3.0...1.4.0) - 2019-04-15
 
