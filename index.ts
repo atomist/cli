@@ -293,10 +293,17 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 type: "string",
                 required: false,
             }, {
+                parameterName: "seed-url",
+                describe: "Git URL to clone the seed to overlay with SDM repository",
+                type: "string",
+                required: false,
+                default: "https://github.com/atomist-seeds/empty-sdm.git",
+            },{
                 parameterName: "sha",
                 describe: "Git sha to checkout",
                 type: "string",
                 required: false,
+                default: "master",
             }, {
                 parameterName: "file",
                 describe: "Name of the file that exports the configuration",
@@ -310,6 +317,9 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                     file: argv.file,
                     sha: argv.sha,
                     local: argv.local,
+                    seedUrl: argv["seed-url"],
+                    install: argv.install,
+                    compile: argv.compile,
                 });
             } else {
                 return start({
