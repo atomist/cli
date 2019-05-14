@@ -1,9 +1,7 @@
 {
-  "sdm": {
-    "docker": {
-      "tag": {
-        "latest": true
-      }
+  "docker": {
+    "tag": {
+      "latest": true
     }
   }
 }
