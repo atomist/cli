@@ -33,7 +33,7 @@ import { install } from "./lib/install";
 import { kube } from "./lib/kube";
 import * as print from "./lib/print";
 import * as provider from "./lib/provider";
-import { start } from "./lib/start";
+import { repositoryStart } from "./lib/repositoryStart";
 import { version } from "./lib/version";
 import * as workspace from "./lib/workspace";
 
@@ -211,24 +211,55 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         })),
     });
     yargBuilder.withSubcommand({
-        command: "start",
-        describe: "Start an SDM or automation client",
-        parameters: [
-            commonOptions.changeDir,
-            commonOptions.compile,
-            commonOptions.install, {
-                parameterName: "local",
-                default: false,
-                describe: "Start SDM in local mode",
-                type: "boolean",
-            }],
-        handler: (argv: any) => cliCommand(() => start({
-            cwd: argv["change-dir"],
-            install: argv.install,
-            compile: argv.compile,
-            local: argv.local,
-        })),
-    });
+            command: "start",
+            describe: "Start an SDM or automation client",
+            parameters: [
+                commonOptions.changeDir,
+                commonOptions.compile,
+                commonOptions.install, {
+                    parameterName: "local",
+                    default: false,
+                    describe: "Start SDM in local mode",
+                    type: "boolean",
+                }, {
+                    parameterName: "repository-url",
+                    describe: "Git URL to clone",
+                    type: "string",
+                    required: false,
+                }, {
+                    parameterName: "index",
+                    describe: "Name of the file that exports the configuration",
+                    type: "string",
+                    required: false,
+                    implies: "repository-url",
+                }, {
+                    parameterName: "sha",
+                    describe: "Git sha to checkout",
+                    type: "string",
+                    required: false,
+                    implies: "repository-url",
+                }, {
+                    parameterName: "seed-url",
+                    describe: "Git URL to clone the seed to overlay with SDM repository",
+                    type: "string",
+                    required: false,
+                    implies: "repository-url",
+                }],
+            handler: (argv: any) => cliCommand(() => {
+                return repositoryStart({
+                    cwd: argv["change-dir"],
+                    cloneUrl: argv["repository-url"],
+                    index: argv.index,
+                    sha: argv.sha,
+                    local: argv.local,
+                    seedUrl: argv["seed-url"],
+                    install: argv.install,
+                    compile: argv.compile,
+                });
+            }),
+        },
+    )
+    ;
     yargBuilder.build().save(yargs);
     // tslint:disable-next-line:no-unused-expression
     yargs.completion("completion")
