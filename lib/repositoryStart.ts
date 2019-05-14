@@ -17,7 +17,6 @@
 import { guid } from "@atomist/automation-client";
 import { execPromise } from "@atomist/automation-client/lib/util/child_process";
 import * as fs from "fs-extra";
-import gitUrlParse = require("git-url-parse");
 import * as os from "os";
 import * as path from "path";
 import * as print from "./print";
@@ -25,6 +24,8 @@ import {
     start,
     StartOptions,
 } from "./start";
+import gitUrlParse = require("git-url-parse");
+import * as _ from "lodash";
 
 /**
  * Configuration options for repository start command
@@ -50,15 +51,14 @@ const FilesToCopy = [
  */
 export async function repositoryStart(opts: { cloneUrl: string } & Partial<RepositoryStartOptions>): Promise<number> {
 
-    const optsToUse: RepositoryStartOptions = {
+    const optsToUse: RepositoryStartOptions = _.merge({
         index: "index.ts",
         sha: "master",
         local: false,
         seedUrl: "https://github.com/atomist-seeds/empty-sdm.git",
         compile: true,
         install: true,
-        ...opts,
-    };
+    }, opts);
 
     let cwd = optsToUse.cwd;
 

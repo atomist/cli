@@ -274,7 +274,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
 }
 
 async function main(): Promise<any> {
-    const YargBuilder = yb.freshYargBuilder({ epilogForHelpMessage: "Copyright Atomist, Inc. 2018" });
+    const YargBuilder = yb.freshYargBuilder({ epilogForHelpMessage: "Copyright Atomist, Inc. 2019" });
     if (shouldAddLocalSdmCommands(process.argv)) {
         // Lazily load sdm-local to prevent early initialization
         const sdmLocal = require("@atomist/sdm-local");
