@@ -99,9 +99,6 @@ spec:
             - name: TMPDIR
               value: /tmp
           image: atomist/cli:latest
-          args:
-            - "start"
-            - "--repository-url=https://github.com/cdupuis/minimal-sdm.git"
           livenessProbe:
             failureThreshold: 3
             httpGet:
