@@ -26,6 +26,7 @@ import {
     shouldAddLocalSdmCommands,
 } from "./lib/command";
 import { config } from "./lib/config";
+import { deploy } from "./lib/deploy";
 import { execute } from "./lib/execute";
 import { gitHook } from "./lib/gitHook";
 import { gqlFetch } from "./lib/gqlFetch";
@@ -208,6 +209,53 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             dryRun: argv["dry-run"],
             yes: argv.yes,
             url: argv.url,
+        })),
+    });
+    yargBuilder.withSubcommand({
+        command: "deploy",
+        describe: "Deploy an SDM to a Kubernetes cluster",
+        parameters: [{
+            parameterName: "repository-url",
+            describe: "Git URL to clone",
+            type: "string",
+            required: true,
+        }, {
+            parameterName: "index",
+            describe: "Name of the file that exports the configuration",
+            type: "string",
+            required: false,
+        }, {
+            parameterName: "sha",
+            describe: "Git sha to checkout",
+            type: "string",
+            required: false,
+        }, {
+            parameterName: "seed-url",
+            describe: "Git URL to clone the seed to overlay with SDM repository",
+            type: "string",
+            required: false,
+        }, {
+            parameterName: "namespace",
+            describe: "Deploy utilities in namespace mode",
+            type: "string",
+        }, {
+            parameterName: "dry-run",
+            describe: "Only print the k8s objects that would be deployed, without sending them",
+            type: "boolean",
+        }, {
+            parameterName: "yes",
+            describe: "Confirm all questions with yes",
+            type: "boolean",
+        }],
+        handler: (argv: any) => cliCommand(() => deploy({
+            ns: argv.namespace,
+            dryRun: argv["dry-run"],
+            yes: argv.yes,
+            cloneUrl: argv["repository-url"],
+            index: argv.index,
+            //sha: argv.sha,
+            //local: argv.local,
+            //seedUrl: argv["seed-url"],
         })),
     });
     yargBuilder.withSubcommand({
