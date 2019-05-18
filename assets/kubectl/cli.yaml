@@ -144,7 +144,7 @@ spec:
         - name: cli
           secret:
             defaultMode: 288
-            secretName: k8s-sdm
+            secretName: cli
         - emptyDir: {}
           name: home
         - emptyDir: {}
