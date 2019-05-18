@@ -135,17 +135,9 @@ spec:
             - mountPath: /opt/atm
               name: cli
               readOnly: true
-            - mountPath: /home/atomist
-              name: home
-            - mountPath: /tmp
-              name: tmp
       serviceAccountName: cli
       volumes:
         - name: cli
           secret:
             defaultMode: 288
             secretName: cli
-        - emptyDir: {}
-          name: home
-        - emptyDir: {}
-          name: tmp
