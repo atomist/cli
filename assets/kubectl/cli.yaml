@@ -1,0 +1,154 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: atomist
+    app.kubernetes.io/name: sdm
+    app.kubernetes.io/part-of: sdm
+  name: sdm
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: atomist
+    app.kubernetes.io/name: cli
+    app.kubernetes.io/part-of: cli
+    atomist.com/workspaceId: T29E48P34
+  name: cli
+  namespace: sdm
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: atomist
+    app.kubernetes.io/name: cli
+    app.kubernetes.io/part-of: cli
+    atomist.com/workspaceId: T29E48P34
+  name: cli
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces", "pods", "secrets", "serviceaccounts", "services"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["apps", "extensions"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["extensions"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["clusterroles", "clusterrolebindings", "roles", "rolebindings"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: atomist
+    app.kubernetes.io/name: cli
+    app.kubernetes.io/part-of: cli
+    atomist.com/workspaceId: T29E48P34
+  name: cli
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cli
+subjects:
+  - kind: ServiceAccount
+    name: cli
+    namespace: sdm
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: atomist
+    app.kubernetes.io/name: cli
+    app.kubernetes.io/part-of: cli
+    atomist.com/workspaceId: T29E48P34
+  name: cli
+  namespace: sdm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cli
+      atomist.com/workspaceId: T29E48P34
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: atomist
+        app.kubernetes.io/name: cli
+        app.kubernetes.io/part-of: cli
+        app.kubernetes.io/version: "1"
+        atomist.com/workspaceId: T29E48P34
+    spec:
+      containers:
+        - env:
+            - name: ATOMIST_CONFIG_PATH
+              value: /opt/atm/client.config.json
+            - name: TMPDIR
+              value: /tmp
+          image: atomist/cli:latest
+          args:
+            - "start"
+            - "--repository-url=https://github.com/cdupuis/minimal-sdm.git"
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 120
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 3
+          name: cli
+          ports:
+            - name: http
+              containerPort: 2866
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+            requests:
+              cpu: 100m
+              memory: 320Mi
+          volumeMounts:
+            - mountPath: /opt/atm
+              name: cli
+              readOnly: true
+            - mountPath: /home/atomist
+              name: home
+            - mountPath: /tmp
+              name: tmp
+      serviceAccountName: cli
+      volumes:
+        - name: cli
+          secret:
+            defaultMode: 288
+            secretName: k8s-sdm
+        - emptyDir: {}
+          name: home
+        - emptyDir: {}
+          name: tmp
