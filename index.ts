@@ -290,7 +290,6 @@ main()
         process.exit(102);
     });
 
-
 import * as client from "@atomist/automation-client";
 export { client };
 import * as sdm from "@atomist/sdm";
