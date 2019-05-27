@@ -209,6 +209,7 @@ export async function deploy(opts: DeployOptions): Promise<number> {
             const status = await spawnPromise(spawnOpts);
             if (status !== 0) {
                 cliSdmTmp.cleanup();
+                cliSecretTmp.cleanup();
                 return status;
             }
         }
