@@ -119,18 +119,29 @@ async function spawnCommand(opts: SpawnOptions): Promise<number> {
 }
 
 /**
- * Run `npm install`.  It ensures a package.json exist in cwd.
+ * Run `npm ci` if a package-lock.json exists in the project; runs `npm install` otherwise.
+ * It ensures a package.json exist in cwd.
  *
  * @param cwd directory to run install in
  * @return return value of the `npm install` command
  */
 async function npmInstall(cwd: string): Promise<number> {
-    return spawnPromise({
-        command: "npm",
-        args: ["install"],
-        cwd,
-        checkPackageJson: true,
-    });
+    const packageJsonLock = path.join(cwd, "package-lock.json");
+    if (await fs.pathExists(packageJsonLock)) {
+        return spawnPromise({
+            command: "npm",
+            args: ["ci"],
+            cwd,
+            checkPackageJson: true,
+        });
+    } else {
+        return spawnPromise({
+            command: "npm",
+            args: ["install"],
+            cwd,
+            checkPackageJson: true,
+        });
+    }
 }
 
 /**
