@@ -28,7 +28,7 @@ import * as express from "express";
 import * as inquirer from "inquirer";
 import { sha256 } from "js-sha256";
 import * as _ from "lodash";
-import opn = require("opn");
+import opn = require("open");
 import {
     createSpinner,
     nonce,

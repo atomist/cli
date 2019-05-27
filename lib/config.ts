@@ -35,7 +35,7 @@ import * as express from "express";
 import * as inquirer from "inquirer";
 import { sha256 } from "js-sha256";
 import * as _ from "lodash";
-import opn = require("opn");
+import opn = require("open");
 import * as os from "os";
 import { resolveUserConfig } from "./cliConfig";
 import * as print from "./print";
