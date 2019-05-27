@@ -37,7 +37,7 @@ describe("gql", () => {
             await fs.ensureDir(e);
             const l = libDir(t.path);
             assert.equal(l, e);
-            t.cleanup();
+            await t.cleanup();
         });
 
         it("should return lib when there is no dir", () => {

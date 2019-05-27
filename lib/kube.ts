@@ -209,16 +209,16 @@ export async function kube(opts: KubeOptions): Promise<number> {
         } else {
             const status = await spawnPromise(spawnOpts);
             if (status !== 0) {
-                k8ventTmp.cleanup();
-                k8sSdmTmp.cleanup();
+                await k8ventTmp.cleanup();
+                await k8sSdmTmp.cleanup();
                 return status;
             }
         }
     }
     print.log("---");
 
-    k8ventTmp.cleanup();
-    k8sSdmTmp.cleanup();
+    await k8ventTmp.cleanup();
+    await k8sSdmTmp.cleanup();
 
     if (!dryRun) {
         print.log("");
