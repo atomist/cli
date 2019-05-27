@@ -289,3 +289,11 @@ main()
         print.error(err.stack);
         process.exit(102);
     });
+
+
+import * as client from "@atomist/automation-client";
+export { client };
+import * as sdm from "@atomist/sdm";
+export { sdm };
+import * as sdmcore from "@atomist/sdm-core";
+export { sdmcore };

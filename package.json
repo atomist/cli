@@ -22,10 +22,10 @@
     "cli"
   ],
   "dependencies": {
-    "@atomist/automation-client": "^1.4.0",
-    "@atomist/sdm": "^1.4.0",
-    "@atomist/sdm-core": "^1.4.0",
-    "@atomist/sdm-local": "^1.0.6",
+    "@atomist/automation-client": "1.5.0-master.20190527141005",
+    "@atomist/sdm": "1.5.0-master.20190526082545",
+    "@atomist/sdm-core": "1.5.0-master.20190525162949",
+    "@atomist/sdm-local": "1.0.7-master.20190507205218",
     "@octokit/rest": "^16.18.1",
     "@types/cross-spawn": "^6.0.0",
     "@types/express": "^4.16.1",
@@ -72,7 +72,7 @@
     "ts-node": "^8.0.3",
     "tslint": "^5.14.0",
     "typedoc": "^0.14.2",
-    "typescript": "^3.4.1"
+    "typescript": "^3.4.5"
   },
   "directories": {
     "test": "test"
