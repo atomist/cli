@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Publish latest tag for docker image on release. [#70](https://github.com/atomist/cli/issues/70)
 -   Add support for starting an SDM from a remote repo. [#87](https://github.com/atomist/cli/issues/87)
 
+### Changed
+
+-   We should 'npm ci' not 'npm install'. [#91](https://github.com/atomist/cli/issues/91)
+
 ## [1.4.0](https://github.com/atomist/cli/compare/1.3.0...1.4.0) - 2019-04-15
 
 ### Changed
