@@ -20,7 +20,7 @@ class AtomistCli < Formula
     assert_predicate bin/"@atomist", :exist?
     assert_predicate bin/"@atomist", :executable?
 
-    run_output = shell_output("#{bin}/atomist 2>&1")
+    run_output = shell_output("#{bin}/atomist 2>&1", 1)
     assert_match "Not enough non-option arguments", run_output
     assert_match "Specify --help for available options", run_output
 
