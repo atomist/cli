@@ -20,6 +20,7 @@ import * as yb from "@atomist/sdm-local/lib/cli/invocation/command/support/yargB
 import "source-map-support/register";
 import * as yargs from "yargs";
 
+import * as binaryprovider from "./lib/binaryprovider";
 import {
     cliCommand,
     isEmbeddedSdmCommand,
@@ -138,6 +139,24 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             type: "string",
         }],
         handler: argv => cliCommand(() => dockerprovider.config({
+            apiKey: argv["api-key"],
+            workspaceId: argv["workspace-id"],
+            validateApiKey: true,
+        })),
+    });
+    yargBuilder.withSubcommand({
+        command: "configure binary provider",
+        describe: "Create a new binary registry provider",
+        parameters: [{
+            parameterName: "api-key",
+            describe: "Atomist API key",
+            type: "string",
+        }, {
+            parameterName: "workspace-id",
+            describe: "Atomist workspace ID",
+            type: "string",
+        }],
+        handler: argv => cliCommand(() => binaryprovider.config({
             apiKey: argv["api-key"],
             workspaceId: argv["workspace-id"],
             validateApiKey: true,
