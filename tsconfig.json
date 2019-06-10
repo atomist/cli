@@ -15,7 +15,7 @@
             "ScriptHost",
             "esnext.asynciterable"
         ],
-        "strict": true,
+        "strict": false,
         "strictNullChecks": false,
         "noImplicitReturns": true,
         "noUnusedLocals": true,

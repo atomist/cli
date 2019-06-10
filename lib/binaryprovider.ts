@@ -30,47 +30,26 @@ import {
 } from "./config";
 import * as print from "./print";
 import {
-    createGitHubCom,
-} from "./provider/github";
+    createDockerHub,
+    createJFrog,
+} from "./provider/docker";
 
-type ProviderTypes = Record<string, {
+type BinaryRegistryProviderTypes = Record<string, {
     label: string;
     create: (workspaceId: string,
              apiKey: string,
              cfg: Configuration) => Promise<{ code: number, configuration?: Partial<Configuration> }>;
 }>;
 
-/*const UnsupportedProvider = async (workspaceId: string,
-                                   apiKey: string,
-                                   cfg: Configuration) => {
-    print.error("SCM provider not supported yet!");
-    return {
-        code: 1,
-        configuration: cfg,
-    };
-};*/
-
-const Providers: ProviderTypes = {
-    github_com: {
-        label: "GitHub.com",
-        create: createGitHubCom,
+const BinaryRegistryProviders: BinaryRegistryProviderTypes = {
+    dockerhub: {
+        label: "Maven",
+        create: createMaven,
     },
-    /*ghe: {
-        label: "GitHub Enterprise",
-        config: UnsupportedProvider,
+    jfrog: {
+        label: "NPM",
+        create: createNpm,
     },
-    gitlab: {
-        label: "GitLab",
-        config: UnsupportedProvider,
-    },
-    gitlab_com: {
-        label: "GitLab.com",
-        config: UnsupportedProvider,
-    },
-    bitbucket: {
-        label: "BitBucket",
-        config: UnsupportedProvider,
-    },*/
 };
 
 /**
@@ -88,7 +67,7 @@ export interface ConfigureOptions {
 }
 
 /**
- * Create a new SCM provider
+ * Create a new Docker provider
  * @param opts
  */
 export async function config(opts: ConfigureOptions): Promise<number> {
@@ -124,30 +103,28 @@ export async function config(opts: ConfigureOptions): Promise<number> {
         return 1;
     }
 
-    print.log("Select an SCM provider type to configure:");
+    print.log("Select an binary registry provider type to configure:");
     const questions: inquirer.Question[] = [
         {
             type: "list",
             name: "provider",
-            message: "SCM provider",
-            choices: _.map(Providers, (v, k) => ({ name: v.label, value: k })),
+            message: "Docker provider",
+            choices: _.map(BinaryRegistryProviders, (v, k) => ({ name: v.label, value: k })),
         },
     ];
 
     const answers = await inquirer.prompt(questions);
     try {
-        const result = await Providers[answers.provider].create(workspaceId, apiKey, cfg);
+        const result = await BinaryRegistryProviders[answers.provider].create(workspaceId, apiKey, cfg);
         const newCfg = {
             ...userCfg,
             ...(result.configuration || {}),
         };
         await writeUserConfig(newCfg);
-        print.log(`Successfully configured SCM provider ${chalk.cyan(Providers[answers.provider].label)}`);
+        print.log(`Successfully configured binary registry provider ${chalk.cyan(BinaryRegistryProviders[answers.provider].label)}`);
         return result.code;
     } catch (e) {
-        print.error(`Failed to configure SCM provider: ${e.message}`);
+        print.error(`Failed to configure binary registry provider: ${e.message}`);
         return 1;
     }
-
-    return 0;
 }

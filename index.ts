@@ -26,14 +26,15 @@ import {
     shouldAddLocalSdmCommands,
 } from "./lib/command";
 import { config } from "./lib/config";
+import * as dockerprovider from "./lib/dockerprovider";
 import { execute } from "./lib/execute";
 import { gitHook } from "./lib/gitHook";
 import { gqlFetch } from "./lib/gqlFetch";
 import { install } from "./lib/install";
 import { kube } from "./lib/kube";
 import * as print from "./lib/print";
-import * as provider from "./lib/provider";
 import { repositoryStart } from "./lib/repositoryStart";
+import * as scmprovider from "./lib/scmprovider";
 import { version } from "./lib/version";
 import * as workspace from "./lib/workspace";
 
@@ -107,8 +108,8 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         })),
     });
     yargBuilder.withSubcommand({
-        command: "provider config",
-        describe: "Create a new provider",
+        command: "configure scm provider",
+        describe: "Create a new SCM provider",
         parameters: [{
             parameterName: "api-key",
             describe: "Atomist API key",
@@ -118,7 +119,25 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             describe: "Atomist workspace ID",
             type: "string",
         }],
-        handler: argv => cliCommand(() => provider.config({
+        handler: argv => cliCommand(() => scmprovider.config({
+            apiKey: argv["api-key"],
+            workspaceId: argv["workspace-id"],
+            validateApiKey: true,
+        })),
+    });
+    yargBuilder.withSubcommand({
+        command: "configure docker provider",
+        describe: "Create a new Docker registry provider",
+        parameters: [{
+            parameterName: "api-key",
+            describe: "Atomist API key",
+            type: "string",
+        }, {
+            parameterName: "workspace-id",
+            describe: "Atomist workspace ID",
+            type: "string",
+        }],
+        handler: argv => cliCommand(() => dockerprovider.config({
             apiKey: argv["api-key"],
             workspaceId: argv["workspace-id"],
             validateApiKey: true,

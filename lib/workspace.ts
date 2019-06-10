@@ -29,7 +29,7 @@ import {
     validateApiKey,
 } from "./config";
 import * as print from "./print";
-import { config as providerConfigure } from "./provider";
+import { config as providerConfigure } from "./scmprovider";
 
 const CreateTeamMutation = `
 mutation CreateTeam($name: String!) {

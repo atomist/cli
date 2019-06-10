@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+import {
+    ApolloGraphClient,
+    Configuration,
+} from "@atomist/automation-client";
+
 export const CreateGitHubScmProviderMutation = `
 mutation CreateGitHubResourceProvider {
   createGitHubResourceProvider {
@@ -47,3 +52,73 @@ mutation SetScmProviderConfiguration($id: ID!, $value: String!, $name: String!, 
   }
 }
 `;
+
+export const CreateDockerRegistryMutation = `
+mutation CreateDockerRegistryProvider($type: DockerRegistryType!, $name: String!, $url: String!) {
+  createDockerRegistryProvider(type: $type, name: $name, url: $url) {
+    id
+  }
+}
+`;
+
+export const CreateBinaryRepositoryProviderMutation = `
+mutation CreateBinaryRepositoryProvider($type: BinaryRepositoryType!, $name: String!, $url: String!) {
+  createBinaryRegistryProvider(type: $type, name: $name, url: $url) {
+    id
+  }
+}
+`;
+
+export const DeleteResourceProviderMutation = `
+mutation DeleteResourceProvider($id: String!) {
+  deleteResourceProvider(id: $id)
+}
+`;
+
+export const CreateGenericResourceUserMutation = `
+mutation CreateGenericResourceUser($username: String!, $resourceProviderId: ID!) {
+  createResourceUser(login: $username, resourceProviderId: $resourceProviderId, resourceUserType: GenericResourceUser) {
+    id
+  }
+}`;
+
+export const SetCredentialForResourceUserMutation = `
+mutation CreateGenericResourceUser($resourceUser: ID!, $resourceProviderId: ID!, $password: String!) {
+  setCredential(providerId: $resourceProviderId, resourceUserId: $resourceUser, credential: { type: Password, password: $password}) {
+    id
+  }
+}`;
+
+export const LinkCredentialMutation = `
+mutation LinkCredential($resourceProviderId: ID!, $credentialId: ID!) {
+  linkCredentialToResourceProvider(resourceProviderId: $resourceProviderId, credentialId: $credentialId) {
+    id
+  }
+}`;
+
+export async function configureCredentialsForResourceProvider(providerId: string,
+                                                              username: string,
+                                                              password: string,
+                                                              workspaceId: string,
+                                                              apiKey: string,
+                                                              cfg: Configuration): Promise<void> {
+    const graphClient = new ApolloGraphClient(`${cfg.endpoints.graphql}/${workspaceId}`,
+        { Authorization: `Bearer ${apiKey}` });
+
+    const createResourceUserResult = await graphClient.mutate<{ createResourceUser: { id: string } }, {}>({
+        mutation: CreateGenericResourceUserMutation,
+        variables: {
+            username,
+            resourceProviderId: providerId,
+        },
+    });
+
+    await graphClient.mutate<{ setCredential: { id: string } }, {}>({
+        mutation: SetCredentialForResourceUserMutation,
+        variables: {
+            resourceUser: createResourceUserResult.createResourceUser.id,
+            resourceProviderId: providerId,
+            password,
+        },
+    });
+}
