@@ -30,9 +30,9 @@ import {
 } from "./config";
 import * as print from "./print";
 import {
-    createDockerHub,
-    createJFrog,
-} from "./provider/docker";
+    createMaven,
+    createNpm,
+} from "./provider/binary";
 
 type BinaryRegistryProviderTypes = Record<string, {
     label: string;
