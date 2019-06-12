@@ -113,12 +113,20 @@ export async function configureCredentialsForResourceProvider(providerId: string
         },
     });
 
-    await graphClient.mutate<{ setCredential: { id: string } }, {}>({
+    const setCredentialResult = await graphClient.mutate<{ setCredential: { id: string } }, {}>({
         mutation: SetCredentialForResourceUserMutation,
         variables: {
             resourceUser: createResourceUserResult.createResourceUser.id,
             resourceProviderId: providerId,
             password,
+        },
+    });
+
+    await graphClient.mutate<{ linkCredentialToResourceProvider: { id: string } }, {}>({
+        mutation: CreateGenericResourceUserMutation,
+        variables: {
+            credentialId: setCredentialResult.setCredential.id,
+            resourceProviderId: providerId,
         },
     });
 }
