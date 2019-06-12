@@ -15,6 +15,7 @@
  */
 
 import { execPromise } from "@atomist/sdm";
+import chalk from "chalk";
 import * as fs from "fs-extra";
 import * as path from "path";
 import { createSpinner } from "./config";
@@ -39,27 +40,29 @@ function hasPackageJson(directory: string): boolean {
 }
 
 async function updateDependenciesToTag(dependencies: string[], versionTag: string, spinner: any): Promise<void> {
-    await Promise.all(dependencies.map(async dep => {
-        await execPromise(
-            "npm",
-            [
-                "install",
-                "--save",
-                `${dep}@${versionTag}`]);
-        spinner.setSpinnerTitle(`Updated ${dep} development dependency to ${versionTag}`);
-    }));
+    const dependenciesToUpdate = dependencies.map(d => `${d}@${versionTag}`);
+    spinner.setSpinnerTitle(`Updating dependencies to ${versionTag} ${chalk.yellow("%s")}`);
+    await execPromise(
+        "npm",
+        [
+            "install",
+            "--save",
+            ...dependenciesToUpdate,
+        ],
+    );
 }
 
 async function updateDevDependenciesToTag(dependencies: string[], versionTag: string, spinner: any): Promise<void> {
-    await Promise.all(dependencies.map(async dep => {
-        await execPromise(
-            "npm",
-            [
-                "install",
-                "--save-dev",
-                `${dep}@${versionTag}`]);
-        spinner.setSpinnerTitle(`Updated ${dep} dependency to ${versionTag}`);
-    }));
+    const dependenciesToUpdate = dependencies.map(d => `${d}@${versionTag}`);
+    spinner.setSpinnerTitle(`Updating dev dependencies to ${versionTag} ${chalk.yellow("%s")}`);
+    await execPromise(
+        "npm",
+        [
+            "install",
+            "--save-dev",
+            ...dependenciesToUpdate,
+        ],
+    );
 }
 
 /**
