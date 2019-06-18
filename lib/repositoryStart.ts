@@ -56,8 +56,6 @@ export async function repositoryStart(opts: { cloneUrl: string } & Partial<Repos
         sha: "master",
         local: false,
         seedUrl: "https://github.com/atomist-seeds/empty-sdm.git",
-        compile: true,
-        install: true,
     }, opts);
 
     let cwd = optsToUse.cwd;
