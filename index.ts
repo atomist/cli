@@ -166,7 +166,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
     });
     yargBuilder.withSubcommand({
         command: "git-hook",
-        describe: "Process Git hook data for local SDM",
+        describe: "(not for human use)",
         handler: argv => cliCommand(() => gitHook(process.argv)),
     });
     yargBuilder.withSubcommand({
@@ -211,55 +211,55 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         })),
     });
     yargBuilder.withSubcommand({
-            command: "start",
-            describe: "Start an SDM or automation client",
-            parameters: [
-                commonOptions.changeDir,
-                commonOptions.compile,
-                commonOptions.install, {
-                    parameterName: "local",
-                    default: false,
-                    describe: "Start SDM in local mode",
-                    type: "boolean",
-                }, {
-                    parameterName: "repository-url",
-                    describe: "Git URL to clone",
-                    type: "string",
-                    required: false,
-                }, {
-                    parameterName: "index",
-                    describe: "Name of the file that exports the configuration",
-                    type: "string",
-                    required: false,
-                    implies: "repository-url",
-                }, {
-                    parameterName: "sha",
-                    describe: "Git sha to checkout",
-                    type: "string",
-                    required: false,
-                    implies: "repository-url",
-                }, {
-                    parameterName: "seed-url",
-                    describe: "Git URL to clone the seed to overlay with SDM repository",
-                    type: "string",
-                    required: false,
-                    implies: "repository-url",
-                }],
-            handler: (argv: any) => cliCommand(() => {
-                return repositoryStart({
-                    cwd: argv["change-dir"],
-                    cloneUrl: argv["repository-url"],
-                    index: argv.index,
-                    sha: argv.sha,
-                    local: argv.local,
-                    seedUrl: argv["seed-url"],
-                    install: argv.install,
-                    compile: argv.compile,
-                });
-            }),
-        },
+        command: "start",
+        describe: "Start an SDM or automation client",
+        parameters: [
+            commonOptions.changeDir,
+            commonOptions.compile,
+            commonOptions.install, {
+                parameterName: "local",
+                default: false,
+                describe: "Start SDM in local mode",
+                type: "boolean",
+            }, {
+                parameterName: "repository-url",
+                describe: "Git URL to clone",
+                type: "string",
+                required: false,
+            }, {
+                parameterName: "index",
+                describe: "Name of the file that exports the configuration",
+                type: "string",
+                required: false,
+                implies: "repository-url",
+            }, {
+                parameterName: "sha",
+                describe: "Git sha to checkout",
+                type: "string",
+                required: false,
+                implies: "repository-url",
+            }, {
+                parameterName: "seed-url",
+                describe: "Git URL to clone the seed to overlay with SDM repository",
+                type: "string",
+                required: false,
+                implies: "repository-url",
+            }],
+        handler: (argv: any) => cliCommand(() => {
+            return repositoryStart({
+                cwd: argv["change-dir"],
+                cloneUrl: argv["repository-url"],
+                index: argv.index,
+                sha: argv.sha,
+                local: argv.local,
+                seedUrl: argv["seed-url"],
+                install: argv.install,
+                compile: argv.compile,
+            });
+        }),
+    },
     )
-    ;
+        ;
     yargBuilder.build().save(yargs);
     // tslint:disable-next-line:no-unused-expression
     yargs.completion("completion")
