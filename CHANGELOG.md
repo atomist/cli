@@ -7,7 +7,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/1.5.1...HEAD)
 
+### Added
+
+-   Tell people not to run git-hook manually. [#96](https://github.com/atomist/cli/pull/96)
+
+### Fixed
+
+-   Fix install behavior. [866638a](https://github.com/atomist/cli/commit/866638a0a8b506baa6cb2f23b8c6b430e93e9400)
+
 ## [1.5.1](https://github.com/atomist/cli/compare/1.5.0...1.5.1) - 2019-05-31
+
+### Changed
+
+-   Update sdm-local. [805371b](https://github.com/atomist/cli/commit/805371b0d134cbbe7f714eebdfdec5cdde9023da)
+
+### Fixed
+
+-   Update Homebrew shell_output test. [f2256dd](https://github.com/atomist/cli/commit/f2256dd6a2f5260ca19afb53c7176e3ae31dd328)
 
 ## [1.5.0](https://github.com/atomist/cli/compare/1.4.0...1.5.0) - 2019-05-27
 
