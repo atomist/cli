@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Tell people not to run git-hook manually. [#96](https://github.com/atomist/cli/pull/96)
 
+### Changed
+
+-   Update Atomist and TypeScript deps. [5f93892](https://github.com/atomist/cli/commit/5f938925534df984b117e6dfa3d49efa2a6a5699)
+
 ### Fixed
 
 -   Fix install behavior. [866638a](https://github.com/atomist/cli/commit/866638a0a8b506baa6cb2f23b8c6b430e93e9400)
