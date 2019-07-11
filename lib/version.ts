@@ -16,7 +16,6 @@
 
 import * as _ from "lodash";
 import * as readPkgUp from "read-pkg-up";
-
 import * as print from "./print";
 
 /**
@@ -30,12 +29,12 @@ export function version(): string {
         // must be sync because yargs.version only accepts a string
         const pj = readPkgUp.sync({ cwd: __dirname });
         const dependencies: string[] = [];
-        _.forEach(pj.pkg.dependencies, (v, k) => {
+        _.forEach(pj.package.dependencies, (v, k) => {
             if (k.startsWith("@atomist/")) {
                 dependencies.push(`${k} ${v}`);
             }
         });
-        return `${pj.pkg.name} ${pj.pkg.version}
+        return `${pj.package.name} ${pj.package.version}
 
 ${dependencies.sort((d1, d2) => d1.localeCompare(d2)).join("\n")}`;
     } catch (e) {

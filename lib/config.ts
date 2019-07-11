@@ -358,7 +358,7 @@ export async function configureWorkspaces(apiKey: string,
                     checked: cfg.workspaceIds.includes(p.team.id),
                     short: p.team.id,
                 })),
-            validate: value => {
+            validate: (value: any) => {
                 if (value.length < 1) {
                     return chalk.red(multiple ? "Please select at least one workspace" : "Please select one workspace");
                 }
