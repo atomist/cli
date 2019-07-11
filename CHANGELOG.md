@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Add support for passing configuration profiles to start. [c5ffce8](https://github.com/atomist/cli/commit/c5ffce8bfa53fd66c01990638dd3cbeb3d9cc374)
 
+### Changed
+
+-   Update automation-client, sdm, sdm-core and sdm-local. [75a48a0](https://github.com/atomist/cli/commit/75a48a0eb61ae470149da1f7b381cac72c01ba30)
+
 ## [1.6.0](https://github.com/atomist/cli/compare/1.5.1...1.6.0) - 2019-07-09
 
 ### Added
