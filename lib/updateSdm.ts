@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { execPromise } from "@atomist/sdm";
+import {
+    execPromise,
+    spawnLog,
+    StringCapturingProgressLog,
+} from "@atomist/sdm";
 import chalk from "chalk";
 import * as fs from "fs-extra";
 import * as path from "path";
@@ -40,8 +44,13 @@ function hasPackageJson(directory: string): boolean {
 }
 
 async function updateDependenciesToTag(dependencies: string[], versionTag: string, spinner: any): Promise<void> {
-    const dependenciesToUpdate = dependencies.map(d => `${d}@${versionTag}`);
-    spinner.setSpinnerTitle(`Updating dependencies to ${versionTag} ${chalk.yellow("%s")}`);
+    const dependenciesToUpdate = dependencies
+        .filter(async d => {
+            const moduleVersion = await getModuleVersion(`${d}@${versionTag}`);
+            return moduleVersion !== undefined;
+        })
+        .map(d => `${d}@${versionTag}`);
+    spinner.setSpinnerTitle(`Updating ${dependenciesToUpdate.length} dependencies to ${versionTag} ${chalk.yellow("%s")}`);
     await execPromise(
         "npm",
         [
@@ -50,6 +59,23 @@ async function updateDependenciesToTag(dependencies: string[], versionTag: strin
             ...dependenciesToUpdate,
         ],
     );
+}
+
+async function getModuleVersion(module: string): Promise<string | undefined> {
+    const log = new StringCapturingProgressLog();
+    const result = await spawnLog(
+        "npm",
+        ["show", module, "version"],
+        {
+            logCommand: false,
+            log,
+        });
+
+    if (result.code === 0) {
+        return log.log.trim();
+    }
+
+    return undefined;
 }
 
 async function updateDevDependenciesToTag(dependencies: string[], versionTag: string, spinner: any): Promise<void> {
@@ -73,15 +99,19 @@ async function updateDevDependenciesToTag(dependencies: string[], versionTag: st
  */
 export async function updateSdm(opts: InstallOptions): Promise<number> {
     if (hasPackageJson(opts.cwd)) {
-        const spinner = createSpinner(
-            `Updating dependencies in package.json`);
-        const packageJson = await fs.readJson(path.join(opts.cwd, "package.json"));
-        const extractedDependencies = getAtomistDependencies(packageJson.dependencies);
-        const extractedDevDependencies = getAtomistDependencies(packageJson.devDependencies);
-        await updateDependenciesToTag(extractedDependencies, opts.versionTag, spinner);
-        await updateDevDependenciesToTag(extractedDevDependencies, opts.versionTag, spinner);
-        spinner.stop(true);
-        return 0;
+        const spinner = createSpinner(`Updating dependencies in package.json`);
+        try {
+            const packageJson = await fs.readJson(path.join(opts.cwd, "package.json"));
+            const extractedDependencies = getAtomistDependencies(packageJson.dependencies);
+            const extractedDevDependencies = getAtomistDependencies(packageJson.devDependencies);
+            await updateDependenciesToTag(extractedDependencies, opts.versionTag, spinner);
+            await updateDevDependenciesToTag(extractedDevDependencies, opts.versionTag, spinner);
+            spinner.stop(true);
+            return 0;
+        } catch (e) {
+            print.error(`Error while updating package.json`);
+            return 1;
+        }
     } else {
         print.error(`Current directory does not contain a package.json`);
         return 1;
