@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/1.6.1...HEAD)
 
+### Added
+
+-   Create command to update atomist dependencies. [#95](https://github.com/atomist/cli/issues/95)
+
 ## [1.6.1](https://github.com/atomist/cli/compare/1.6.0...1.6.1) - 2019-07-11
 
 ### Added
