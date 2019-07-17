@@ -34,6 +34,7 @@ import { kube } from "./lib/kube";
 import * as print from "./lib/print";
 import * as provider from "./lib/provider";
 import { repositoryStart } from "./lib/repositoryStart";
+import { updateSdm } from "./lib/updateSdm";
 import { version } from "./lib/version";
 import * as workspace from "./lib/workspace";
 
@@ -163,6 +164,22 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             cwd: argv["change-dir"],
             registry: argv.registry,
         })),
+    });
+    yargBuilder.withSubcommand({
+        command: "update sdm",
+        describe: "Update an SDM to the latest dependency version of Atomist of a certain branch",
+        parameters: [
+            commonOptions.changeDir,
+            {
+                parameterName: "tag",
+                describe: "NPM tag to update the dependencies to",
+                type: "string",
+                required: false,
+                default: "latest",
+            }],
+        handler: argv => cliCommand(() => updateSdm({
+            versionTag: argv.tag,
+            cwd: argv["change-dir"]})),
     });
     yargBuilder.withSubcommand({
         command: "git-hook",
