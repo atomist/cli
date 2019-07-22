@@ -31,6 +31,7 @@ import { gitHook } from "./lib/gitHook";
 import { gqlFetch } from "./lib/gqlFetch";
 import { install } from "./lib/install";
 import { kube } from "./lib/kube";
+import { kubeFetch } from "./lib/kubeFetch";
 import * as print from "./lib/print";
 import * as provider from "./lib/provider";
 import { repositoryStart } from "./lib/repositoryStart";
@@ -179,7 +180,8 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             }],
         handler: argv => cliCommand(() => updateSdm({
             versionTag: argv.tag,
-            cwd: argv["change-dir"]})),
+            cwd: argv["change-dir"],
+        })),
     });
     yargBuilder.withSubcommand({
         command: "git-hook",
@@ -228,61 +230,84 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         })),
     });
     yargBuilder.withSubcommand({
-            command: "start",
-            describe: "Start an SDM or automation client",
-            parameters: [
-                commonOptions.changeDir,
-                commonOptions.compile,
-                commonOptions.install, {
-                    parameterName: "local",
-                    default: false,
-                    describe: "Start SDM in local mode",
-                    type: "boolean",
-                }, {
-                    parameterName: "profile",
-                    describe: "Name of configuration profiles to include",
-                    type: "string",
-                    required: false,
-                }, {
-                    parameterName: "repository-url",
-                    describe: "Git URL to clone",
-                    type: "string",
-                    required: false,
-                }, {
-                    parameterName: "index",
-                    describe: "Name of the file that exports the configuration",
-                    type: "string",
-                    required: false,
-                    implies: "repository-url",
-                }, {
-                    parameterName: "sha",
-                    describe: "Git sha to checkout",
-                    type: "string",
-                    required: false,
-                    implies: "repository-url",
-                }, {
-                    parameterName: "seed-url",
-                    describe: "Git URL to clone the seed to overlay with SDM repository",
-                    type: "string",
-                    required: false,
-                    implies: "repository-url",
-                }],
-            handler: (argv: any) => cliCommand(() => {
-                return repositoryStart({
-                    cwd: argv["change-dir"],
-                    cloneUrl: argv["repository-url"],
-                    index: argv.index,
-                    sha: argv.sha,
-                    local: argv.local,
-                    profile: argv.profile,
-                    seedUrl: argv["seed-url"],
-                    install: argv.install,
-                    compile: argv.compile,
-                });
-            }),
-        },
-    )
-    ;
+        command: "kube-fetch",
+        describe: "Fetch resources from a Kubernetes cluster using the currently configured Kubernetes credentials, " +
+            "remove system-populated properties, and save each resource specification to a file",
+        parameters: [{
+            parameterName: "options-file",
+            describe: "Path to file containing a JSON object defining options selecting which resources to fetch, see " +
+                "https://atomist.github.io/sdm-pack-k8s/interfaces/_lib_kubernetes_fetch_.kubernetesfetchoptions.html " +
+                "for details on the structure of the object",
+            type: "string",
+        }, {
+            parameterName: "output-dir",
+            describe: "Directory to write spec files in, if not provided current directory is used",
+            type: "string",
+        }, {
+            parameterName: "secret-key",
+            describe: "Key to use to encrypt secret data values before writing to file",
+            type: "string",
+        }],
+        handler: (argv: any) => cliCommand(() => kubeFetch({
+            optionsFile: argv["options-file"],
+            outputDir: argv["output-dir"],
+            secretKey: argv["secret-key"],
+        })),
+    });
+    yargBuilder.withSubcommand({
+        command: "start",
+        describe: "Start an SDM or automation client",
+        parameters: [
+            commonOptions.changeDir,
+            commonOptions.compile,
+            commonOptions.install, {
+                parameterName: "local",
+                default: false,
+                describe: "Start SDM in local mode",
+                type: "boolean",
+            }, {
+                parameterName: "profile",
+                describe: "Name of configuration profiles to include",
+                type: "string",
+                required: false,
+            }, {
+                parameterName: "repository-url",
+                describe: "Git URL to clone",
+                type: "string",
+                required: false,
+            }, {
+                parameterName: "index",
+                describe: "Name of the file that exports the configuration",
+                type: "string",
+                required: false,
+                implies: "repository-url",
+            }, {
+                parameterName: "sha",
+                describe: "Git sha to checkout",
+                type: "string",
+                required: false,
+                implies: "repository-url",
+            }, {
+                parameterName: "seed-url",
+                describe: "Git URL to clone the seed to overlay with SDM repository",
+                type: "string",
+                required: false,
+                implies: "repository-url",
+            }],
+        handler: (argv: any) => cliCommand(() => {
+            return repositoryStart({
+                cwd: argv["change-dir"],
+                cloneUrl: argv["repository-url"],
+                index: argv.index,
+                sha: argv.sha,
+                local: argv.local,
+                profile: argv.profile,
+                seedUrl: argv["seed-url"],
+                install: argv.install,
+                compile: argv.compile,
+            });
+        }),
+    });
     yargBuilder.build().save(yargs);
     // tslint:disable-next-line:no-unused-expression
     yargs.completion("completion")
