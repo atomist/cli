@@ -156,7 +156,13 @@ async function cloneSeed(optsToUse: RepositoryStartOptions, seed: string): Promi
 
 async function copyIndexTs(optsToUse: RepositoryStartOptions, cwd: string): Promise<void> {
     print.info(`Preparing '${optsToUse.index}'...`);
-    await fs.move(path.join(cwd, optsToUse.index), path.join(cwd, "index.ts"), { overwrite: true });
+    const from = path.join(cwd, optsToUse.index.replace(".ts", "").replace(".js", ""));
+    // Rewrite the index.ts to export the configuration from provided file to not break relative imports
+    const indexTs = `import { configuration as cfg } from "${from}";
+
+export const configuration = cfg;
+`;
+    await fs.writeFile(path.join(cwd, "index.ts"), indexTs);
     print.info("Finished");
 }
 
