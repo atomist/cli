@@ -28,7 +28,6 @@ import * as express from "express";
 import * as inquirer from "inquirer";
 import { sha256 } from "js-sha256";
 import * as _ from "lodash";
-import opn = require("open");
 import {
     createSpinner,
     nonce,
@@ -38,22 +37,7 @@ import {
     ConfigureGitHubScmProviderMutation,
     CreateGitHubScmProviderMutation,
 } from "./util";
-
-const OrgsQuery = `query Orgs {
-  orgs {
-    nodes {
-      owner
-      ownerType
-      viewerCanAdminister
-    }
-  }
-}`;
-
-interface Orgs {
-    orgs: {
-        nodes: Array<{ owner: string, viewerCanAdminister: boolean, ownerType: "organization" | "user" }>;
-    };
-}
+import opn = require("open");
 
 const GitHubProviderQuery = `query ScmProviderById {
   SCMProvider(providerType: github_com) {
@@ -241,18 +225,14 @@ async function configure(workspaceId: string,
 
     let spinner = createSpinner(`Loading available GitHub organizations`);
 
-    let graphClient = new ApolloGraphClient(
-        cfg.endpoints.graphql.replace("/team", ""),
-        { Authorization: `Bearer ${apiKey}` });
-    const accessibleOrgs = await graphClient.query<Orgs, void>({
-        query: OrgsQuery,
-        options: QueryNoCacheOptions,
-    });
+    const accessibleOrgs = await axios.get<Array<{ login: string }>>(
+        `https://api.github.com/user/orgs`,
+        { headers: { Authorization: `token ${token}` } });
     spinner.stop(true);
 
     const orgs = _.uniq([
         ...configuredOrgs,
-        ...accessibleOrgs.orgs.nodes.filter(ao => ao.ownerType === "organization").map(o => o.owner)]);
+        ...accessibleOrgs.data.map(o => o.login)]);
 
     print.log("");
     print.log(`You can now connect GitHub organizations and/or repositories to
@@ -279,13 +259,6 @@ will install a webhook to receive events like pushes, issues and PRs.`);
                 name: o,
                 value: o,
                 checked: configuredOrgs.includes(o),
-                disabled: () => {
-                    const aorg = accessibleOrgs.orgs.nodes.find(ao => ao.owner === o);
-                    if (!!aorg && !aorg.viewerCanAdminister) {
-                        return "no administrator access";
-                    }
-                    return undefined;
-                },
             })),
         when: a => orgs.length > 0 && a.type === "orgs",
     }, {
@@ -326,9 +299,6 @@ will install a webhook to receive events like pushes, issues and PRs.`);
 
     spinner = createSpinner(`Configuring GitHub SCM provider`);
 
-    graphClient = new ApolloGraphClient(`${cfg.endpoints.graphql}/${workspaceId}`,
-        { Authorization: `Bearer ${apiKey}` });
-
     const repos = (!answers.repos ? [] : answers.repos).filter((r: any) => r !== "<new_repo>").map((r: any) => ({
         owner: r.ownerSpec,
         repo: r.nameSpec,
@@ -337,6 +307,9 @@ will install a webhook to receive events like pushes, issues and PRs.`);
     if (!!answers.newRepo) {
         repos.push(slugToRepoSpec(answers.newRepo));
     }
+
+    const graphClient = new ApolloGraphClient(`${cfg.endpoints.graphql}/${workspaceId}`,
+        { Authorization: `Bearer ${apiKey}` });
 
     await graphClient.mutate<{}, { id: string, orgs: string[], repos: Array<{ owner: string, repo: string }> }>({
         mutation: ConfigureGitHubScmProviderMutation,
