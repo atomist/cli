@@ -31,6 +31,7 @@ import { gitHook } from "./lib/gitHook";
 import { gqlFetch } from "./lib/gqlFetch";
 import { install } from "./lib/install";
 import { kube } from "./lib/kube";
+import { kubeCrypt } from "./lib/kubeCrypt";
 import { kubeFetch } from "./lib/kubeFetch";
 import * as print from "./lib/print";
 import * as provider from "./lib/provider";
@@ -227,6 +228,52 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             dryRun: argv["dry-run"],
             yes: argv.yes,
             url: argv.url,
+        })),
+    });
+    yargBuilder.withSubcommand({
+        command: "kube-decrypt",
+        describe: "Decrypt encrypted Kubernetes secret data values",
+        parameters: [{
+            parameterName: "file",
+            describe: "Decrypt Kubernetes secret data values from secret spec file",
+            type: "string",
+        }, {
+            parameterName: "literal",
+            describe: "Decrypt secret data value provided as a literal string",
+            type: "string",
+        }, {
+            parameterName: "secret-key",
+            describe: "Key to use to decrypt secret data values",
+            type: "string",
+        }],
+        handler: (argv: any) => cliCommand(() => kubeCrypt({
+            action: "decrypt",
+            file: argv.file,
+            literal: argv.literal,
+            secretKey: argv["secret-key"],
+        })),
+    });
+    yargBuilder.withSubcommand({
+        command: "kube-encrypt",
+        describe: "Encrypt Base64 encoded Kubernetes secret data values",
+        parameters: [{
+            parameterName: "file",
+            describe: "Encrypt Kubernetes secret data values from secret spec file",
+            type: "string",
+        }, {
+            parameterName: "literal",
+            describe: "Encrypt secret data value provided as a literal string",
+            type: "string",
+        }, {
+            parameterName: "secret-key",
+            describe: "Key to use to encrypt secret data values",
+            type: "string",
+        }],
+        handler: (argv: any) => cliCommand(() => kubeCrypt({
+            action: "encrypt",
+            file: argv.file,
+            literal: argv.literal,
+            secretKey: argv["secret-key"],
         })),
     });
     yargBuilder.withSubcommand({
