@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Create command to update atomist dependencies. [#95](https://github.com/atomist/cli/issues/95)
 -   Add kube-fetch command. [#98](https://github.com/atomist/cli/issues/98)
+-   Add kube-encrypt and kube-decrypt commands. [#101](https://github.com/atomist/cli/issues/101)
 
 ## [1.6.1](https://github.com/atomist/cli/compare/1.6.0...1.6.1) - 2019-07-11
 
