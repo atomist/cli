@@ -111,7 +111,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
     });
     yargBuilder.withSubcommand({
         command: "provider config",
-        describe: "Create a new provider",
+        describe: "[DEPRECATED] Create a new provider",
         parameters: [{
             parameterName: "api-key",
             describe: "Atomist API key",

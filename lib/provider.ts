@@ -35,42 +35,14 @@ import {
 
 type ProviderTypes = Record<string, {
     label: string;
-    create: (workspaceId: string,
-             apiKey: string,
-             cfg: Configuration) => Promise<{ code: number, configuration?: Partial<Configuration> }>;
+    create: (workspaceId: string, apiKey: string, cfg: Configuration) => Promise<{ code: number, configuration?: Partial<Configuration> }>;
 }>;
-
-/*const UnsupportedProvider = async (workspaceId: string,
-                                   apiKey: string,
-                                   cfg: Configuration) => {
-    print.error("SCM provider not supported yet!");
-    return {
-        code: 1,
-        configuration: cfg,
-    };
-};*/
 
 const Providers: ProviderTypes = {
     github_com: {
         label: "GitHub.com",
         create: createGitHubCom,
     },
-    /*ghe: {
-        label: "GitHub Enterprise",
-        config: UnsupportedProvider,
-    },
-    gitlab: {
-        label: "GitLab",
-        config: UnsupportedProvider,
-    },
-    gitlab_com: {
-        label: "GitLab.com",
-        config: UnsupportedProvider,
-    },
-    bitbucket: {
-        label: "BitBucket",
-        config: UnsupportedProvider,
-    },*/
 };
 
 /**
@@ -92,6 +64,8 @@ export interface ConfigureOptions {
  * @param opts
  */
 export async function config(opts: ConfigureOptions): Promise<number> {
+    print.warn("This command is DEPRECATED and will be removed in a future release!");
+    print.warn("Please use https://app.atomist.com/ and navigate to Settings > Integrations to configure providers.");
     const userCfg = resolveUserConfig();
     const defaultCfg = defaultConfiguration();
     const cfg = mergeConfigs(defaultCfg, userCfg);
