@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add kube-fetch command. [#98](https://github.com/atomist/cli/issues/98)
 -   Add kube-encrypt and kube-decrypt commands. [#101](https://github.com/atomist/cli/issues/101)
 
+### Deprecated
+
+-   Provider configuration using the CLI is deprecated. [#103](https://github.com/atomist/cli/issues/103)
+
 ## [1.6.1](https://github.com/atomist/cli/compare/1.6.0...1.6.1) - 2019-07-11
 
 ### Added
