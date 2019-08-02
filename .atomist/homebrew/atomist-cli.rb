@@ -6,6 +6,9 @@ class AtomistCli < Formula
   url "%URL%"
   sha256 "%SHA256%"
 
+  bottle do
+  end
+
   depends_on "node"
 
   def install
