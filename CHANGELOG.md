@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/1.7.0...HEAD)
 
+### Removed
+
+-   **BREAKING** Remove provider config command. [#103](https://github.com/atomist/cli/issues/103)
+
 ## [1.7.0](https://github.com/atomist/cli/compare/1.6.1...1.7.0) - 2019-08-02
 
 ### Added
