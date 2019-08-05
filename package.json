@@ -80,7 +80,7 @@
     "autotest": "supervisor --watch index.ts,lib,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
     "build": "run-s compile test lint doc",
     "clean": "run-p clean:compile clean:doc clean:run",
-    "clean:compile": "rimraf git-info.json \"index.{d.ts,js{,.map}}\" \"{lib,test}/**/*.{d.ts,js{,.map}}\" lib/typings/types.ts",
+    "clean:compile": "rimraf git-info.json \"index.{d.ts,js}{,.map}\" \"{lib,test}/**/*.{d.ts,js}{,.map}\" lib/typings/types.ts",
     "clean:dist": "run-s clean clean:npm",
     "clean:doc": "rimraf doc",
     "clean:npm": "rimraf node_modules",
@@ -100,24 +100,7 @@
     "@atomist": "./index.js"
   },
   "engines": {
-    "node": ">=8.1.0",
+    "node": ">=8.2.0",
     "npm": ">=5.0.0"
-  },
-  "nyc": {
-    "include": [
-      "lib/**/*.*"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "exclude": [
-      "lib/typings",
-      "**/*.d.ts"
-    ],
-    "reporter": [
-      "html",
-      "text-summary"
-    ],
-    "all": true
   }
 }

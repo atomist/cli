@@ -1,35 +1,33 @@
 {
-    "compilerOptions": {
-        "newLine": "LF",
-        "target": "ES6",
-        "module": "CommonJS",
-        "moduleResolution": "Node",
-        "jsx": "React",
-        "declaration": true,
-        "sourceMap": true,
-        "rootDir": ".",
-        "lib": [
-            "DOM",
-            "ES2017",
-            "DOM.Iterable",
-            "ScriptHost",
-            "esnext.asynciterable"
-        ],
-        "strict": true,
-        "strictNullChecks": false,
-        "noImplicitReturns": true,
-        "noUnusedLocals": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
-    },
-    "exclude": [
-        "legal",
-        "node_modules",
-        ".#*"
+  "compilerOptions": {
+    "newLine": "LF",
+    "target": "ES2016",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "jsx": "React",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "lib": [
+      "DOM",
+      "ES2017",
+      "DOM.Iterable",
+      "ScriptHost",
+      "esnext.asynciterable"
     ],
-    "compileOnSave": true,
-    "buildOnSave": false,
-    "atom": {
-        "rewriteTsconfig": false
-    }
+    "strict": true,
+    "strictNullChecks": false,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "include": ["index.ts", "bin/*.ts", "lib/**/*.ts", "test/**/*.ts"],
+  "exclude": [".#*"],
+  "compileOnSave": true,
+  "buildOnSave": false,
+  "atom": {
+    "rewriteTsconfig": false
+  }
 }
