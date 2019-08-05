@@ -29,7 +29,6 @@ import {
     validateApiKey,
 } from "./config";
 import * as print from "./print";
-import { config as providerConfigure } from "./provider";
 
 const CreateTeamMutation = `
 mutation CreateTeam($name: String!) {
@@ -95,13 +94,6 @@ export async function create(opts: CreateOptions): Promise<number> {
 
     userCfg.workspaceIds.push(workspaceId);
     await writeUserConfig(userCfg);
-
-    try {
-        await providerConfigure({ apiKey, workspaceId, validateApiKey: false });
-    } catch (e) {
-        print.error(`Failed to configured SCM provider: ${e.message}`);
-        return 1;
-    }
 
     return 0;
 }

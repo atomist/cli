@@ -34,7 +34,6 @@ import { kube } from "./lib/kube";
 import { kubeCrypt } from "./lib/kubeCrypt";
 import { kubeFetch } from "./lib/kubeFetch";
 import * as print from "./lib/print";
-import * as provider from "./lib/provider";
 import { repositoryStart } from "./lib/repositoryStart";
 import { updateSdm } from "./lib/updateSdm";
 import { version } from "./lib/version";
@@ -107,24 +106,6 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         handler: argv => cliCommand(() => workspace.create({
             apiKey: argv["api-key"],
             workspaceName: argv["workspace-name"],
-        })),
-    });
-    yargBuilder.withSubcommand({
-        command: "provider config",
-        describe: "[DEPRECATED] Create a new provider",
-        parameters: [{
-            parameterName: "api-key",
-            describe: "Atomist API key",
-            type: "string",
-        }, {
-            parameterName: "workspace-id",
-            describe: "Atomist workspace ID",
-            type: "string",
-        }],
-        handler: argv => cliCommand(() => provider.config({
-            apiKey: argv["api-key"],
-            workspaceId: argv["workspace-id"],
-            validateApiKey: true,
         })),
     });
     yargBuilder.withSubcommand({
