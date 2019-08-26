@@ -33,6 +33,7 @@ import { install } from "./lib/install";
 import { kube } from "./lib/kube";
 import { kubeCrypt } from "./lib/kubeCrypt";
 import { kubeFetch } from "./lib/kubeFetch";
+import { kubeInstall } from "./lib/kubeInstall";
 import * as print from "./lib/print";
 import { repositoryStart } from "./lib/repositoryStart";
 import { updateSdm } from "./lib/updateSdm";
@@ -181,7 +182,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
     yargBuilder.withSubcommand({
         command: "kube",
         aliases: ["k8s"],
-        describe: "Deploy Atomist utilities to Kubernetes cluster",
+        describe: "DEPRECATED use kube-install",
         parameters: [{
             parameterName: "environment",
             describe: "Informative name for your Kubernetes cluster",
@@ -203,6 +204,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             describe: "Confirm all questions with yes",
             type: "boolean",
         }],
+        // tslint:disable-next-line:deprecation
         handler: (argv: any) => cliCommand(() => kube({
             env: argv.environment,
             ns: argv.namespace,
@@ -285,6 +287,38 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             outputDir: argv["output-dir"],
             outputFormat: argv["output-format"],
             secretKey: argv["secret-key"],
+        })),
+    });
+    yargBuilder.withSubcommand({
+        command: "kube-install",
+        describe: "Deploy Atomist utilities to Kubernetes a cluster",
+        parameters: [{
+            parameterName: "environment",
+            describe: "Informative name for your Kubernetes cluster",
+            type: "string",
+        }, {
+            parameterName: "namespace",
+            describe: "Deploy utilities in namespace mode",
+            type: "string",
+        }, {
+            parameterName: "url",
+            describe: "URL of publicly accessible hostname (e.g. http://a.atomist.io)",
+            type: "string",
+        }, {
+            parameterName: "dry-run",
+            describe: "Only print the k8s objects that would be deployed, without sending them",
+            type: "boolean",
+        }, {
+            parameterName: "yes",
+            describe: "Confirm all questions with yes",
+            type: "boolean",
+        }],
+        handler: (argv: any) => cliCommand(() => kubeInstall({
+            env: argv.environment,
+            ns: argv.namespace,
+            dryRun: argv["dry-run"],
+            yes: argv.yes,
+            url: argv.url,
         })),
     });
     yargBuilder.withSubcommand({
