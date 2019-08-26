@@ -180,7 +180,7 @@ More info: https://docs.atomist.com/quick-start/#create-a-software-delivery-mach
  */
 async function createApiKey(cfg: Configuration): Promise<string> {
 
-    let questions: inquirer.Question[] = [
+    let questions: inquirer.QuestionCollection = [
         {
             type: "input",
             name: "apiKey",
@@ -323,9 +323,7 @@ API key is invalid. Run ${chalk.cyan("atomist config --create-api-key")} to obta
  * @param apiKey
  * @param cfg
  */
-export async function configureWorkspaces(apiKey: string,
-                                          cfg: Configuration,
-                                          multiple: boolean = true): Promise<string[]> {
+export async function configureWorkspaces(apiKey: string, cfg: Configuration, multiple: boolean = true): Promise<string[]> {
     const graphClient = new ApolloGraphClient(
         cfg.endpoints.graphql.replace("/team", ""),
         { Authorization: `Bearer ${apiKey}` });
@@ -346,7 +344,7 @@ export async function configureWorkspaces(apiKey: string,
         print.log(`Select a workspace:`);
     }
 
-    const questions: inquirer.Question[] = [
+    const questions = [
         {
             type: multiple ? "checkbox" : "list",
             name: "workspaceIds",
