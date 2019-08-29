@@ -28,7 +28,7 @@ describe("gql", () => {
         it("should find lib dir", () => {
             const l = libDir(path.join(__dirname, ".."));
             const e = path.resolve(__dirname, "..", "lib");
-            assert.equal(l, e);
+            assert(l === e);
         });
 
         it("should find src dir", async () => {
@@ -36,14 +36,14 @@ describe("gql", () => {
             const e = path.join(t.path, "src");
             await fs.ensureDir(e);
             const l = libDir(t.path);
-            assert.equal(l, e);
+            assert(l === e);
             await t.cleanup();
         });
 
         it("should return lib when there is no dir", () => {
             const l = libDir(__dirname);
             const e = path.resolve(__dirname, "lib");
-            assert.equal(l, e);
+            assert(l === e);
         });
 
     });
