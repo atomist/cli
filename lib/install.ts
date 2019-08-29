@@ -51,8 +51,6 @@ interface ExtensionPack {
  * @return integer return value
  */
 export async function install(opts: InstallOptions): Promise<number> {
-    print.warn("The install command is deprecated and will be removed in a future release.");
-    print.warn("Use `npm install SDM_PACK` instead.");
     const keywords = opts.keywords.filter(k => !!k);
     let spinner = createSpinner(
         `Searching extension packs${keywords.length > 0 ? " for " : ""}${chalk.cyan(keywords.join(", "))}`);

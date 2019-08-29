@@ -28,10 +28,9 @@ describe("command", () => {
         const knownCommands = [
             "config",
             "execute",
-            "git",
+            "git-hook",
             "gql-fetch",
-            "gql-gen",
-            "kube",
+            "kube-install",
             "start",
         ];
 
