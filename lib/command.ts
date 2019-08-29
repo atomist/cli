@@ -33,16 +33,23 @@ export function shouldAddLocalSdmCommands(args: string[]): boolean {
     if (!command) {
         return false;
     }
-    const reservedCommands = [
+    const internalCommands = [
         "config",
+        "connect",
         "execute",
-        "git",
+        "git-hook",
         "gql-fetch",
-        "gql-gen",
+        "install",
         "kube",
+        "kube-decrypt",
+        "kube-encrypt",
+        "kube-fetch",
+        "kube-install",
+        "login",
         "start",
+        "update",
     ];
-    return !reservedCommands.includes(command);
+    return !internalCommands.includes(command);
 }
 
 /**
