@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/1.7.0...HEAD)
 
+### Changed
+
+-   Add kube-install command, deprecate kube. [#106](https://github.com/atomist/cli/issues/106)
+
 ### Removed
 
 -   **BREAKING** Remove provider config command. [#103](https://github.com/atomist/cli/issues/103)
