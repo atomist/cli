@@ -30,7 +30,6 @@ import { execute } from "./lib/execute";
 import { gitHook } from "./lib/gitHook";
 import { gqlFetch } from "./lib/gqlFetch";
 import { install } from "./lib/install";
-import { kube } from "./lib/kube";
 import { kubeCrypt } from "./lib/kubeCrypt";
 import { kubeFetch } from "./lib/kubeFetch";
 import { kubeInstall } from "./lib/kubeInstall";
@@ -38,7 +37,6 @@ import * as print from "./lib/print";
 import { repositoryStart } from "./lib/repositoryStart";
 import { updateSdm } from "./lib/updateSdm";
 import { version } from "./lib/version";
-import * as workspace from "./lib/workspace";
 
 process.env.SUPPRESS_NO_CONFIG_WARNING = "true";
 if (!isEmbeddedSdmCommand(process.argv)) {
@@ -70,8 +68,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
 
     yargBuilder.withSubcommand({
         command: "config",
-        aliases: ["connect", "login"],
-        describe: "Connect to Atomist",
+        describe: "Configure connection to Atomist",
         parameters: [{
             parameterName: "api-key",
             describe: "Atomist API key",
@@ -93,21 +90,31 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         })),
     });
     yargBuilder.withSubcommand({
-        command: "workspace create",
-        describe: "Create a new workspace",
+        command: "connect",
+        aliases: ["login"],
+        describe: "DEPRECATED use 'config'",
         parameters: [{
             parameterName: "api-key",
             describe: "Atomist API key",
             type: "string",
         }, {
-            parameterName: "workspace-name",
-            describe: "Workspace name",
+            parameterName: "workspace-id",
+            describe: "Atomist workspace ID",
             type: "string",
+        }, {
+            parameterName: "create-api-key",
+            describe: "Create a new API key regardless if currently one is configured",
+            type: "boolean",
+            default: false,
         }],
-        handler: argv => cliCommand(() => workspace.create({
-            apiKey: argv["api-key"],
-            workspaceName: argv["workspace-name"],
-        })),
+        handler: argv => {
+            deprecated(argv, "atomist config");
+            return cliCommand(() => config({
+                apiKey: argv["api-key"],
+                workspaceId: argv["workspace-id"],
+                createApiKey: argv["create-api-key"],
+            }));
+        },
     });
     yargBuilder.withSubcommand({
         command: "execute <name>",
@@ -128,7 +135,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
     });
     yargBuilder.withSubcommand({
         command: "install [keywords]",
-        describe: "Search and install an SDM extension pack",
+        describe: "DEPRECATED use 'npm install'",
         positional: [{
             key: "keywords",
             opts: {
@@ -143,11 +150,14 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 type: "string",
                 required: false,
             }],
-        handler: argv => cliCommand(() => install({
-            keywords: [argv.keywords, ...argv._.filter((a: any) => a !== "install")],
-            cwd: argv["change-dir"],
-            registry: argv.registry,
-        })),
+        handler: argv => {
+            deprecated(argv, "npm install");
+            return cliCommand(() => install({
+                keywords: [argv.keywords, ...argv._.filter((a: any) => a !== "install")],
+                cwd: argv["change-dir"],
+                registry: argv.registry,
+            }));
+        },
     });
     yargBuilder.withSubcommand({
         command: "update sdm",
@@ -182,7 +192,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
     yargBuilder.withSubcommand({
         command: "kube",
         aliases: ["k8s"],
-        describe: "DEPRECATED use kube-install",
+        describe: "DEPRECATED use 'kube-install'",
         parameters: [{
             parameterName: "environment",
             describe: "Informative name for your Kubernetes cluster",
@@ -204,14 +214,16 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             describe: "Confirm all questions with yes",
             type: "boolean",
         }],
-        // tslint:disable-next-line:deprecation
-        handler: (argv: any) => cliCommand(() => kube({
-            env: argv.environment,
-            ns: argv.namespace,
-            dryRun: argv["dry-run"],
-            yes: argv.yes,
-            url: argv.url,
-        })),
+        handler: (argv: any) => {
+            deprecated(argv, "kube-install");
+            return cliCommand(() => kubeInstall({
+                env: argv.environment,
+                ns: argv.namespace,
+                dryRun: argv["dry-run"],
+                yes: argv.yes,
+                url: argv.url,
+            }));
+        },
     });
     yargBuilder.withSubcommand({
         command: "kube-decrypt",
@@ -377,7 +389,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
     });
     yargBuilder.build().save(yargs);
     // tslint:disable-next-line:no-unused-expression
-    yargs.completion("completion")
+    yargs.completion("completion", false as any)
         .showHelpOnFail(false, "Specify --help for available options")
         .alias("help", ["h", "?"])
         .version(version())
@@ -386,6 +398,13 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
         .strict()
         .wrap(Math.min(100, yargs.terminalWidth()))
         .argv;
+}
+
+function deprecated(argv: any, alt?: string): void {
+    print.warn(`The '${argv._[0]}' command is DEPRECATED and will be removed in a future release.`);
+    if (alt) {
+        print.warn(`Use '${alt}' instead.`);
+    }
 }
 
 async function main(): Promise<any> {

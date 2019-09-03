@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,16 +33,23 @@ export function shouldAddLocalSdmCommands(args: string[]): boolean {
     if (!command) {
         return false;
     }
-    const reservedCommands = [
+    const internalCommands = [
         "config",
+        "connect",
         "execute",
-        "git",
+        "git-hook",
         "gql-fetch",
-        "gql-gen",
+        "install",
         "kube",
+        "kube-decrypt",
+        "kube-encrypt",
+        "kube-fetch",
+        "kube-install",
+        "login",
         "start",
+        "update",
     ];
-    return !reservedCommands.includes(command);
+    return !internalCommands.includes(command);
 }
 
 /**
