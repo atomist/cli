@@ -11,9 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Add kube-install command, deprecate kube. [#106](https://github.com/atomist/cli/issues/106)
 
+### Deprecated
+
+-   Remove broken, deprecate outdated commands. [#110](https://github.com/atomist/cli/issues/110)
+
 ### Removed
 
 -   **BREAKING** Remove provider config command. [#103](https://github.com/atomist/cli/issues/103)
+-   Remove broken, deprecate outdated commands. [#110](https://github.com/atomist/cli/issues/110)
 
 ## [1.7.0](https://github.com/atomist/cli/compare/1.6.1...1.7.0) - 2019-08-02
 
