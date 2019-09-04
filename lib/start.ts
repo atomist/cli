@@ -22,7 +22,7 @@ import {
 /**
  * Command-line options for start.
  */
-export type StartOptions = Pick<SpawnOptions, "cwd" | "compile" | "install"> & { local: boolean, profile: string };
+export type StartOptions = Pick<SpawnOptions, "cwd" | "compile" | "install"> & { local: boolean, profile: string, dev: boolean };
 
 /**
  * Start automation client server process.
@@ -41,7 +41,7 @@ export async function start(opts: StartOptions): Promise<number> {
 
     const spawnOpts = {
         ...opts,
-        command: "atm-start",
+        command: opts.dev ? "atm-start-dev" : "atm-start",
         args: [] as string[],
     };
     return spawnBinary(spawnOpts);

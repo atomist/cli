@@ -372,6 +372,11 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 type: "string",
                 required: false,
                 implies: "repository-url",
+            }, {
+                parameterName: "dev",
+                describe: "Start in development mode",
+                type: "boolean",
+                required: false,
             }],
         handler: (argv: any) => cliCommand(() => {
             return repositoryStart({
@@ -384,6 +389,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 seedUrl: argv["seed-url"],
                 install: argv.install,
                 compile: argv.compile,
+                dev: argv.dev,
             });
         }),
     });
