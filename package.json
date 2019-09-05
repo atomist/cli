@@ -25,7 +25,7 @@
     "@atomist/automation-client": "1.6.3-master.20190904061426",
     "@atomist/sdm": "1.6.2-master.20190903184656",
     "@atomist/sdm-core": "1.6.2-master.20190903201907",
-    "@atomist/sdm-local": "1.2.1-master.20190905171149",
+    "@atomist/sdm-local": "1.2.1-master.20190905210152",
     "@atomist/sdm-pack-k8s": "^1.9.0",
     "@kubernetes/client-node": "^0.10.2",
     "@types/cross-spawn": "^6.0.0",
