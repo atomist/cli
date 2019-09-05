@@ -350,6 +350,16 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 type: "string",
                 required: false,
             }, {
+                parameterName: "dev",
+                describe: "Enable development mode",
+                type: "boolean",
+                required: false,
+            }, {
+                parameterName: "debug",
+                describe: "Enable Node.js debugger",
+                type: "boolean",
+                required: false,
+            }, {
                 parameterName: "repository-url",
                 describe: "Git URL to clone",
                 type: "string",
@@ -372,16 +382,6 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 type: "string",
                 required: false,
                 implies: "repository-url",
-            }, {
-                parameterName: "dev",
-                describe: "Start in development mode",
-                type: "boolean",
-                required: false,
-            }, {
-                parameterName: "debug",
-                describe: "Enable Node.js debugger",
-                type: "boolean",
-                required: false,
             }],
         handler: (argv: any) => cliCommand(() => {
             return repositoryStart({
@@ -395,6 +395,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 install: argv.install,
                 compile: argv.compile,
                 dev: argv.dev,
+                debug: argv.debug,
             });
         }),
     });
