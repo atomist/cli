@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/cli/compare/1.7.0...HEAD)
 
+### Added
+
+-   Add `--dev` and `--debug` flag to start command. [#116](https://github.com/atomist/cli/issues/116)
+
 ### Changed
 
 -   Add kube-install command, deprecate kube. [#106](https://github.com/atomist/cli/issues/106)
