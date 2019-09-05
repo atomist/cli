@@ -57,7 +57,7 @@ export async function start(opts: StartOptions): Promise<number> {
         const spawnOpts = {
             ...opts,
             command: path.join("bin", opts.watch ? "start-dev.js" : "start.js"),
-            args: ["--inspect"],
+            nodeArgs: ["--inspect"],
         };
         return spawnJs(spawnOpts);
     }
