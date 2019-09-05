@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
+import * as path from "path";
 import {
     spawnBinary,
+    spawnJs,
     SpawnOptions,
 } from "./spawn";
 
 /**
  * Command-line options for start.
  */
-export type StartOptions = Pick<SpawnOptions, "cwd" | "compile" | "install"> & { local: boolean, profile: string, dev: boolean };
+export type StartOptions = Pick<SpawnOptions, "cwd" | "compile" | "install"> & {
+    local: boolean,
+    profile: string,
+    dev: boolean,
+    debug: boolean,
+};
 
 /**
  * Start automation client server process.
@@ -39,10 +46,19 @@ export async function start(opts: StartOptions): Promise<number> {
     }
     delete process.env.ATOMIST_DISABLE_LOGGING;
 
-    const spawnOpts = {
-        ...opts,
-        command: opts.dev ? "atm-start-dev" : "atm-start",
-        args: [] as string[],
-    };
-    return spawnBinary(spawnOpts);
+    if (!opts.debug) {
+        const spawnOpts = {
+            ...opts,
+            command: opts.dev ? "atm-start-dev" : "atm-start",
+            args: [] as string[],
+        };
+        return spawnBinary(spawnOpts);
+    } else {
+        const spawnOpts = {
+            ...opts,
+            command: path.join("bin", opts.dev ? "atm-start-dev" : "atm-start"),
+            args: ["--inspect"],
+        };
+        return spawnJs(spawnOpts);
+    }
 }

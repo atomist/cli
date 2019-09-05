@@ -377,6 +377,11 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 describe: "Start in development mode",
                 type: "boolean",
                 required: false,
+            }, {
+                parameterName: "debug",
+                describe: "Enable Node.js debugger",
+                type: "boolean",
+                required: false,
             }],
         handler: (argv: any) => cliCommand(() => {
             return repositoryStart({
