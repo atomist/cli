@@ -27,7 +27,7 @@ import {
 export type StartOptions = Pick<SpawnOptions, "cwd" | "compile" | "install"> & {
     local: boolean,
     profile: string,
-    dev: boolean,
+    watch: boolean,
     debug: boolean,
 };
 
@@ -49,14 +49,14 @@ export async function start(opts: StartOptions): Promise<number> {
     if (!opts.debug) {
         const spawnOpts = {
             ...opts,
-            command: opts.dev ? "atm-start-dev" : "atm-start",
+            command: opts.watch ? "atm-start-dev" : "atm-start",
             args: [] as string[],
         };
         return spawnBinary(spawnOpts);
     } else {
         const spawnOpts = {
             ...opts,
-            command: path.join("bin", opts.dev ? "start-dev.js" : "start.js"),
+            command: path.join("bin", opts.watch ? "start-dev.js" : "start.js"),
             args: ["--inspect"],
         };
         return spawnJs(spawnOpts);

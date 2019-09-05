@@ -350,14 +350,16 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 type: "string",
                 required: false,
             }, {
-                parameterName: "dev",
-                describe: "Enable development mode",
+                parameterName: "watch",
+                describe: "Enable watch mode",
                 type: "boolean",
+                default: false,
                 required: false,
             }, {
                 parameterName: "debug",
                 describe: "Enable Node.js debugger",
                 type: "boolean",
+                default: false,
                 required: false,
             }, {
                 parameterName: "repository-url",
@@ -394,7 +396,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 seedUrl: argv["seed-url"],
                 install: argv.install,
                 compile: argv.compile,
-                dev: argv.dev,
+                watch: argv.watch,
                 debug: argv.debug,
             });
         }),
