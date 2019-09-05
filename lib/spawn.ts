@@ -61,10 +61,10 @@ export async function spawnBinary(opts: SpawnOptions): Promise<number> {
 /**
  * Run an @atomist/automation-client Node.js script.
  */
-export async function spawnJs(opts: SpawnOptions): Promise<number> {
+export async function spawnJs(opts: SpawnOptions & { nodeArgs?: string[] }): Promise<number> {
     opts.cwd = path.resolve(opts.cwd);
     const script = path.join(opts.cwd, "node_modules", "@atomist", "automation-client", opts.command);
-    opts.args = [script, ...opts.args];
+    opts.args = [...(opts.nodeArgs || []), script, ...(opts.args || [])];
     opts.command = process.argv0;
     opts.checks = [
         () => {

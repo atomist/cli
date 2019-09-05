@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Atomist, Inc.
+ * Copyright © 2019 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
+import * as path from "path";
 import {
     spawnBinary,
+    spawnJs,
     SpawnOptions,
 } from "./spawn";
 
 /**
  * Command-line options for start.
  */
-export type StartOptions = Pick<SpawnOptions, "cwd" | "compile" | "install"> & { local: boolean, profile: string };
+export type StartOptions = Pick<SpawnOptions, "cwd" | "compile" | "install"> & {
+    local: boolean,
+    profile: string,
+    watch: boolean,
+    debug: boolean,
+};
 
 /**
  * Start automation client server process.
@@ -39,10 +46,19 @@ export async function start(opts: StartOptions): Promise<number> {
     }
     delete process.env.ATOMIST_DISABLE_LOGGING;
 
-    const spawnOpts = {
-        ...opts,
-        command: "atm-start",
-        args: [] as string[],
-    };
-    return spawnBinary(spawnOpts);
+    if (!opts.debug) {
+        const spawnOpts = {
+            ...opts,
+            command: opts.watch ? "atm-start-dev" : "atm-start",
+            args: [] as string[],
+        };
+        return spawnBinary(spawnOpts);
+    } else {
+        const spawnOpts = {
+            ...opts,
+            command: path.join("bin", opts.watch ? "start-dev.js" : "start.js"),
+            nodeArgs: ["--inspect"],
+        };
+        return spawnJs(spawnOpts);
+    }
 }
