@@ -19,31 +19,66 @@ import * as path from "path";
 import * as assert from "power-assert";
 import * as tmp from "tmp-promise";
 
-import { libDir } from "../lib/gql";
+import { graphqlDir } from "../lib/gql";
 
 describe("gql", () => {
 
     describe("libDir", () => {
 
-        it("should find lib dir", () => {
-            const l = libDir(path.join(__dirname, ".."));
-            const e = path.resolve(__dirname, "..", "lib");
-            assert(l === e);
+        it("should find lib/graphql dir", async () => {
+            const t = await tmp.dir({ unsafeCleanup: true });
+            const e = path.resolve(t.path, "lib");
+            await fs.ensureDir(e);
+            const g = path.join(e, "graphql");
+            await fs.ensureDir(g);
+            const l = graphqlDir(path.join(t.path));
+            assert(l === g);
         });
 
-        it("should find src dir", async () => {
+        it("should find src/graphql dir", async () => {
             const t = await tmp.dir({ unsafeCleanup: true });
             const e = path.join(t.path, "src");
             await fs.ensureDir(e);
-            const l = libDir(t.path);
-            assert(l === e);
+            const g = path.join(e, "graphql");
+            await fs.ensureDir(g);
+            const l = graphqlDir(t.path);
+            assert.strictEqual(l, g);
             await t.cleanup();
         });
 
-        it("should return lib when there is no dir", () => {
-            const l = libDir(__dirname);
-            const e = path.resolve(__dirname, "lib");
-            assert(l === e);
+        it("should return /graphql when there is no lib or src", () => {
+            const l = graphqlDir(__dirname);
+            const expected = path.join(__dirname, "graphql");
+            assert.strictEqual(l, expected);
+        });
+
+        it("should return root/graphql when there is lib but no lib/graphql", async () => {
+            const t = await tmp.dir({ unsafeCleanup: true });
+            const e = path.join(t.path, "lib");
+            await fs.ensureDir(e);
+            const l = graphqlDir(t.path);
+            const expected = path.join(t.path, "graphql");
+            assert.strictEqual(l, expected);
+            await t.cleanup();
+        });
+
+        it("should return root/graphql when there is src but no src/graphql", async () => {
+            const t = await tmp.dir({ unsafeCleanup: true });
+            const e = path.join(t.path, "src");
+            await fs.ensureDir(e);
+            const l = graphqlDir(t.path);
+            const expected = path.join(t.path, "graphql");
+            assert.strictEqual(l, expected);
+            await t.cleanup();
+        });
+
+        it("should return graphql/ if it has graphql", async () => {
+            const t = await tmp.dir({ unsafeCleanup: true });
+            const g = path.join(t.path, "graphql");
+            await fs.ensureDir(g);
+            const result = graphqlDir(t.path);
+            assert.strictEqual(result, g);
+            await t.cleanup();
         });
 
     });

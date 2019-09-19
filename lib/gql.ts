@@ -25,14 +25,18 @@ import * as path from "path";
  * @param cwd directory to use as base for location of lib dir
  * @return Resolved, full path to lib directory
  */
-export function libDir(cwd: string): string {
-    const lib = path.resolve(cwd, "lib");
-    const src = path.resolve(cwd, "src");
+export function graphqlDir(cwd: string): string {
+    const graphql = path.resolve(cwd, "graphql");
+    if (fs.existsSync(graphql)) {
+        return graphql;
+    }
+    const lib = path.resolve(cwd, "lib", "graphql");
+    const src = path.resolve(cwd, "src", "graphql");
     if (fs.existsSync(lib)) {
         return lib;
     } else if (fs.existsSync(src)) {
         return src;
     } else {
-        return lib;
+        return graphql;
     }
 }

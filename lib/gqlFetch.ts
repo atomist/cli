@@ -18,7 +18,7 @@ import * as fs from "fs-extra";
 import * as path from "path";
 
 import { resolveCliConfig } from "./cliConfig";
-import { libDir } from "./gql";
+import { graphqlDir } from "./gql";
 import * as print from "./print";
 import { spawnBinary } from "./spawn";
 
@@ -54,7 +54,7 @@ export async function gqlFetch(opts: GqlFetchOptions): Promise<number> {
     const graphQL = cliConfig.endpoints && cliConfig.endpoints.graphql
         ? cliConfig.endpoints.graphql : "https://automation.atomist.com/graphql/team";
 
-    const outDir = path.join(libDir(opts.cwd), "graphql");
+    const outDir = graphqlDir(opts.cwd);
     const outSchema = path.join(outDir, "schema.json");
     await fs.ensureDir(outDir);
     const spawnOpts = {
