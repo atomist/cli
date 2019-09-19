@@ -26,6 +26,10 @@ import * as path from "path";
  * @return Resolved, full path to lib directory
  */
 export function libDir(cwd: string): string {
+    const graphql = path.resolve(cwd, "graphql");
+    if (fs.existsSync(graphql)) {
+        return cwd;
+    }
     const lib = path.resolve(cwd, "lib");
     const src = path.resolve(cwd, "src");
     if (fs.existsSync(lib)) {

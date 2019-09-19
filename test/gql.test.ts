@@ -46,6 +46,15 @@ describe("gql", () => {
             assert(l === e);
         });
 
+        it("should return input directory if it has graphql/", async () => {
+            const t = await tmp.dir({ unsafeCleanup: true });
+            const graphqlDir = path.join(t.path, "graphql");
+            await fs.ensureDir(graphqlDir);
+            const result = libDir(t.path);
+            assert(result === t.path);
+            await t.cleanup();
+        });
+
     });
 
 });
