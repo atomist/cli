@@ -17,7 +17,6 @@
 import { guid } from "@atomist/automation-client";
 import { execPromise } from "@atomist/automation-client/lib/util/child_process";
 import * as fs from "fs-extra";
-import gitUrlParse = require("git-url-parse");
 import * as _ from "lodash";
 import * as os from "os";
 import * as path from "path";
@@ -26,6 +25,7 @@ import {
     start,
     StartOptions,
 } from "./start";
+import gitUrlParse = require("git-url-parse");
 
 /**
  * Configuration options for repository start command
@@ -33,6 +33,7 @@ import {
 export interface RepositoryStartOptions extends StartOptions {
     cloneUrl: string;
     index: string;
+    yaml: string;
     sha: string;
     seedUrl: string;
 }
@@ -44,6 +45,7 @@ const FilesToCopy = [
     "package.json",
     "tsconfig.json",
     "tslint.json",
+    "lib/configureYaml.ts",
 ];
 
 /**
@@ -53,12 +55,13 @@ export async function repositoryStart(opts: { cloneUrl: string } & Partial<Repos
 
     const optsToUse: RepositoryStartOptions = _.merge({
         index: "index.ts",
+        yaml: undefined,
         sha: "master",
         local: false,
         profile: undefined,
         watch: false,
         debug: false,
-        seedUrl: "https://github.com/atomist-seeds/empty-sdm.git",
+        seedUrl: "git@github.com:cdupuis/yaml-seed.git",
     }, opts);
 
     let cwd = optsToUse.cwd;
@@ -78,8 +81,12 @@ export async function repositoryStart(opts: { cloneUrl: string } & Partial<Repos
             return 5;
         }
 
-        // Move the provided file into the index.ts
-        if (!!optsToUse.index && optsToUse.index !== "index.ts") {
+        if (!!optsToUse.yaml) {
+            // If yaml is specified use that
+            const patterns = optsToUse.yaml.split(",").map(p => p.trim());
+            await copyYamlIndexTs(patterns, optsToUse, cwd);
+        } else if (!!optsToUse.index && optsToUse.index !== "index.ts") {
+            // Move the provided file into the index.ts
             await copyIndexTs(optsToUse, cwd);
         }
 
@@ -168,6 +175,17 @@ export const configuration = cfg;
     print.info("Finished");
 }
 
+async function copyYamlIndexTs(pattern: string[], optsToUse: RepositoryStartOptions, cwd: string): Promise<void> {
+    print.info(`Preparing '${optsToUse.index}'...`);
+    // Rewrite the index.ts to export the configuration from provided file to not break relative imports
+    const indexTs = `import { configureYaml } from "./lib/configureYaml";
+
+export const configuration = configureYaml(${pattern.map(p => `"${p}"`).join(", ")});
+`;
+    await fs.writeFile(path.join(cwd, "index.ts"), indexTs);
+    print.info("Finished");
+}
+
 async function copyFiles(optsToUse: RepositoryStartOptions, cwd: string, seed: string): Promise<void> {
     const gitUrl = gitUrlParse(optsToUse.cloneUrl);
 
@@ -176,6 +194,7 @@ async function copyFiles(optsToUse: RepositoryStartOptions, cwd: string, seed: s
         const sp = path.join(seed, f);
         if (!(await fs.pathExists(fp)) && (await fs.pathExists(sp))) {
             print.info(`Creating '${f}'`);
+            await fs.ensureDir(path.dirname(fp));
             await fs.copyFile(sp, fp);
 
             if (f === "package.json") {

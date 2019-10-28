@@ -384,6 +384,14 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 type: "string",
                 required: false,
                 implies: "repository-url",
+                conflicts: "yaml",
+            }, {
+                parameterName: "yaml",
+                describe: "Glob patters for yaml files to import",
+                type: "string",
+                required: false,
+                implies: "repository-url",
+                conflicts: "index",
             }, {
                 parameterName: "sha",
                 describe: "Git sha to checkout",
@@ -402,6 +410,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 cwd: argv["change-dir"],
                 cloneUrl: argv["repository-url"],
                 index: argv.index,
+                yaml: argv.yaml,
                 sha: argv.sha,
                 local: argv.local,
                 profile: argv.profile,
