@@ -22,10 +22,10 @@
     "cli"
   ],
   "dependencies": {
-    "@atomist/automation-client": "^1.7.0",
-    "@atomist/sdm": "^1.7.0",
-    "@atomist/sdm-core": "^1.7.0",
-    "@atomist/sdm-local": "^1.2.1",
+    "@atomist/automation-client": "2.0.0-master.20191206152722",
+    "@atomist/sdm": "2.0.0-master.20191206153457",
+    "@atomist/sdm-core": "2.0.0-master.20191206160429",
+    "@atomist/sdm-local": "1.2.2-master.20191206162119",
     "@atomist/sdm-pack-k8s": "^1.10.0",
     "@kubernetes/client-node": "^0.10.2",
     "@types/cross-spawn": "^6.0.0",
@@ -46,7 +46,7 @@
     "cli-spinner": "^0.2.10",
     "cross-spawn": "^6.0.5",
     "express": "^4.17.1",
-    "external-editor": "^3.1.0",
+    "fast-glob": "^3.1.0",
     "fs-extra": "^8.1.0",
     "git-url-parse": "^11.1.2",
     "inquirer": "^6.5.2",
@@ -60,23 +60,24 @@
     "source-map-support": "^0.5.12",
     "tmp-promise": "^2.0.2",
     "ts-essentials": "^3.0.0",
-    "yargs": "^13.3.0"
+    "yargs": "13.3.0"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.7.5",
+    "@types/node": "^12.12.14",
     "@types/power-assert": "^1.5.0",
     "espower-typescript": "^9.0.2",
-    "mocha": "^6.2.0",
+    "external-editor": "^3.1.0",
+    "mocha": "^6.2.2",
     "npm-run-all": "^4.1.5",
     "power-assert": "^1.6.1",
     "replace": "^1.1.1",
     "rimraf": "^3.0.0",
     "supervisor": "^0.12.0",
-    "ts-node": "^8.3.0",
-    "tslint": "^5.20.0",
-    "typedoc": "^0.15.0",
-    "typescript": "^3.6.3"
+    "ts-node": "^8.5.4",
+    "tslint": "^5.20.1",
+    "typedoc": "^0.15.3",
+    "typescript": "^3.7.3"
   },
   "directories": {
     "test": "test"
@@ -102,7 +103,8 @@
   },
   "bin": {
     "atomist": "./index.js",
-    "@atomist": "./index.js"
+    "@atomist": "./index.js",
+    "atomist-start": "./bin/start.js"
   },
   "engines": {
     "node": ">=8.2.0",
