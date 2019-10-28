@@ -43,9 +43,10 @@ export interface RepositoryStartOptions extends StartOptions {
  */
 const FilesToCopy = [
     "package.json",
+    "package-lock.json",
     "tsconfig.json",
     "tslint.json",
-    "lib/configureYaml.ts",
+    ".gitignore",
 ];
 
 /**
@@ -61,7 +62,7 @@ export async function repositoryStart(opts: { cloneUrl: string } & Partial<Repos
         profile: undefined,
         watch: false,
         debug: false,
-        seedUrl: "git@github.com:cdupuis/yaml-seed.git",
+        seedUrl: "git@github.com:atomist-seeds/empty-sdm.git",
     }, opts);
 
     let cwd = optsToUse.cwd;
@@ -178,7 +179,7 @@ export const configuration = cfg;
 async function copyYamlIndexTs(pattern: string[], optsToUse: RepositoryStartOptions, cwd: string): Promise<void> {
     print.info(`Preparing '${optsToUse.index}'...`);
     // Rewrite the index.ts to export the configuration from provided file to not break relative imports
-    const indexTs = `import { configureYaml } from "./lib/configureYaml";
+    const indexTs = `import { configureYaml } from "@atomist/sdm-core";
 
 export const configuration = configureYaml(${pattern.map(p => `"${p}"`).join(", ")});
 `;
