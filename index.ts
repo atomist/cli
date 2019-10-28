@@ -407,6 +407,13 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 type: "string",
                 required: false,
                 implies: "repository-url",
+                conflicts: "yaml",
+            }, {
+                parameterName: "yaml",
+                describe: "Glob patters for yaml files to import",
+                type: "string",
+                required: false,
+                conflicts: "index",
             }, {
                 parameterName: "sha",
                 describe: "Git sha to checkout",
@@ -418,13 +425,13 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 describe: "Git URL to clone the seed to overlay with SDM repository",
                 type: "string",
                 required: false,
-                implies: "repository-url",
             }],
         handler: (argv: any) => cliCommand(() => {
             return repositoryStart({
                 cwd: argv["change-dir"],
                 cloneUrl: argv["repository-url"],
                 index: argv.index,
+                yaml: argv.yaml,
                 sha: argv.sha,
                 local: argv.local,
                 profile: argv.profile,

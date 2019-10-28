@@ -153,7 +153,7 @@ describe("kubeEdit", () => {
                     password: "Y29ycmVjdCBob3JzZSBiYXR0ZXJ5IHN0YXBsZQ==",
                 },
             });
-        });
+        }).timeout(10000);
 
         it("edit metadata", async () => {
             process.env.EDITOR = "npx replace --silent mysecret yoursecret";
@@ -179,7 +179,7 @@ describe("kubeEdit", () => {
                     password: "Y29ycmVjdCBob3JzZSBiYXR0ZXJ5IHN0YXBsZQ==",
                 },
             });
-        });
+        }).timeout(10000);
 
         it("edit encoded", async () => {
             process.env.EDITOR = "npx replace --silent horse zebra";
@@ -205,7 +205,7 @@ describe("kubeEdit", () => {
                     password: "Y29ycmVjdCB6ZWJyYSBiYXR0ZXJ5IHN0YXBsZQ==",
                 },
             });
-        });
+        }).timeout(10000);
 
         it("edit encrypted", async () => {
             process.env.EDITOR = "npx replace --silent horse zebra";
@@ -231,7 +231,7 @@ describe("kubeEdit", () => {
                     password: "n04B+JR7vlmMG/Kri0XFjVWqx2q2QvskF5xeaNNgi7S+o1s0eXlCoY7yKd2LXYC1",
                 },
             });
-        });
+        }).timeout(10000);
     });
 
 });
