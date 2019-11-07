@@ -62,7 +62,7 @@ export async function repositoryStart(opts: { cloneUrl: string } & Partial<Repos
         profile: undefined,
         watch: false,
         debug: false,
-        seedUrl: "git@github.com:atomist-seeds/empty-sdm.git",
+        seedUrl: "https://github.com/atomist-seeds/empty-sdm.git",
     }, opts);
 
     let cwd = optsToUse.cwd;
