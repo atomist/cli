@@ -22,9 +22,9 @@
     "cli"
   ],
   "dependencies": {
-    "@atomist/automation-client": "^1.7.0",
-    "@atomist/sdm": "^1.7.0",
-    "@atomist/sdm-core": "^1.7.0",
+    "@atomist/automation-client": "1.8.0-master.20191102180610",
+    "@atomist/sdm": "1.8.0-master.20191102194220",
+    "@atomist/sdm-core": "1.8.0-master.20191104170555",
     "@atomist/sdm-local": "^1.2.1",
     "@atomist/sdm-pack-k8s": "^1.10.0",
     "@kubernetes/client-node": "^0.10.2",
@@ -46,6 +46,7 @@
     "cli-spinner": "^0.2.10",
     "cross-spawn": "^6.0.5",
     "express": "^4.17.1",
+    "fast-glob": "^3.1.0",
     "fs-extra": "^8.1.0",
     "git-url-parse": "^11.1.2",
     "inquirer": "^6.5.2",
