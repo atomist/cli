@@ -15,14 +15,16 @@
  * limitations under the License.
  */
 
+// tslint:disable-next-line:no-import-side-effect
 import "source-map-support/register";
 import * as yargs from "yargs";
 import { cliCommand } from "../lib/command";
+import * as print from "../lib/print";
 import { repositoryStart } from "../lib/repositoryStart";
 import { version } from "../lib/version";
 
-function start(): void {
-    yargs.command("*", "Start an SDM or automation client", argv => {
+async function start(): Promise<any> {
+    return yargs.command("*", "Start an SDM or automation client", argv => {
         argv.options({
             "change-dir": {
                 alias: "C",
@@ -97,8 +99,8 @@ function start(): void {
             },
         });
         return yargs;
-    }, (argv: any) => {
-        cliCommand(() => {
+    }, async (argv: any) => {
+        await cliCommand(() => {
             return repositoryStart({
                 cwd: argv["change-dir"],
                 cloneUrl: argv["repository-url"],
@@ -126,4 +128,9 @@ function start(): void {
         .argv;
 }
 
-start();
+start()
+    .catch((err: Error) => {
+        print.error(`Unhandled error: ${err.message}`);
+        print.error(err.stack);
+        process.exit(102);
+    });
