@@ -15,10 +15,10 @@
  */
 
 import { guid } from "@atomist/automation-client";
+import { obtainGitInfo } from "@atomist/automation-client/lib/internal/env/gitInfo";
 import { execPromise } from "@atomist/automation-client/lib/util/child_process";
 import * as fg from "fast-glob";
 import * as fs from "fs-extra";
-import gitUrlParse = require("git-url-parse");
 import * as _ from "lodash";
 import * as os from "os";
 import * as path from "path";
@@ -27,6 +27,7 @@ import {
     start,
     StartOptions,
 } from "./start";
+import gitUrlParse = require("git-url-parse");
 
 /**
  * Configuration options for repository start command
@@ -127,6 +128,12 @@ export async function repositoryStart(opts: { cloneUrl: string } & Partial<Repos
         // Move the cloned and prepared content over the seed to start it
         try {
             if (!isRemoteSeed(optsToUse)) {
+                // Prepare the git-info.json file that would otherwise be missing
+                const gitInfoName = "git-info.json";
+                const gitInfoPath = path.join(cwd, gitInfoName);
+                const gitInfo = await obtainGitInfo(cwd);
+                await fs.writeJson(gitInfoPath, gitInfo, { spaces: 2, encoding: "utf8" });
+                // Copy content over the seed
                 await fs.copy(cwd, seed);
                 cwd = seed;
             }
