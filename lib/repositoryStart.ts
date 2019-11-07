@@ -137,7 +137,7 @@ export async function repositoryStart(opts: { cloneUrl: string } & Partial<Repos
 
         // Find out if we need to compile
         const files = await fg(`${cwd}/**/*.ts`,
-            { ignore: [`${cwd}/**/{.git,node_modules}/**`] });
+            { ignore: [`${cwd}/**/{.git,node_modules,test}/**`] });
         if (files.length > 0) {
             optsToUse.compile = true;
         } else {
