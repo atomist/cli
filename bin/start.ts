@@ -22,7 +22,7 @@ import { repositoryStart } from "../lib/repositoryStart";
 import { version } from "../lib/version";
 
 function start(): void {
-    yargs.command("start", "Start an SDM or automation client", argv => {
+    yargs.command("*", "Start an SDM or automation client", argv => {
         argv.options({
             "change-dir": {
                 alias: "C",
