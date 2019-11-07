@@ -29,34 +29,34 @@ function start(): void {
                 describe: "Path to automation client project",
                 type: "string",
             },
-            compile: {
+            "compile": {
                 default: true,
                 describe: "Run 'npm run compile' before running",
                 type: "boolean",
             },
-            install: {
+            "install": {
                 describe: "Run 'npm install' before running/compiling, default is to install if no " +
                     "'node_modules' directory exists",
                 type: "boolean",
             },
-            local: {
+            "local": {
                 default: false,
                 describe: "Start SDM in local mode",
                 type: "boolean",
             },
-            profile: {
+            "profile": {
                 describe: "Name of configuration profiles to include",
                 type: "string",
                 required: false,
                 alias: "profiles",
             },
-            watch: {
+            "watch": {
                 describe: "Enable watch mode",
                 type: "boolean",
                 default: false,
                 required: false,
             },
-            debug: {
+            "debug": {
                 describe: "Enable Node.js debugger",
                 type: "boolean",
                 default: false,
@@ -67,21 +67,21 @@ function start(): void {
                 type: "string",
                 required: false,
             },
-            index: {
+            "index": {
                 describe: "Name of the file that exports the configuration",
                 type: "string",
                 required: false,
                 implies: "repository-url",
                 conflicts: "yaml",
             },
-            yaml: {
+            "yaml": {
                 describe: "Glob patters for yaml files to import",
                 type: "string",
                 required: false,
                 implies: "repository-url",
                 conflicts: "index",
             },
-            sha: {
+            "sha": {
                 describe: "Git sha to checkout",
                 type: "string",
                 required: false,
