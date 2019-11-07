@@ -18,7 +18,6 @@ import { guid } from "@atomist/automation-client";
 import { execPromise } from "@atomist/automation-client/lib/util/child_process";
 import * as fg from "fast-glob";
 import * as fs from "fs-extra";
-import gitUrlParse = require("git-url-parse");
 import * as _ from "lodash";
 import * as os from "os";
 import * as path from "path";
@@ -27,6 +26,7 @@ import {
     start,
     StartOptions,
 } from "./start";
+import gitUrlParse = require("git-url-parse");
 
 /**
  * Configuration options for repository start command
@@ -43,7 +43,6 @@ export interface RepositoryStartOptions extends StartOptions {
  * Files to check and copy from the seed into the cloned client/SDM repo
  */
 const FilesToCopy = [
-    "node_modules",
     "package.json",
     "package-lock.json",
     "tsconfig.json",
@@ -125,6 +124,17 @@ export async function repositoryStart(opts: { cloneUrl: string } & Partial<Repos
             print.warn(`Failed to remove seed: ${e.message}`);
         }
 
+        // Move the cloned and prepared content over the seed to start it
+        try {
+            if (!isRemoteSeed(optsToUse)) {
+                await fs.copy(cwd, seed);
+                cwd = seed;
+            }
+        } catch (e) {
+            print.error(`Failed to copy seed files into clone: ${e.message}`);
+            return 15;
+        }
+
         // Find out if we need to compile
         const files = await fg(`${cwd}/**/*.ts`,
             { ignore: [`${cwd}/**/{.git,node_modules}/**`] });
@@ -141,6 +151,7 @@ export async function repositoryStart(opts: { cloneUrl: string } & Partial<Repos
         cwd,
     });
 }
+
 function isRemoteSeed(opts: RepositoryStartOptions): boolean {
     return opts.seedUrl.startsWith("git@") || opts.seedUrl.startsWith("https://");
 }
@@ -216,31 +227,27 @@ async function copyFiles(optsToUse: RepositoryStartOptions, cwd: string, seed: s
         if (!(await fs.pathExists(fp)) && (await fs.pathExists(sp))) {
             print.info(`Creating '${f}'`);
 
-            if (f === "node_modules") {
-                await fs.ensureSymlink(sp, fp);
-            } else {
-                await fs.ensureDir(path.dirname(fp));
-                await fs.copyFile(sp, fp);
+            await fs.ensureDir(path.dirname(fp));
+            await fs.copyFile(sp, fp);
 
-                if (f === "package.json") {
-                    const pj = await fs.readJson(fp);
+            if (f === "package.json") {
+                const pj = await fs.readJson(fp);
 
-                    // This is special handling required to support gist clone urls
-                    if ((gitUrl.owner.length === 0 || gitUrl.owner === "git")
-                        && optsToUse.cloneUrl.includes("gist")) {
-                        pj.name = `@gist/${gitUrl.name.slice(0, 7)}`;
-                    } else {
-                        pj.name = `@${gitUrl.owner}/${gitUrl.name}`;
-                    }
-
-                    const sha = await execPromise(
-                        "git",
-                        ["log", "--pretty=format:%h", "-n", "1"],
-                        { cwd });
-                    pj.version = `0.1.0-${sha.stdout.trim()}`;
-
-                    await fs.writeJson(fp, pj, { replacer: undefined, spaces: 2 });
+                // This is special handling required to support gist clone urls
+                if ((gitUrl.owner.length === 0 || gitUrl.owner === "git")
+                    && optsToUse.cloneUrl.includes("gist")) {
+                    pj.name = `@gist/${gitUrl.name.slice(0, 7)}`;
+                } else {
+                    pj.name = `@${gitUrl.owner}/${gitUrl.name}`;
                 }
+
+                const sha = await execPromise(
+                    "git",
+                    ["log", "--pretty=format:%h", "-n", "1"],
+                    { cwd });
+                pj.version = `0.1.0-${sha.stdout.trim()}`;
+
+                await fs.writeJson(fp, pj, { replacer: undefined, spaces: 2 });
             }
         } else if (f === "package.json") {
             optsToUse.install = true;
