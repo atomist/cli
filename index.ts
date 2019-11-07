@@ -241,6 +241,11 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 type: "string",
                 required: false,
             }, {
+                parameterName: "yaml",
+                describe: "Git URL to clone the seed to overlay with SDM repository",
+                type: "string",
+                required: false,
+            }, {
                 parameterName: "namespace",
                 describe: "Deploy utilities in namespace mode",
                 type: "string",
@@ -269,6 +274,7 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             seedUrl: argv["seed-url"],
             install: argv.install,
             compile: argv.compile,
+            yaml: argv.yaml,
             image: argv.image,
         })),
     });

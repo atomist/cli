@@ -27,7 +27,10 @@ import * as inquirer from "inquirer";
 import yaml = require("js-yaml");
 import * as stringify from "json-stringify-safe";
 import * as tmp from "tmp-promise";
-import { resolveCliConfig } from "./cliConfig";
+import {
+    resolveCliConfig,
+    resolveUserConfig,
+} from "./cliConfig";
 import * as print from "./print";
 import { RepositoryStartOptions } from "./repositoryStart";
 import {
@@ -58,7 +61,7 @@ export async function deploy(opts: DeployOptions): Promise<number> {
     const yes = opts.yes;
     let dryRun = opts.dryRun;
 
-    const cliConfig = resolveCliConfig();
+    const cliConfig = resolveUserConfig();
     const apiKey = cliConfig.apiKey;
     if (!apiKey) {
         print.error(`No API key set in user configuration, run 'atomist config' first`);
@@ -115,6 +118,7 @@ export async function deploy(opts: DeployOptions): Promise<number> {
         workspaceIds,
         apiKey,
         logging: { level: "debug" },
+        sdm: cliConfig.sdm,
     };
 
     // For testing purpose, we add the staging endpoints into the config
@@ -160,8 +164,11 @@ export async function deploy(opts: DeployOptions): Promise<number> {
         if (opts.compile !== undefined) {
             args.push(`--compile=${opts.compile}`);
         }
-        if (opts.compile !== undefined) {
+        if (opts.install !== undefined) {
             args.push(`--install=${opts.install}`);
+        }
+        if (opts.yaml !== undefined) {
+            args.push(`--yaml=${opts.yaml}`);
         }
         docs[4].spec.template.spec.containers[0].args = args;
         docs[4].spec.template.spec.containers[0].env = [

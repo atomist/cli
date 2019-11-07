@@ -35,6 +35,7 @@ export interface RepositoryStartOptions extends StartOptions {
     index: string;
     sha: string;
     seedUrl: string;
+    yaml?: string;
 }
 
 /**
