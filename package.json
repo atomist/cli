@@ -101,7 +101,8 @@
   },
   "bin": {
     "atomist": "./index.js",
-    "@atomist": "./index.js"
+    "@atomist": "./index.js",
+    "atomist-start": "./bin/start.js"
   },
   "engines": {
     "node": ">=8.2.0",
