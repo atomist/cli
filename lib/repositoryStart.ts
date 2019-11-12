@@ -130,6 +130,7 @@ export async function repositoryStart(opts: { cloneUrl: string } & Partial<Repos
             if (!isRemoteSeed(optsToUse)) {
                 // Prepare the git-info.json file that would otherwise be missing
                 const gitInfoName = "git-info.json";
+                print.info(`Creating '${gitInfoName}'`);
                 const gitInfoPath = path.join(cwd, gitInfoName);
                 const gitInfo = await obtainGitInfo(cwd);
                 await fs.writeJson(gitInfoPath, gitInfo, { spaces: 2, encoding: "utf8" });
