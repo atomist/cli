@@ -64,24 +64,38 @@ export async function repositoryStart(opts: { cloneUrl: string } & Partial<Repos
         profile: undefined,
         watch: false,
         debug: false,
-        seedUrl: process.env.ATOMIST_SEED_URL || "https://github.com/atomist-seeds/empty-sdm.git",
+        seedUrl: process.env.ATOMIST_SEED_URL ||
+            (!!opts.yaml ? "https://github.com/atomist-seeds/yaml-sdm.git" : "https://github.com/atomist-seeds/empty-sdm.git"),
     }, opts);
 
     let cwd = optsToUse.cwd;
+    let seed = path.join(os.homedir(), ".atomist", "cache", `sdm-${guid().slice(0, 7)}`);
 
-    if (!!optsToUse.cloneUrl) {
+    if (!!optsToUse.cloneUrl || optsToUse.yaml) {
 
-        const gitUrl = gitUrlParse(optsToUse.cloneUrl);
+        if (!!optsToUse.cloneUrl) {
+            const gitUrl = gitUrlParse(optsToUse.cloneUrl);
+            cwd = path.join(os.homedir(), ".atomist", "sdm", gitUrl.owner, gitUrl.name);
 
-        cwd = path.join(os.homedir(), ".atomist", "sdm", gitUrl.owner, gitUrl.name);
-        let seed = path.join(os.homedir(), ".atomist", "cache", `sdm-${guid().slice(0, 7)}`);
+            // Git clone
+            try {
+                await clone(optsToUse, cwd);
+            } catch (e) {
+                print.error(`Failed to clone/checkout repository: ${e.message}`);
+                return 5;
+            }
+        } else {
+            cwd = path.join(os.homedir(), ".atomist", "sdm", process.cwd().split(path.sep).slice(-1)[0]);
 
-        // Git clone
-        try {
-            await clone(optsToUse, cwd);
-        } catch (e) {
-            print.error(`Failed to clone/checkout repository: ${e.message}`);
-            return 5;
+            // Copy project
+            try {
+                print.info("Copying repository...");
+                await fs.emptyDir(cwd);
+                await fs.copy(process.cwd(), cwd);
+            } catch (e) {
+                print.error(`Failed to copy repository: ${e.message}`);
+                return 5;
+            }
         }
 
         if (!!optsToUse.yaml) {
@@ -130,6 +144,7 @@ export async function repositoryStart(opts: { cloneUrl: string } & Partial<Repos
             if (!isRemoteSeed(optsToUse)) {
                 // Prepare the git-info.json file that would otherwise be missing
                 const gitInfoName = "git-info.json";
+                print.info(`Creating '${gitInfoName}'`);
                 const gitInfoPath = path.join(cwd, gitInfoName);
                 const gitInfo = await obtainGitInfo(cwd);
                 await fs.writeJson(gitInfoPath, gitInfo, { spaces: 2, encoding: "utf8" });
@@ -226,8 +241,6 @@ exports.configuration = sdm_core.configureYaml(${pattern.map(p => `"${p}"`).join
 }
 
 async function copyFiles(optsToUse: RepositoryStartOptions, cwd: string, seed: string): Promise<void> {
-    const gitUrl = gitUrlParse(optsToUse.cloneUrl);
-
     for (const f of FilesToCopy) {
         const fp = path.join(cwd, f);
         const sp = path.join(seed, f);
@@ -240,12 +253,17 @@ async function copyFiles(optsToUse: RepositoryStartOptions, cwd: string, seed: s
             if (f === "package.json") {
                 const pj = await fs.readJson(fp);
 
-                // This is special handling required to support gist clone urls
-                if ((gitUrl.owner.length === 0 || gitUrl.owner === "git")
-                    && optsToUse.cloneUrl.includes("gist")) {
-                    pj.name = `@gist/${gitUrl.name.slice(0, 7)}`;
+                if (!!optsToUse.cloneUrl) {
+                    const gitUrl = gitUrlParse(optsToUse.cloneUrl);
+                    // This is special handling required to support gist clone urls
+                    if ((gitUrl.owner.length === 0 || gitUrl.owner === "git")
+                        && optsToUse.cloneUrl.includes("gist")) {
+                        pj.name = `@gist/${gitUrl.name.slice(0, 7)}`;
+                    } else {
+                        pj.name = `@${gitUrl.owner}/${gitUrl.name}`;
+                    }
                 } else {
-                    pj.name = `@${gitUrl.owner}/${gitUrl.name}`;
+                    pj.name = process.cwd().split(path.sep).slice(-1)[0];
                 }
 
                 const sha = await execPromise(
