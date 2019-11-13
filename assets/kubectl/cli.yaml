@@ -29,8 +29,8 @@ metadata:
   name: cli
 rules:
   - apiGroups: [""]
-    resources: ["namespaces", "pods", "secrets", "serviceaccounts", "services"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete", "log"]
+    resources: ["namespaces", "pods", "secrets", "serviceaccounts", "services", "pods/log"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete""]
   - apiGroups: ["apps", "extensions"]
     resources: ["deployments"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
