@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Base64 support in kube commands. [#120](https://github.com/atomist/cli/issues/120)
+-   Issue/#114 cli editor support. [#121](https://github.com/atomist/cli/issues/121)
 
 ## [1.8.0](https://github.com/atomist/cli/compare/1.7.0...1.8.0) - 2019-09-15
 
