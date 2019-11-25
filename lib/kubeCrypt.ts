@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-import { guid } from "@atomist/automation-client";
-import {
-    decryptSecret,
-    encryptSecret,
-} from "@atomist/sdm-pack-k8s";
 import * as k8s from "@kubernetes/client-node";
 import * as fs from "fs-extra";
 import * as inquirer from "inquirer";
 import * as yaml from "js-yaml";
+import * as _ from "lodash";
 import { DeepPartial } from "ts-essentials";
 import { maskString } from "./config";
+import {
+    base64,
+    crypt,
+    printSecret,
+} from "./kubeUtils";
 import * as print from "./print";
 
 /**
@@ -32,7 +33,7 @@ import * as print from "./print";
  */
 export interface KubeCryptOptions {
     /** To encrypt or decrypt? */
-    action: "decrypt" | "encrypt";
+    action: KubeCryptActions;
     /** Path to Kubernetes secret spec file. */
     file?: string;
     /** Literal string to encrypt/decrypt. */
@@ -43,6 +44,9 @@ export interface KubeCryptOptions {
     base64?: boolean;
 }
 
+/** Action to perform */
+export type KubeCryptActions = "decrypt" | "encrypt";
+
 /**
  * Encrypt or decrypt secret data values.
  *
@@ -51,46 +55,24 @@ export interface KubeCryptOptions {
  */
 export async function kubeCrypt(opts: KubeCryptOptions): Promise<number> {
     let secret: DeepPartial<k8s.V1Secret>;
-    const literalProp = `literal-${guid()}`;
-    if (opts.literal) {
-        secret = wrapLiteral(opts.literal, literalProp);
-    } else if (opts.file) {
-        try {
-            const secretString = await fs.readFile(opts.file, "utf8");
-            secret = await yaml.safeLoad(secretString);
-        } catch (e) {
-            print.error(`Failed to load secret spec from file '${opts.file}': ${e.message}`);
-            return 2;
-        }
-    } else {
-        const answers = await inquirer.prompt<Record<string, string>>([{
-            type: "input",
-            name: "literal",
-            message: `Enter literal string to be ${opts.action}ed:`,
-        }]);
-        secret = wrapLiteral(answers.literal, literalProp);
-    }
 
-    if (!opts.secretKey) {
-        const answers = await inquirer.prompt<Record<string, string>>([{
-            type: "input",
-            name: "secretKey",
-            message: `Enter encryption key:`,
-            transformer: maskString,
-            validate: v => v.length < 1 ? "Secret key must have non-zero length" : true,
-        }]);
-        opts.secretKey = answers.secretKey;
+    secret = await handleSecretParameter(opts);
+    if (!secret) {
+        return 2;
     }
+    opts.secretKey = await handleSecretKeyParameter(opts);
+
+    const base64Encode = (s: DeepPartial<k8s.V1Secret>) => opts.base64 ? base64(s, "encode") : s;
+    const base64Decode = (s: DeepPartial<k8s.V1Secret>) => opts.base64 ? base64(s, "decode") : s;
 
     try {
-        const transformed = await cryptEncode(secret, opts.secretKey, opts.action === "encrypt", opts.base64);
-        if (transformed.data[literalProp]) {
-            print.log(transformed.data[literalProp]);
-        } else if (/\.ya?ml$/.test(opts.file)) {
-            print.log(yaml.safeDump(transformed));
+        let transformed: DeepPartial<k8s.V1Secret>;
+        if (opts.action === "encrypt") {
+            transformed = await crypt(base64Encode(secret), opts);
         } else {
-            print.log(JSON.stringify(transformed, undefined, 2));
+            transformed = base64Decode(await crypt(secret, opts));
         }
+        printSecret(transformed, opts);
     } catch (e) {
         print.error(`Failed to ${opts.action} secret: ${e.message}`);
         return 3;
@@ -99,7 +81,42 @@ export async function kubeCrypt(opts: KubeCryptOptions): Promise<number> {
     return 0;
 }
 
-function wrapLiteral(literal: string, prop: string): DeepPartial<k8s.V1Secret> {
+/**
+ * Handle the literal or file secret parameter from the cli
+ * @param opts file or literal of KubeCryptOptions
+ * @returns secret or undefined if the file cannot be loaded
+ */
+export async function handleSecretParameter(opts: Pick<KubeCryptOptions, "file" | "literal" | "action">): Promise<DeepPartial<k8s.V1Secret>> {
+    let secret: DeepPartial<k8s.V1Secret>;
+    if (opts.file) {
+        try {
+            const secretString = await fs.readFile(opts.file, "utf8");
+            secret = await yaml.safeLoad(secretString);
+        } catch (e) {
+            print.error(`Failed to load secret spec from '${opts.file}'`);
+            return undefined;
+        }
+    } else {
+        if (!opts.literal) {
+            const answers = await inquirer.prompt<Record<string, string>>([{
+                type: "input",
+                name: "literal",
+                message: `Enter literal string to be ${opts.action}ed:`,
+            }]);
+            opts.literal = answers.literal;
+        }
+        secret = wrapLiteral(opts.literal, opts.literal);
+    }
+    return secret;
+}
+
+/**
+ *  Creates a k8s.V1Secret with the input in the data section.
+ * @param prop property name
+ * @param literal String to wrap in k8s.V1Secret
+ * @returns the k8s.V1Secret
+ */
+export function wrapLiteral(prop: string, literal: string): DeepPartial<k8s.V1Secret> {
     const secret: DeepPartial<k8s.V1Secret> = {
         apiVersion: "v1",
         data: {},
@@ -111,35 +128,20 @@ function wrapLiteral(literal: string, prop: string): DeepPartial<k8s.V1Secret> {
 }
 
 /**
- * Does the requested encryption/decryption of the provided secret and optionally base64 encodes/decodes the secret
- * @param input the secret to encrypt/decrypt
- * @param key the secret key to encrypt/decrypy with
- * @param b64 true to bese64 encode/decode
- * @return the encrypted/decrypted and optionally base64 encoded/decoded secret
+ * Handle the secret key parameter from the cli
+ * @param opts secretKey from KubeCryptOptions
+ * @returns the secret
  */
-export async function cryptEncode(input: DeepPartial<k8s.V1Secret>, key: string, encrypt: boolean, b64: boolean): Promise<DeepPartial<k8s.V1Secret>> {
-    const doBase64 = (s: DeepPartial<k8s.V1Secret>) => b64 ? base64(s, encrypt) : s;
-
-    let secret: DeepPartial<k8s.V1Secret>;
-    if (encrypt) {
-        secret = doBase64(input);
-        secret = await encryptSecret(secret, key);
-    } else {
-        secret = await decryptSecret(input, key);
-        secret = doBase64(secret);
+export async function handleSecretKeyParameter(opts: Pick<KubeCryptOptions, "secretKey">): Promise<string> {
+    if (!opts.secretKey) {
+        const answers = await inquirer.prompt<Record<string, string>>([{
+            type: "input",
+            name: "secretKey",
+            message: `Enter encryption key:`,
+            transformer: maskString,
+            validate: v => v.length < 1 ? "Secret key must have non-zero length" : true,
+        }]);
+        opts.secretKey = answers.secretKey;
     }
-    return secret;
-}
-
-/**
- * Encodes or decodes the data section of a secret
- * @param secret The secret to encode/decode
- * @param encode True encodes, False decodes
- */
-export function base64(secret: DeepPartial<k8s.V1Secret>, encode: boolean): DeepPartial<k8s.V1Secret> {
-    for (const datum of Object.keys(secret.data)) {
-        const encoding = encode ? Buffer.from(secret.data[datum]).toString("base64") : Buffer.from(secret.data[datum], "base64").toString();
-        secret.data[datum] = encoding;
-    }
-    return secret;
+    return opts.secretKey;
 }

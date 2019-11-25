@@ -31,6 +31,7 @@ import { gitHook } from "./lib/gitHook";
 import { gqlFetch } from "./lib/gqlFetch";
 import { install } from "./lib/install";
 import { kubeCrypt } from "./lib/kubeCrypt";
+import { kubeEdit } from "./lib/kubeEdit";
 import { kubeFetch } from "./lib/kubeFetch";
 import { kubeInstall } from "./lib/kubeInstall";
 import * as print from "./lib/print";
@@ -232,10 +233,12 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             parameterName: "file",
             describe: "Decrypt Kubernetes secret data values from secret spec file",
             type: "string",
+            conflicts: "literal",
         }, {
             parameterName: "literal",
             describe: "Decrypt secret data value provided as a literal string",
             type: "string",
+            conflicts: "file",
         }, {
             parameterName: "secret-key",
             describe: "Key to use to decrypt secret data values",
@@ -261,10 +264,12 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             parameterName: "file",
             describe: "Encrypt Kubernetes secret data values from secret spec file",
             type: "string",
+            conflicts: "literal",
         }, {
             parameterName: "literal",
             describe: "Encrypt secret data value provided as a literal string",
             type: "string",
+            conflicts: "file",
         }, {
             parameterName: "secret-key",
             describe: "Key to use to encrypt secret data values",
@@ -280,6 +285,24 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
             base64: argv.base64,
             file: argv.file,
             literal: argv.literal,
+            secretKey: argv["secret-key"],
+        })),
+    });
+    yargBuilder.withSubcommand({
+        command: "kube-edit <secret-spec-file>",
+        describe: "Decrypts a secret and opens it in an editor. Output is re-encrypted and saved back to the original file",
+        positional: [{
+            key: "secret-spec-file", opts: {
+                describe: "Kubernetes secret spec file",
+            },
+        }],
+        parameters: [{
+            parameterName: "secret-key",
+            describe: "Key used to decrypt & encrypt secret data values",
+            type: "string",
+        }],
+        handler: (argv: any) => cliCommand(() => kubeEdit({
+            file: argv["secret-spec-file"],
             secretKey: argv["secret-key"],
         })),
     });

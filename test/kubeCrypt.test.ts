@@ -14,159 +14,67 @@
  * limitations under the License.
  */
 
-import * as k8s from "@kubernetes/client-node";
+import * as fs from "fs-extra";
+import * as yaml from "js-yaml";
 import * as assert from "power-assert";
-import { DeepPartial } from "ts-essentials";
+import { withFile } from "tmp-promise";
 import {
-    base64,
-    cryptEncode,
+    handleSecretParameter,
+    wrapLiteral,
 } from "../lib/kubeCrypt";
 
 describe("kubeCrypt", () => {
 
-    describe("base64", () => {
+    describe("handleSecretParameter", () => {
+        const secret = {
+            apiVersion: "v1",
+            kind: "Secret",
+            type: "Opaque",
+            data: {
+                username: "some username",
+                password: "some password",
+            },
+        };
 
-        it("encode", () => {
-            const secret: DeepPartial<k8s.V1Secret> = {
-                apiVersion: "v1",
-                kind: "Secret",
-                type: "Opaque",
-                data: {
-                    jane: "doe",
-                    john: "smith",
-                },
-            };
+        it("file input", async () => {
+            await withFile(async ({ path, fd }) => {
+                await fs.writeFile(path, yaml.safeDump(secret));
 
-            const encodedSecret = base64(secret, true);
+                const s = await handleSecretParameter({
+                    action: "encrypt",
+                    file: path,
+                });
 
-            assert.deepStrictEqual(encodedSecret, {
-                apiVersion: "v1",
-                kind: "Secret",
-                type: "Opaque",
-                data: {
-                    jane: "ZG9l",
-                    john: "c21pdGg=",
-                },
+                assert.deepEqual(s, secret);
             });
         });
 
-        it("decode", () => {
-            const secret: DeepPartial<k8s.V1Secret> = {
-                apiVersion: "v1",
-                kind: "Secret",
-                type: "Opaque",
-                data: {
-                    music: "Um9jayAmIFJvbGw=",
-                },
-            };
+        it("literal input", async () => {
+            await withFile(async ({ path, fd }) => {
+                await fs.writeFile(path, yaml.safeDump(secret));
 
-            const encodedSecret = base64(secret, false);
+                const s = await handleSecretParameter({
+                    action: "decrypt",
+                    literal: "something",
+                });
 
-            assert.deepStrictEqual(encodedSecret, {
-                apiVersion: "v1",
-                kind: "Secret",
-                type: "Opaque",
-                data: {
-                    music: "Rock & Roll",
-                },
+                const key = Object.keys(s.data)[0];
+                assert.deepEqual(s.data[key], "something");
             });
         });
     });
 
-    describe("doKubeCrypt", () => {
+    describe("wrapLiteral", () => {
 
-        it("encrypt without base64", async () => {
-            const secret: DeepPartial<k8s.V1Secret> = {
+        it("single line with special characters", () => {
+            const o = wrapLiteral("thingmabob <>--!#@!", "doodad");
+
+            assert.deepEqual(o, {
                 apiVersion: "v1",
                 kind: "Secret",
                 type: "Opaque",
                 data: {
-                    jane: "doe",
-                    john: "smith",
-                },
-            };
-
-            const encodedSecret = await cryptEncode(secret, "super-secret-key", true, false);
-
-            assert.deepStrictEqual(encodedSecret, {
-                apiVersion: "v1",
-                kind: "Secret",
-                type: "Opaque",
-                data: {
-                    jane: "UiYhAtTurHKXQ2rWnmOs/Q==",
-                    john: "VNqXYEwNsLpS7TQ4hJmSFw==",
-                },
-            });
-        });
-
-        it("encrypt with base64", async () => {
-            const secret: DeepPartial<k8s.V1Secret> = {
-                apiVersion: "v1",
-                kind: "Secret",
-                type: "Opaque",
-                data: {
-                    jane: "doe",
-                    john: "smith",
-                },
-            };
-
-            const encodedSecret = await cryptEncode(secret, "super-secret-key", true, true);
-
-            assert.deepStrictEqual(encodedSecret, {
-                apiVersion: "v1",
-                kind: "Secret",
-                type: "Opaque",
-                data: {
-                    jane: "ZTqxNwPNH8m87L2D6nzYaQ==",
-                    john: "dwM3clgniklNL8yBW67xMA==",
-                },
-            });
-        });
-
-        it("decrypt without base64", async () => {
-            const secret: DeepPartial<k8s.V1Secret> = {
-                apiVersion: "v1",
-                kind: "Secret",
-                type: "Opaque",
-                data: {
-                    jane: "UiYhAtTurHKXQ2rWnmOs/Q==",
-                    john: "VNqXYEwNsLpS7TQ4hJmSFw==",
-                },
-            };
-
-            const encodedSecret = await cryptEncode(secret, "super-secret-key", false, false);
-
-            assert.deepStrictEqual(encodedSecret, {
-                apiVersion: "v1",
-                kind: "Secret",
-                type: "Opaque",
-                data: {
-                    jane: "doe",
-                    john: "smith",
-                },
-            });
-        });
-
-        it("decrypt with base64", async () => {
-            const secret: DeepPartial<k8s.V1Secret> = {
-                apiVersion: "v1",
-                kind: "Secret",
-                type: "Opaque",
-                data: {
-                    jane: "ZTqxNwPNH8m87L2D6nzYaQ==",
-                    john: "dwM3clgniklNL8yBW67xMA==",
-                },
-            };
-
-            const encodedSecret = await cryptEncode(secret, "super-secret-key", false, true);
-
-            assert.deepStrictEqual(encodedSecret, {
-                apiVersion: "v1",
-                kind: "Secret",
-                type: "Opaque",
-                data: {
-                    jane: "doe",
-                    john: "smith",
+                    "thingmabob <>--!#@!": "doodad",
                 },
             });
         });
