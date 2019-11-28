@@ -390,7 +390,6 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 describe: "Glob patters for yaml files to import",
                 type: "string",
                 required: false,
-                implies: "repository-url",
                 conflicts: "index",
             }, {
                 parameterName: "sha",
@@ -403,7 +402,6 @@ function setupYargs(yargBuilder: yb.YargBuilder): void {
                 describe: "Git URL to clone the seed to overlay with SDM repository",
                 type: "string",
                 required: false,
-                implies: "repository-url",
             }],
         handler: (argv: any) => cliCommand(() => {
             return repositoryStart({
