@@ -153,7 +153,7 @@ describe("kubeEdit", () => {
                     password: "Y29ycmVjdCBob3JzZSBiYXR0ZXJ5IHN0YXBsZQ==",
                 },
             });
-        })to;
+        });
 
         it("edit metadata", async () => {
             process.env.EDITOR = "npx replace --silent mysecret yoursecret";
