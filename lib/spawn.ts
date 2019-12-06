@@ -130,14 +130,14 @@ async function npmInstall(cwd: string): Promise<number> {
     if (await fs.pathExists(packageJsonLock)) {
         return spawnPromise({
             command: "npm",
-            args: ["ci"],
+            args: ["ci", "--no-progress", "--quiet"],
             cwd,
             checkPackageJson: true,
         });
     } else {
         return spawnPromise({
             command: "npm",
-            args: ["install"],
+            args: ["install", "--no-progress", "--quiet"],
             cwd,
             checkPackageJson: true,
         });
