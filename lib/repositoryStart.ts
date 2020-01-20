@@ -233,7 +233,7 @@ export const configuration = cfg;
 async function copyYamlIndexJs(pattern: string[], optsToUse: RepositoryStartOptions, cwd: string): Promise<void> {
     print.info(`Preparing 'index.js'...`);
     // Rewrite the index.js to export the configuration from provided file to not break relative imports
-    const indexJs = `const sdm_core = require("@atomist/sdm-core");
+    const indexJs = `const sdm_core = require("@atomist/sdm-core/lib/machine/yaml/configureYaml");
 exports.configuration = sdm_core.configureYaml(${pattern.map(p => `"${p}"`).join(", ")});
 `;
     await fs.writeFile(path.join(cwd, "index.js"), indexJs);
