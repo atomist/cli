@@ -193,8 +193,8 @@ export async function fetchSpecs(ns?: string): Promise<K8sObject[]> {
             cluster: "/assets/kubectl/cluster-wide.yaml",
         },
         "k8vent": {
-            ns: "/kube/kubectl/namespace-scoped.yaml",
-            cluster: "/kube/kubectl/cluster-wide.yaml",
+            ns: "/kube/namespace-scoped.yaml",
+            cluster: "/kube/cluster-wide.yaml",
         },
     };
     const specs: K8sObject[] = [];
@@ -228,7 +228,7 @@ export function kubeWebhookUrls(workspaceIds: string[]): string {
  * Return base raw content GitHub.com URL for atomist repos.
  */
 function ghBaseRawUrl(repo: string): string {
-    return `https://raw.githubusercontent.com/atomist/${repo}/master`;
+    return `https://raw.githubusercontent.com/atomist/${repo}/main`;
 }
 
 /** Options informing the k8s-sdm configuration. */
